@@ -160,7 +160,7 @@ io.on('connection', (socket)=>{
     socket.broadcast.to(socket.code).emit('disConnected', {
       type: 'disconnect',
       name: 'SERVER',
-      message: socket.name
+      message: data
     })
 
     socket.leave(socket.code);
