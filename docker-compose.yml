@@ -2,17 +2,13 @@ version: '3'
 services:
    frontend:
       container_name: react
-      build:
-         context: './Web-Frontend'
-         dockerfile: Dockerfile
+      image: kkimbj18/front
       networks:
          - network
    backend:
       container_name: express
       restart: always
-      build: 
-         context: './Backend'
-         dockerfile: Dockerfile
+      image: kkimbj18/back
       ports:
          - '3000:3000'
       depends_on:
@@ -30,9 +26,7 @@ services:
          - ./mongo-data:/data/db
    nginx:
       restart: always
-      build:
-         dockerfile: Dockerfile
-         context: ./Nginx
+      image: kkimbj18/nginx
       volumes:
          - ../volumes/certbot/conf:/etc/letsencrypt
          - ../volumes/certbot/www:/var/www/certbot
@@ -45,9 +39,7 @@ services:
    jenkins:
       container_name: jenkins
       user: root
-      build:
-         context: ./Jenkins
-         dockerfile: Dockerfile
+      image: kkimbj18/jenkins
       ports:
          - '8080:8080'
       volumes:
