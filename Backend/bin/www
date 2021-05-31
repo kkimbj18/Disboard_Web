@@ -154,8 +154,10 @@ io.on('connection', (socket)=>{
   })
 
   // 수업 퇴장 시, 참가자 갱신
-  socket.on('disconnect', ()=>{
+  socket.on('disconnect', (data)=>{
     console.log('user disconnected');
+
+    data.name = socket.name;
 
     socket.broadcast.to(socket.code).emit('disConnected', {
       type: 'disconnect',
