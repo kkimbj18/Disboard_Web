@@ -18,6 +18,9 @@ import NoticePage from '../components/views/NoticePage/Index'
 import LectureNotePage from '../components/views/LectureNotePage/Index'
 import SubjectHomePage from '../components/views/LectureHomePage/Index'
 import CalendarPage from '../components/views/CalendarPage/Index.js'
+import AttendPage from '../components/views/AttendancePage/Index.js'
+import AssignmentProfessor from '../components/views/LectureAssignmentPage/Professor.js'
+import AssignmentStudent from '../components/views/LectureAssignmentPage/Student.js'
 
 
 const baseUrl = "/main/";
@@ -50,6 +53,9 @@ function Index() {
                             <Route path= {baseUrl+":subject/:name/notice"} component={NoticePage}/>
                             <Route path= {baseUrl+":subject/:name/lectureNote"} component={LectureNotePage}/>
                             <Route path= {baseUrl+":subject/:name/chart"} component={LectureChartPage} />
+                            <Route path= {baseUrl+":subject/:name/pf/assignment"} component={AssignmentProfessor}/>
+                            <Route path= {baseUrl+":subject/:name/st/assignment"} component={AssignmentStudent}/>
+                            <Route path= {baseUrl+":subject/:name/attendence"} component={AttendPage}/> 
                             <Route exact path= {"/main/calendar"} component={CalendarPage} />
                         </Switch>
                     </Router>

@@ -65,6 +65,7 @@ width: 475px;
 display : flex;
 justify-content : center;
 align-items : center;
+height : 140px;
 `
 
 const NameInput = styled.input`
@@ -111,7 +112,7 @@ margin : 0 5px;
 `
 
 const SubmitBtn = styled.button`
-width : 250px;
+width : 475px;
 height : 40px;
 border : none;
 background-color: #407AD6;
@@ -119,6 +120,7 @@ color : white;
 text-align :center;
 line-height : 40px;
 border-radius : 10px;
+margin-bottom: 50px;
 `
 
 const Container = styled.div`
@@ -241,9 +243,7 @@ function Index() {
                             </DayContainer>
                             {dayList.map((value, index) => <li>{week[value - 1]} : <TimePicker.RangePicker format="HH:mm" onChange={(value, dateString) => onChangeTime(index, dateString)} /></li>)}
                         </TimeBox>
-                        <Tmp>
-                            <SubmitBtn onClick={submitHandler}>제출</SubmitBtn>
-                        </Tmp>
+                        <SubmitBtn onClick={submitHandler}>제출</SubmitBtn>
                     </div>
                 </Route>
             </Switch>

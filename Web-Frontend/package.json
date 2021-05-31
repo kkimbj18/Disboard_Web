@@ -2,7 +2,7 @@
   "name": "disboard",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://disboard13.kro.kr/",
+  "proxy": "https://disboard13.kro.kr/",
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^27.1.0",
     "@ckeditor/ckeditor5-react": "^3.0.2",

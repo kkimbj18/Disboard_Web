@@ -63,7 +63,6 @@ border-radius: 5px;
 
 function Index({match}) {
     const user = JSON.parse(window.sessionStorage.userInfo);
-    const isProfessor = (user.type === "professor");
     const subjectId = match.params.subject;
     const subjectName = match.params.name;
 
@@ -94,21 +93,22 @@ function Index({match}) {
         getData();
         
     },[])
-
+    
     return(
-        <div><Router><Switch>
-            <Route path="/">
-                <Container style={{marginLeft: "20px", marginTop: '10px'}}>
-                    <Title>Assignment</Title>
-                    <div style={{width: "100%", display: "block"}}>
-                        <SubTitle>내 강의 / {subjectName} / 과제</SubTitle>
-                        {isProfessor && <WriteBtn href={`/main/${subjectId}/${subjectName}/assignment/write`} style={{display: "inline-block", float:"right"}}>작성하기</WriteBtn>}
-                    </div>
-                    <hr style={{width: "100%", margin: "30px 0px", marginTop: "50px",display:"block", borderColor: '#ffffff'}}/>
-                    {isLoading && display()}
+        <Router>
+            <Switch>
+                <Route path="/">
+                    <Container style={{marginLeft: "20px", marginTop: '10px'}}>
+                        <Title>Assignment</Title>
+                        <div style={{width: "100%", display: "block"}}>
+                            <SubTitle>내 강의 / {subjectName} / 과제</SubTitle>
+                        </div>
+                        <hr style={{width: "100%", margin: "30px 0px", marginTop: "50px",display:"block", borderColor: '#ffffff'}}/>
+                        {isLoading && display()}
                     </Container>
                 </Route>
-        </Switch></Router></div>                
+            </Switch>
+        </Router>
     );
 }
 

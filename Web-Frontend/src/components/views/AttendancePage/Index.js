@@ -9,7 +9,7 @@ import { rejects } from 'assert';
 
 const Container = styled.div`
 width : 97%;
-height : 100%;
+// height : 100%;
 display : inline-block;
 margin-left : 20px;
 margin-top : 10px; 
@@ -123,7 +123,7 @@ function ShowAttendance ({attendanceList, dayList}){
             <tbody>
                 {attendanceList.state.map((value, index) => 
                 <TabletrColor>
-                    <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{moment(dayList[index]).format('YYYY.MM.DD')}</td>
+                    <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{moment(dayList[index].date).format('YYYY.MM.DD')}</td>
                     <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{attendanceList.name}</td>
                     <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{moment(attendanceList.time).format('hh:mm ~ hh:mm')}</td>
                     <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{showState(value)}</td>
@@ -131,6 +131,31 @@ function ShowAttendance ({attendanceList, dayList}){
                 )}
             </tbody>
         </table>
+    )
+}
+
+function ShowAllAttendance ({dayList}){
+    return(
+        <table style={{width: "100%", margin: "10px auto", borderTop: "1px solid #D5D5D5", textAlign: "center"}}>
+        <thead style={{borderBottom: "1px solid #D5D5D5", fontStyle: "bold", fontWeight:"500", backgroundColor: "#f3f3f3"}}>
+            <tr>
+                <th style={{padding: "10px 0", width: "25%"}}>날짜</th>
+                <th style={{padding: "10px 0", width: "25%"}}>강의 시간</th>
+                <th style={{padding: "10px 0", width: "50%"}}>출결 상태</th>
+            </tr>
+        </thead>
+        <tbody>
+            {dayList.map((value, index) => 
+            <TabletrColor>
+                <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{moment(value.date).format('YYYY.MM.DD')}</td>
+                <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{moment(value.time).format('hh:mm ~ hh:mm')}</td>
+                <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>
+                <BoxText>출석 <NumText style={{color: "#0E7ED1"}}> {value.attend}</NumText>회 / 지각 <NumText style={{color: "#61C679"}}> {value.late}</NumText>회 / 결석 <NumText style={{color: "#E24C4B"}}> {value.absence}</NumText>회</BoxText>
+                </td>
+            </TabletrColor>
+            )}
+        </tbody>
+    </table>        
     )
 }
 
@@ -171,6 +196,7 @@ function Index({match}) {
     
     const isProfessor = user.type === "professor";
     const isAll = String(subjectId) === "all";
+    const [isAllStudent, setisAllStudent] = useState(true);
     const [isLoading, setisLoading] = useState(true);
 
     const [dayList, setDayList] = useState(["2021-03-04", "2021-03-08", "2021-03-11", "2021-03-15", "2021-03-18"]);
@@ -263,6 +289,35 @@ function Index({match}) {
         }) */
     })
     }
+
+    const setDayData = () => {
+        dayList.map((value, index) => {
+            let attend = 0;
+            let late = 0;
+            let absence = 0;
+            tempData.map((student) => {
+                switch (student.state[index]) {
+                    case 0:
+                        attend = attend + 1;
+                        break;
+                    case 1: 
+                        late = late + 1;
+                        break;
+                    default:
+                        absence = absence + 1;
+                        break;
+                }
+            })
+            let day = {
+                date: value,
+                time: "",
+                attend: attend,
+                late: late,
+                absence: absence
+            }
+            dayList[index] = day;
+        })
+    }
  
     const onChangeSubject = (e) => {
         setisLoading(false);
@@ -307,7 +362,12 @@ function Index({match}) {
 
     const onChangeStudent = (e) => {
         const change = e.target.value;
-        setStudentIndex(change);
+        if(change === "all"){
+            setisAllStudent(true);
+        }else{
+            setisAllStudent(false);
+            setStudentIndex(change);
+        }
         onChangeData(change);
     }
 
@@ -350,7 +410,7 @@ function Index({match}) {
 
     const display = () => {
         return(
-        <div>
+        <div style={{marginBottom: "60px"}}>
             <Title>Lecture Chart</Title>
             {isAll ?
             <div style={{width: "100%", display: "block"}}>
@@ -361,6 +421,7 @@ function Index({match}) {
                 </SelectCust>
                 {isProfessor && <div>
                     <SelectCust style={{border: "1px solid #e0e0e0", background: "#e0e0e0"}} onChange={onChangeStudent}>
+                        <option value="all">전체</option>
                         {tempData.map((value, index) => <option value={index}>{value.name}</option> )}
                     </SelectCust>
                     <CSVLink headers={headers} data={data} filename={`${subjectName} 출결.csv`}><WriteBtn>엑셀 추출</WriteBtn></CSVLink>
@@ -372,6 +433,7 @@ function Index({match}) {
                 <div style={{display: "inline-block", float:"right"}}>
                     {isProfessor && <div>
                         <SelectCust style={{border: "1px solid #e0e0e0", background: "#e0e0e0"}} onChange={onChangeStudent}>
+                            <option value="all">전체</option>
                             {tempData.map((value, index) => <option value={index}>{value.name}</option> )}
                         </SelectCust>
                         <CSVLink headers={headers} data={data} filename={`${subjectName} 출결.csv`}><WriteBtn>엑셀 추출</WriteBtn></CSVLink>
@@ -420,8 +482,8 @@ function Index({match}) {
                 <tr>
                     <Box style={{width: "100%", marginLeft: "5px"}} colSpan="2">
                         <BoxTitle>출결 상태</BoxTitle>
-                        <BoxText style={{display: "block", float: 'right'}}>출석 <NumText style={{color: "#0E7ED1"}}> {attendance.all}</NumText>회 / 지각 <NumText style={{color: "#61C679"}}> {late.all}</NumText>회 / 결석 <NumText style={{color: "#E24C4B"}}> {absence.all}</NumText>회</BoxText>
-                        <ShowAttendance attendanceList={tempData[studentIndex]} dayList={dayList}/>
+                        {!isAllStudent && <BoxText style={{display: "block", float: 'right'}}>출석 <NumText style={{color: "#0E7ED1"}}> {attendance.all}</NumText>회 / 지각 <NumText style={{color: "#61C679"}}> {late.all}</NumText>회 / 결석 <NumText style={{color: "#E24C4B"}}> {absence.all}</NumText>회</BoxText>}
+                        {isAllStudent ? <ShowAllAttendance dayList={dayList}/> : <ShowAttendance attendanceList={tempData[studentIndex]} dayList={dayList}/>}
                     </Box>
                 </tr>
             </table>
@@ -432,6 +494,7 @@ function Index({match}) {
     useEffect(() => {
         getData().then(()=>{
         })
+        setDayData();
         ExtractExcel();
         onChangeData(studentIndex);
     },[])

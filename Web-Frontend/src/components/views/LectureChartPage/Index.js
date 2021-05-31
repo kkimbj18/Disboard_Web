@@ -201,7 +201,7 @@ function LineChart ({studentData, averageData, studentName, label}){
       },
      };
 
-   return(<Line data={lineData} legend={lineLegend} width={200} height={80} options={lineOptions}/>);
+   return(<Line data={lineData} legend={lineLegend} width={200} height={50} options={lineOptions}/>);
 }
 
 function BarChart ({modeIndex, dayList, goodList, badList, averList}){
@@ -262,7 +262,7 @@ function BarChart ({modeIndex, dayList, goodList, badList, averList}){
 
       ]
      }; 
-   return (<Bar data={barData} width={200} height={80} options={barOptions}/>);
+   return (<Bar data={barData} width={200} height={50} options={barOptions}/>);
 }
 
 function Info ({title, day, data, rate, rateInfo}){
@@ -357,255 +357,83 @@ function Index({match}){
    const [mode, setMode] = useState(0);
    const modeList = ["이해도", "참여점수", "몰입", "출석"];
    
-
-  /*  const getData = () => {
-      if(isProfessor){
-      axios.get('/api/subject/info/'+ String(subjectId))
-      .then((response)=>{
-         const result = response.data.subject;
-         console.log(result);
-
-         setisEmpty(result.lectures.length === 0);
-         if(result.lectures.length === 0){
-            setisLoading(true);
-         }
-         else{
-            result.students.forEach(element => {
-               axios.get('/api/user/get/'+ String(element._id))
-               .then((student)=>{
-                  setStudentList(
-                     studentList.concat({
-                        id: student.data._id,
-                        name: student.data.name
-                     })
-               )
-               })
-               .catch((error)=>{
-                  console.log(error);
-               })
-         })}
-      })
-      .catch((error)=>{
-          console.log(error);
-      });}
-
-      if(!isEmpty){
-         axios.get('/api/lecture/get/subject/'+ String(subjectId))
-         .then((response)=>{
-            const result = response.data;
-            console.log(result);
-            setLectureList(result.lecture);
-            setDayIndex(0);
-            setDay(moment(result.lecture[0].date).format('M월 DD일'));
-            result.lecture.map((value, index) => {
-               dayList[index] = moment(value.date).format('M월 DD일');
-               axios.get('/api/understanding/get/lecture/' + String(value._id))
-               .then((understand)=>{
-                  console.log(understand.data)
-                  let responseGood = understand.data.countResponse.O;
-                  understandingGoodList[index] = responseGood;
-
-                  let responseBad = understand.data.countResponse.X;
-                  understandingBadList[index] = responseBad;
-               })
-               .catch((error)=>{
-                  console.log(error);
-               });
-            });
-         })
-         .catch((error)=>{
-            console.log(error);
-         });
-      }
-      setUnderstandingGood(understandingGoodList.length);
-      setUnderstandingBad(understandingBadList.length);
-      setRate();
-      understandingGoodList.map((value, index) => {
-         barGood[index] = value.length;
-         barAver[index] = value.length - understandingBadList[index].length;
-      })
-      understandingBadList.map((value, index) => {
-         barBad[index] = value.length;
-      })
-      setisLoading(true);
-      if(isLoading){
-         setLineData(dayList, understandingGoodList, understandingBadList);
-      }
-   } */
-
    const getData = () => {
       return new Promise((resolve, reject) => {
-         if(isProfessor){
-            axios.get('/api/subject/info/'+ String(subjectId))
-            .then((response)=>{
-               const result = response.data.subject.students;
-               result.map((value, index) => {
+         axios.get('/api/subject/info/'+ String(subjectId))
+         .then((response)=>{
+            const result = response.data.subject;
+            console.log(result);
+            console.log(result.lectures.length === 0)
+            setisEmpty(result.lectures.length === 0);
+            if(result.lectures.length === 0){
+               setisLoading(true);
+               resolve();
+            }
+            else{
+               result.students.map((value, index) => {
                   axios.get('/api/user/get/'+ String(value))
-                  .then((output)=>{
+                  .then((output) => {
                      const student = {
                         id: output.data._id,
                         name: output.data.name,
                         good: [],
                         bad: []
                      }
-                     /* setStudentList([
-                        ...studentList,
-                        {
-                           id: student.data._id,
-                           name: student.data.name,
-                           good: [],
-                           bad: []
-                        }
-                     ]) */
-                     // setStudentList(studentList.concat([student]));
-                     
                      studentList[index] = student;
-   
-                     resolve();
-   
-                     /* setStudentList(
-                        studentList.concat({
-                           id: student.data._id,
-                           name: student.data.name,
-                           good: [],
-                           bad: []
-                        })
-                     ) */
                   })
-                  .catch((error)=>{
-                     reject(error);
+                  .catch((error) => {
                      console.log(error);
+                     reject(error);
                   })
                })
-            })
-            .catch((error)=>{
-               reject(error);
-               console.log(error);
-            });
-            
-         }
-   
-         const result = {
-            success: true,
-            lecture:[ 
-               {
-                  _id: 0,
-                  date: new Date(2021, 4, 5),
-                  start_time: new Date(0, 0, 0, 10, 0),
-                  subject: 0,
-                  options: {
-                     subtitle: false,
-                     record: false,
-                     attendance: false,
-                     limit: 5
-                  }
-               },
-              {
-               _id: 0,
-              date: new Date(2021, 4, 6),
-              start_time: new Date(0, 0, 0, 10, 0),
-              subject: 0,
-              options: {
-               subtitle: false,
-                record: false,
-                attendance: false,
-                limit: 5
-              }
-                }]
-            };
-         // setLectureList(result.lecture);
-         setDayIndex(0);
-         setDay(moment(result.lecture[0].date).format('M월 DD일'));
-          
-          let test = [{
-            success: true,
-            countResponse: {
-              O: [
-                {
-                  student: {
-                    _id: 4,
-                    name: "1"
-                  },
-                  lecture: 0,
-                  response: "O",
-                  minutes: "10:03",
-                  isCounted: false
-                },
-                {
-                  student: {
-                    _id: 3,
-                    name: "1-1"
-                  },
-                  lecture: 0,
-                  response: "O",
-                  minutes: "10:03",
-                  isCounted: false
-                }
-              ],
-              X: [
-                {
-                  student: {
-                    _id: 4,
-                    name: "1"
-                  },
-                  lecture: 0,
-                  response: "X",
-                  minutes: "10:05",
-                  isCounted: false
-                }
-              ]
-            }
-          }, {
-            success: true,
-            countResponse: {
-              O: [
-                {
-                  student: {
-                    _id: 4,
-                    name: "2"
-                  },
-                  lecture: 0,
-                  response: "O",
-                  minutes: "11:03",
-                  isCounted: false
-                }
-              ],
-              X: [
-                {
-                  student: {
-                    _id: 4,
-                    name: "2"
-                  },
-                  lecture: 0,
-                  response: "X",
-                  minutes: "11:05",
-                  isCounted: false
-                }
-              ]
-            }
-          }]
-         result.lecture.map((value, index) => {
-            dayList[index] = moment(value.date).format('M월 DD일');
-            let good = test[index].countResponse.O;
-            understandingGoodList[index] = good;
-            let bad = test[index].countResponse.X;
-            understandingBadList[index] = bad;
-         })
-   
-         setUnderstandingGood(understandingGoodList[dayIndex].length);
-         setUnderstandingBad(understandingBadList[dayIndex].length);
-         setRate(0);
-   
+
+               axios.get('/api/lecture/get/subject/'+ String(subjectId))
+               .then((response) => {
+                  const result = response.data;
+                  console.log(result);
+                  // setLectureList(result.lecture);
+                  setDay(moment(result.lectures[0].date).format('M월 DD일'));
+                  result.lectures.map((value, index) => {
+                     dayList[index] = moment(value.date).format('M월 DD일');
+                     axios.get('/api/understanding/get/lecture/' + String(value._id))
+                     .then((understand)=>{
+                        if(Object.keys(understand.data.countResponse).length === 0){
+                           understandingGoodList[index] = [];
+                           understandingBadList[index] = [];
+                        }
+                        else{
+                           let responseGood = understand.data.countResponse.O;
+                           understandingGoodList[index] = responseGood;
          
-         understandingGoodList.map((value, index) => {
-            barGood[index] = value.length;
-            barAver[index] = value.length - understandingBadList[index].length;
+                           let responseBad = understand.data.countResponse.X;
+                           understandingBadList[index] = responseBad;
+                        }
+                        if(index === (result.lectures.length - 1)) {resolve();}
+                     })
+                     .catch((error)=>{
+                        console.log(error);
+                        reject(error);
+                     });
+                  })
+               })
+               .catch((error) => {
+                  console.log(error);
+                  reject(error);
+               })
+
+            }
          })
-         understandingBadList.map((value, index) => {
-            barBad[index] = value.length;
+         .catch((error) => {
+            console.log(error);
+            reject(error);
          })
-      });
+
+/*          if(!isEmpty){
+         } */
+      })
    }
+
+
 
    const setLineData = () => {
       dayList.map((day, dayIndex) => {
@@ -706,15 +534,20 @@ function Index({match}){
          setRateInfo("Since last class");
          if(isAllStudent){
             let change = understandingGoodList[dayIndex].length - understandingGoodList[lastIndex].length;
-            setUnderstandingGoodRate((change/ understandingGoodList[lastIndex].length) * 100);
+            let lastLecture = understandingGoodList[lastIndex].length === 0 ? 1 : understandingGoodList[lastIndex].length;
+            setUnderstandingGoodRate((change/ lastLecture) * 100);
 
             change = understandingBadList[dayIndex].length - understandingBadList[lastIndex].length;
-            setUnderstandingBadRate((change / understandingBadList[lastIndex].length) * 100);
+            lastLecture = understandingBadList[lastIndex].length === 0 ? 1 : understandingBadList[lastIndex].length; 
+            setUnderstandingBadRate((change / lastLecture) * 100);
          }else {
             let change = studentList[studentIndex].good[dayIndex].length - studentList[studentIndex].good[lastIndex].length;
-            setUnderstandingGoodRate((change / studentList[studentIndex].good[lastIndex].length) * 100)
+            let lastLecture = studentList[studentIndex].good[lastIndex].length === 0 ? 1 : studentList[studentIndex].good[lastIndex].length; 
+            setUnderstandingGoodRate((change / lastLecture) * 100);
+
             change = studentList[studentIndex].bad[dayIndex].length - studentList[studentIndex].bad[lastIndex].length;
-            setUnderstandingBadRate((change / studentList[studentIndex].bad[lastIndex].length) * 100)
+            lastLecture = studentList[studentIndex].bad[lastIndex].length === 0 ? 1 : studentList[studentIndex].bad[lastIndex].length;
+            setUnderstandingBadRate((change / lastLecture) * 100)
          }
          
       }
@@ -817,8 +650,21 @@ function Index({match}){
      useEffect(() => {
       console.log("This is chart page");
       getData().then(()=>{
-         setDefaultStudentData(dayList, studentList);
-         setLineData();
+         if(dayList.length != 0){
+            setUnderstandingGood(understandingGoodList[dayIndex].length);
+            setUnderstandingBad(understandingBadList[dayIndex].length);
+            setRate(0);
+             understandingGoodList.map((value, index) => {
+                barGood[index] = value.length;
+                barAver[index] = value.length - understandingBadList[index].length;
+             })
+             understandingBadList.map((value, index) => {
+                barBad[index] = value.length;
+             })
+            setDefaultStudentData(dayList, studentList);
+            setLineData();
+            setisLoading(true);
+         }
       })
       
     },[])
