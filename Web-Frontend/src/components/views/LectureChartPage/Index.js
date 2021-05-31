@@ -267,12 +267,13 @@ function BarChart ({modeIndex, dayList, goodList, badList, averList}){
 
 function Info ({title, day, data, rate, rateInfo}){
    console.log(title + " : " + data);
+   var fixRate = rate.toFixed(0);
    return(
       <Box>
          <BoxTitle>{title}</BoxTitle>
          <DayBox>{day}</DayBox>
          <NumTitle>{data}</NumTitle>
-         {rate > 0 ? <RateBoxGreen>{rate}%</RateBoxGreen>:<RateBoxRed>{rate}%</RateBoxRed>}
+         {fixRate > 0 ? <RateBoxGreen>{fixRate}%</RateBoxGreen>:<RateBoxRed>{fixRate}%</RateBoxRed>}
          <InfoBox>{rateInfo}</InfoBox>
       </Box>         
    )
@@ -324,12 +325,28 @@ function Index({match}){
    const [isEmpty, setisEmpty] = useState(false);
 
    // const [lectureList, setLectureList] = useState([]);
-   const [studentList, setStudentList] = useState([]);
-   const [dayList, setDayList] = useState(["05월05일"]);
+   // const [studentList, setStudentList] = useState([]);
+   // const [dayList, setDayList] = useState([]);
+   const [studentList, setStudentList] = useState([{id: 0, name: "김민건", good: [], bad: []}, {id: 1, name: "김수민", good: [], bad: []}, {id: 2, name: "노민도", good: [], bad: []}, {id: 3, name: "윤다연", good: [], bad: []}, {id: 4, name: "최민우", good: [], bad: []}]);
+   const [dayList, setDayList] = useState(["5월5일", "5월6일", "5월7일","5월8일", "5월9일","5월10일"]);
    const [rateInfo, setRateInfo] = useState("");
    
-   const [understandingGoodList, setUnderstandingGoodList] = useState([[3, 4]]);
-   const [understandingBadList, setUnderstandingBadList] = useState([[2, 3]]);
+   const [understandingGoodList, setUnderstandingGoodList] = useState([
+      [{"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "10:03", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:30", "isCounted": false}, {"student": {"_id": 1, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "10:35", "isCounted": false}], 
+      [{"student": {"_id": 3, "name": "윤다연"}, "lecture": 0, "response": "O", "minutes": "10:20", "isCounted": false}, {"student": {"_id": 4, "name": "최민우"}, "lecture": 0, "response": "O", "minutes": "11:30", "isCounted": false}, {"student": {"_id": 1, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:35", "isCounted": false}], 
+      [{"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "10:25", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:30", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:55", "isCounted": false}, {"student": {"_id": 4, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:05", "isCounted": false}], 
+      [{"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "10:37", "isCounted": false}, {"student": {"_id": 4, "name": "최민우"}, "lecture": 0, "response": "O", "minutes": "11:00", "isCounted": false}, {"student": {"_id": 4, "name": "최민우"}, "lecture": 0, "response": "O", "minutes": "11:15", "isCounted": false}], 
+      [{"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "10:10", "isCounted": false}, {"student": {"_id": 3, "name": "윤다연"}, "lecture": 0, "response": "O", "minutes": "10:55", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "11:00", "isCounted": false}, {"student": {"_id": 1, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:05", "isCounted": false}], 
+      [{"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "10:40", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:55", "isCounted": false}, {"student": {"_id": 1, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:35", "isCounted": false}]
+   ]);
+   const [understandingBadList, setUnderstandingBadList] = useState([
+      [{"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "10:03", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:30", "isCounted": false}, {"student": {"_id": 0, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "10:35", "isCounted": false}], 
+      [{"student": {"_id": 3, "name": "윤다연"}, "lecture": 0, "response": "O", "minutes": "10:10", "isCounted": false}, {"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "11:30", "isCounted": false}, {"student": {"_id": 3, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:35", "isCounted": false}], 
+      [{"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:25", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:30", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:55", "isCounted": false}], 
+      [{"student": {"_id": 4, "name": "최민우"}, "lecture": 0, "response": "O", "minutes": "10:37", "isCounted": false}, {"student": {"_id": 4, "name": "최민우"}, "lecture": 0, "response": "O", "minutes": "11:00", "isCounted": false}, {"student": {"_id": 2, "name": "최민우"}, "lecture": 0, "response": "O", "minutes": "11:20", "isCounted": false}], 
+      [{"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "10:20", "isCounted": false}, {"student": {"_id": 1, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:00", "isCounted": false}, {"student": {"_id": 4, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:05", "isCounted": false}], 
+      [{"student": {"_id": 1, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "10:40", "isCounted": false}, {"student": {"_id": 4, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:15", "isCounted": false}]
+   ]);
    const [understandingGoodRate, setUnderstandingGoodRate] = useState(0);
    const [understandingBadRate, setUnderstandingBadRate] = useState(0);
    const [understandingGood, setUnderstandingGood] = useState(0);
@@ -394,9 +411,9 @@ function Index({match}){
                   const result = response.data;
                   console.log(result);
                   // setLectureList(result.lecture);
-                  setDay(moment(result.lectures[0].date).format('M월 DD일'));
+                  setDay(moment(result.lectures[0].date).format('M월 D일'));
                   result.lectures.map((value, index) => {
-                     dayList[index] = moment(value.date).format('M월 DD일');
+                     dayList[index] = moment(value.date).format('M월 D일');
                      axios.get('/api/understanding/get/lecture/' + String(value._id))
                      .then((understand)=>{
                         if(Object.keys(understand.data.countResponse).length === 0){
@@ -524,7 +541,7 @@ function Index({match}){
       // setLineData();
    }
 
-   const setRate = (dayIndex, studentIndex) => {
+   const setRate = (dayIndex, studentIndex, isAllStudent) => {
       let lastIndex = dayIndex - 1;
       if(lastIndex < 0){
          setRateInfo("지난 강의가 없습니다.");
@@ -575,7 +592,7 @@ function Index({match}){
             barAver[index] = studentList[studentIndex].good[index].length - studentList[studentIndex].bad[index].length
          })
       }
-      setRate(dayIndex, studentIndex);
+      setRate(dayIndex, studentIndex, isAllStudent);
    }
 
    const onChangeMode = (e) => {
@@ -595,7 +612,7 @@ function Index({match}){
       const change = e.target.value;
       change === "all" ? setisAllStudent(true) : setisAllStudent(false);
       setStudentIndex(change);
-      onChangeData(dayIndex, change === "all", change);
+      onChangeData(dayIndex, change, change === "all");
    }
 
    const selectOption = () => {
