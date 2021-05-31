@@ -325,11 +325,11 @@ function Index({match}){
 
    // const [lectureList, setLectureList] = useState([]);
    const [studentList, setStudentList] = useState([]);
-   const [dayList, setDayList] = useState([]);
+   const [dayList, setDayList] = useState(["05월05일"]);
    const [rateInfo, setRateInfo] = useState("");
    
-   const [understandingGoodList, setUnderstandingGoodList] = useState([]);
-   const [understandingBadList, setUnderstandingBadList] = useState([]);
+   const [understandingGoodList, setUnderstandingGoodList] = useState([[3, 4]]);
+   const [understandingBadList, setUnderstandingBadList] = useState([[2, 3]]);
    const [understandingGoodRate, setUnderstandingGoodRate] = useState(0);
    const [understandingBadRate, setUnderstandingBadRate] = useState(0);
    const [understandingGood, setUnderstandingGood] = useState(0);
@@ -351,7 +351,7 @@ function Index({match}){
    const [attendanceRate, setAttendanceRate] = useState(0);
    const [attendance, setAttendance] = useState(0);
    
-   const [day, setDay] = useState('');
+   const [day, setDay] = useState(dayList[0]);
    const [dayIndex, setDayIndex] = useState(0);
    const [studentIndex, setStudentIndex] = useState("all");
    const [mode, setMode] = useState(0);
@@ -364,6 +364,8 @@ function Index({match}){
             const result = response.data.subject;
             console.log(result);
             console.log(result.lectures.length === 0)
+            resolve();
+            /*
             setisEmpty(result.lectures.length === 0);
             if(result.lectures.length === 0){
                setisLoading(true);
@@ -422,14 +424,13 @@ function Index({match}){
                })
 
             }
+*/
          })
          .catch((error) => {
             console.log(error);
             reject(error);
          })
 
-/*          if(!isEmpty){
-         } */
       })
    }
 
