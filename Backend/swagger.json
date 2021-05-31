@@ -45,7 +45,8 @@
     }
   ],
   "schemes": [
-    "http"
+    "http",
+    "https"
   ],
   "consumes": [],
   "produces": [],
