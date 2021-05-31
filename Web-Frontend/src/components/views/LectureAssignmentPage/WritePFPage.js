@@ -82,9 +82,15 @@ function Problem({problem, index, onRemove}){
                     <button onClick={() => onRemove(index)}>삭제</button>
                 </div>
             )
-            break;
         default:
-            break;
+            return(
+                <div>
+                    <div>과제 설명</div>
+                    <div>{problem.describe}</div>
+                    <div>정답 : {problem.answer}</div>
+                    <button onClick={() => onRemove(index)}>삭제</button>
+                </div>
+            )
     }
 }
 function ProblemList({problemList, onRemove}){

@@ -123,7 +123,7 @@ function ShowAttendance ({attendanceList, dayList}){
             <tbody>
                 {attendanceList.state.map((value, index) => 
                 <TabletrColor>
-                    <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{moment(dayList[index].date).format('YYYY.MM.DD')}</td>
+                    <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{moment(dayList[index]).format('YYYY.MM.DD')}</td>
                     <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{attendanceList.name}</td>
                     <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{moment(attendanceList.time).format('hh:mm ~ hh:mm')}</td>
                     <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{showState(value)}</td>
@@ -134,7 +134,7 @@ function ShowAttendance ({attendanceList, dayList}){
     )
 }
 
-function ShowAllAttendance ({dayList}){
+function ShowAllAttendance ({attendList}){
     return(
         <table style={{width: "100%", margin: "10px auto", borderTop: "1px solid #D5D5D5", textAlign: "center"}}>
         <thead style={{borderBottom: "1px solid #D5D5D5", fontStyle: "bold", fontWeight:"500", backgroundColor: "#f3f3f3"}}>
@@ -145,7 +145,7 @@ function ShowAllAttendance ({dayList}){
             </tr>
         </thead>
         <tbody>
-            {dayList.map((value, index) => 
+            {attendList.map((value, index) => 
             <TabletrColor>
                 <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{moment(value.date).format('YYYY.MM.DD')}</td>
                 <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{moment(value.time).format('hh:mm ~ hh:mm')}</td>
@@ -197,11 +197,11 @@ function Index({match}) {
     const isProfessor = user.type === "professor";
     const isAll = String(subjectId) === "all";
     const [isAllStudent, setisAllStudent] = useState(true);
-    const [isLoading, setisLoading] = useState(true);
+    const [isLoading, setisLoading] = useState(false);
 
     const [dayList, setDayList] = useState(["2021-03-04", "2021-03-08", "2021-03-11", "2021-03-15", "2021-03-18"]);
 
-    
+    const [allAttend, setAllAttend] = useState([]);
     const [subjectList, setSubjectList] = useState([]);
     const [lectureList, setLectureList] = useState([]);
     const [studentList, setStudentList] = useState([]);
@@ -251,6 +251,7 @@ function Index({match}) {
             const result = response.data;
             console.log(result);
             setLectureList(result.lecture);
+            resolve();
         })
         .catch((error)=>{
             console.log(error);
@@ -315,7 +316,7 @@ function Index({match}) {
                 late: late,
                 absence: absence
             }
-            dayList[index] = day;
+            allAttend[index] = day;
         })
     }
  
@@ -367,8 +368,8 @@ function Index({match}) {
         }else{
             setisAllStudent(false);
             setStudentIndex(change);
+            onChangeData(change);
         }
-        onChangeData(change);
     }
 
     const onChangeData = (studentIndex) => {
@@ -483,7 +484,7 @@ function Index({match}) {
                     <Box style={{width: "100%", marginLeft: "5px"}} colSpan="2">
                         <BoxTitle>출결 상태</BoxTitle>
                         {!isAllStudent && <BoxText style={{display: "block", float: 'right'}}>출석 <NumText style={{color: "#0E7ED1"}}> {attendance.all}</NumText>회 / 지각 <NumText style={{color: "#61C679"}}> {late.all}</NumText>회 / 결석 <NumText style={{color: "#E24C4B"}}> {absence.all}</NumText>회</BoxText>}
-                        {isAllStudent ? <ShowAllAttendance dayList={dayList}/> : <ShowAttendance attendanceList={tempData[studentIndex]} dayList={dayList}/>}
+                        {isAllStudent ? <ShowAllAttendance attendList={allAttend}/> : <ShowAttendance attendanceList={tempData[studentIndex]} dayList={dayList}/>}
                     </Box>
                 </tr>
             </table>
@@ -493,10 +494,11 @@ function Index({match}) {
 
     useEffect(() => {
         getData().then(()=>{
+            setDayData();
+            ExtractExcel();
+            onChangeData(studentIndex);
+            setisLoading(true)
         })
-        setDayData();
-        ExtractExcel();
-        onChangeData(studentIndex);
     },[])
 
     return(
