@@ -116,6 +116,13 @@ function Index(props: QuizProps) {
         setshowRes(true);
     }
 
+    function setShowResFalse(){
+        setshowRes(false);
+        const quizBackground = document.querySelectorAll('#quizBackground')[quizType - 1] as HTMLElement;
+        quizBackground.style.removeProperty('animationName');
+        quizBackground.style.removeProperty('animationDuration');
+    }
+
     function set(time: number, obj: any) {
         console.log(obj);
         setpopup(false);
@@ -123,11 +130,10 @@ function Index(props: QuizProps) {
         setTimeout(() => {
             setisListening(false);
             setresults(results.concat([<ResultContent data-type = {obj.type} id={obj.id} onClick = {openPop} >퀴즈{results.length + 1}</ResultContent>]));
-        }, time * 1000);
-        setlisteningTime(time * 10000);
+        }, time * 10000);
         const quizBackground = document.querySelectorAll('#quizBackground')[quizType - 1] as HTMLElement;
         quizBackground.style.animationName = 'slidein';
-        quizBackground.style.animationDuration = `${time * 60}s`;
+        quizBackground.style.animationDuration = `${time * 10}s`;
     }
 
     return (
@@ -142,7 +148,7 @@ function Index(props: QuizProps) {
             {popup && <Popup type={quizType} socket={props.socket} setOptions={(time: number, obj: any) => {
                 set(time, obj);
             }} />}
-            {showRes && <ResPop type = {currentType} quiz_id = {currentResNum}></ResPop>}
+            {showRes && <ResPop setShowResFalse = {setShowResFalse} type = {currentType} quiz_id = {currentResNum}></ResPop>}
         </QuizContainer>
     )
 }

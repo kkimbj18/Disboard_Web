@@ -238,7 +238,7 @@ function Index(props: TestProps) {
   const [Active1Num, setActive1Num] = useState<number>(1);
   const [Active2Num, setActive2Num] = useState<number>(1);
   const [ref, setref] = useState<any>(React.createRef());
-  const [lecture_id, setlecture_id] = useState<number>(28);
+  const [lecture_id, setlecture_id] = useState<number>(1);
 
   //------useeffect------
 
@@ -329,17 +329,6 @@ function Index(props: TestProps) {
   }
 
   //수업중인 lecture 받아오기
-  useEffect(() => {
-    const payload:ccc = {
-      subjectId: "2"
-    }
-/*     axios.get(`/api/lecture/get/inProgress/subject/2`).then(res=>{
-      console.log(res);
-    })   */
-    axios.put(`/api/lecture/join/28`).then(res=>{
-      console.log(res);
-    })  
-  }, [])
 
   //zoom init
   useEffect(() => {

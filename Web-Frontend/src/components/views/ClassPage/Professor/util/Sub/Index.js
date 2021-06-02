@@ -55,22 +55,20 @@ function Index(props) {
     const [flexRef, setflexRef] = useState(React.createRef());
     const [isListening, setisListening] = useState(true);
     const [Sentence, setSentence] = useState("");
-
     useEffect(() => {
         rec.interimResults = true;
         rec.lang = 'ko-KR';
 
         rec.onstart = () => {
-            console.log('started');
-            console.log(flexRef.current.text);
             if (flexRef.current.text) {
                 if (flexRef.current.text.length > 0) {
-                    console.log(flexRef.current.text);
+                    console.log(flexRef.current.text, 'started');
                     addSub(flexRef.current.text);
                     socket.emit('subtitle', {
                         time: '11:11',
                         content: flexRef.current.text
                     })
+                    flexRef.current.text = "";
                 }
             }
         };
@@ -98,7 +96,6 @@ function Index(props) {
             texts.replace(/느낌표|강조|뿅/gi, '❗️')
             flexRef.current.text = texts;
             /* setSentence(texts); */
-            console.log(texts);
         };
     }, [])
 

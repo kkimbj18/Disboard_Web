@@ -30,6 +30,7 @@ function ResultPopup(props) {
     };
 
     const handleCancel = () => {
+        props.setShowResFalse();
         setIsModalVisible(false);
     };
 

@@ -66,6 +66,7 @@ function Index(props : parProps) {
         })
     }, [pars])
 
+
     function addPar(name: any, interest: any, score: any, email:any) {
         setpars(pars.concat([<Row className = "participantsclass" id = {email} style={{ color: 'black' }}>
             <div>{name}</div>
@@ -84,6 +85,7 @@ function Index(props : parProps) {
                 <div>attendance</div>
             </Row>
             <ListBox id="part_listbox">
+                {renderPtcs()}
                 {pars}
             </ListBox>
         </>

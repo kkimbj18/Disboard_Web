@@ -253,6 +253,7 @@ interface TestProps {
 const socket = socketio('http://disboard13.kro.kr:3000/', {
   transports: ['websocket']
 });
+console.log(socket);
 
 const user = sessionStorage.userInfo && JSON.parse(window.sessionStorage.userInfo);
 function Index(props: TestProps) {
@@ -265,7 +266,7 @@ function Index(props: TestProps) {
   const [ref, setref] = useState<any>(React.createRef());
   const [subType, setsubType] = useState<number>(1);
   const [compRef, setcompRef] = useState(React.createRef());
-  const [lecture_id, setlecture_id] = useState<number>(28);
+  const [lecture_id, setlecture_id] = useState<number>(1);
 
   //------useeffect------
 
@@ -448,7 +449,7 @@ function Index(props: TestProps) {
       options: {
         subtitle: true,
         record: false,
-        attendance: false,
+        attendance: true,
         limit: 5
       }
     }
