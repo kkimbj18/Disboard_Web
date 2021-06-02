@@ -250,7 +250,7 @@ interface TestProps {
   }
 }
 
-const socket = socketio('https://disboard13.kro.kr/', {
+const socket = socketio('http://disboard13.kro.kr:3000/', {
   transports: ['websocket']
 });
 console.log(socket);
