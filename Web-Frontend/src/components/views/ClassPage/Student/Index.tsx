@@ -226,7 +226,7 @@ interface TestProps {
   }
 }
 
-const socket = socketio('http://disboard13.kro.kr:3000/', {
+const socket = socketio('https://disboard13.kro.kr/', {
   transports: ['websocket']
 });
 const user = sessionStorage.userInfo && JSON.parse(window.sessionStorage.userInfo);
