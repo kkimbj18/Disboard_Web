@@ -1,13 +1,1 @@
-"# Backend" 
-Tech
-- Node.js + express.js
-- mongoDB + mongoose
-- swagger (for API Docs)
-- docker (for Deployment)
-- AWS ec2 + S3
-- Nginx (for Reverse Proxy Server)
-- jenkins (for CI/CD)
-
-Our Domain : disboard13.kro.kr
-
- 
+<p align="center"><img width="260" alt="캡처" src="https://user-images.githubusercontent.com/49011398/120544261-2d23f800-c428-11eb-864c-4d0adb5fd1e8.png"></p>
