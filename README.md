@@ -1,1 +1,1 @@
-<p align="center"><img width="466" alt="캡처" src="https://user-images.githubusercontent.com/49011398/120543557-6314ac80-c427-11eb-8b7d-ce513ab0c65e.PNG"></p>
+![그림1](https://user-images.githubusercontent.com/49011398/120544261-2d23f800-c428-11eb-864c-4d0adb5fd1e8.png)
