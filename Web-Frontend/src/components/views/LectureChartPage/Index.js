@@ -328,7 +328,7 @@ function Index({match}){
    // const [studentList, setStudentList] = useState([]);
    // const [dayList, setDayList] = useState([]);
    const [studentList, setStudentList] = useState([{id: 0, name: "김민건", good: [], bad: []}, {id: 1, name: "김수민", good: [], bad: []}, {id: 2, name: "노민도", good: [], bad: []}, {id: 3, name: "윤다연", good: [], bad: []}, {id: 4, name: "최민우", good: [], bad: []}]);
-   const [dayList, setDayList] = useState(["5월5일", "5월6일", "5월7일","5월8일", "5월9일","5월10일"]);
+   const [dayList, setDayList] = useState(["5월16일", "5월20일", "5월25일","5월28일", "6월1일","6월2일"]);
    const [rateInfo, setRateInfo] = useState("");
    
    const [understandingGoodList, setUnderstandingGoodList] = useState([

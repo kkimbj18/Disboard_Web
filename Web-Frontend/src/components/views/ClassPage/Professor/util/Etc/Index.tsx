@@ -100,7 +100,7 @@ function Index(props: QuizProps) {
     }
 
     function renderQuizTypes() {
-        const names = ['주관식 퀴즈', '객관식 퀴즈', 'OX 퀴즈'];
+        const names = ['주관식 퀴즈', '객관식 퀴즈', 'OX 퀴즈', '사전 준비 퀴즈1'];
         return names.map((name, idx) => (
             <QuizBox className="quizTypes" id={(idx + 1).toString()}>
                 <span style={{ zIndex: 99 }}>{names[idx]}</span>

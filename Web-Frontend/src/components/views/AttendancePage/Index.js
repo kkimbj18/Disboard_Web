@@ -198,8 +198,7 @@ function Index({match}) {
     const isAll = String(subjectId) === "all";
     const [isAllStudent, setisAllStudent] = useState(true);
     const [isLoading, setisLoading] = useState(false);
-
-    const [dayList, setDayList] = useState(["2021-03-04", "2021-03-08", "2021-03-11", "2021-03-15", "2021-03-18"]);
+    const [dayList, setDayList] = useState(["2021-05-16", "2021-05-20", "2021-05-25", "2021-06-01", "2021-06-02"]);
 
     const [allAttend, setAllAttend] = useState([]);
     const [subjectList, setSubjectList] = useState([]);
