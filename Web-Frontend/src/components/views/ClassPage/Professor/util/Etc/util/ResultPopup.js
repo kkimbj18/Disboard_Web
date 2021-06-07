@@ -13,12 +13,12 @@ function ResultPopup(props) {
 
 
     useEffect(() => {
-        console.log(props);
+/*         console.log(props);
         axios.get(`/api/quiz/get/${props.quiz_id}`).then(res => {
             console.log(res);
             setreponses(res.data.quiz.responses);
             console.log(res.data.quiz.responses);
-        })
+        }) */
     }, [])
 
     const showModal = () => {
@@ -78,11 +78,13 @@ function ResultPopup(props) {
     }
 
     const data = {
-        labels: labels,
+        /* labels: labels, */
+        labels: ['A', 'B', 'C', 'D', 'E'],
         datasets: [
             {
                 label: '# of Votes',
-                data: tmpData,
+                /* data: tmpData, */
+                data : [5, 7, 2, 3, 5],
                 backgroundColor: colors,
                 borderColor: border,
                 borderWidth: 1,

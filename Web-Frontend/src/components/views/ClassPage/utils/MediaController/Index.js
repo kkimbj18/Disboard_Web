@@ -140,6 +140,7 @@ function Index(props) {
         try {
             const canvas = document.getElementById("canvas1");
             await stream.startShareScreen(canvas);
+            console.log(canvas.getContext('2d'));
         } catch (error) {
             console.log(error);
         }

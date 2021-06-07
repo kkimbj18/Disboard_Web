@@ -9,6 +9,10 @@ export function RenderCanvas() {
     return result;
 }
 
+export function RenderCanvas3(){
+    
+}
+
 export function ToggleCanvas(screenNum) {
     const canvas0 = document.getElementById("canvas0");
     const canvas1 = document.getElementById("canvas1");

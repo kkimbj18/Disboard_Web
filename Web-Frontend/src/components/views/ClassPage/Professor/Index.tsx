@@ -19,6 +19,7 @@ import Part from '../../../../images/utils/part.png'
 import Share from '../../../../images/utils/share.png'
 import './Index.css'
 import { textSpanIsEmpty } from 'typescript'
+import StartAnim from './util/Animation/Index'
 
 interface aaa {
   subjectId: number
@@ -285,6 +286,7 @@ function Index(props: TestProps) {
         console.log("Successfully joined a session.");
         setclient(client);
         setisLoading(false);
+        console.log(client.getMediaStream());
       })
       .catch((error) => {
         console.error(error);
@@ -468,6 +470,9 @@ function Index(props: TestProps) {
     socket.on('disConnected', (data:any)=>{
       console.log(data);
     }) */
+    setTimeout(() => {
+      StartAnim();
+    }, 5000);
   }, [])
 
   if (isLoading) return <Loading type="spin" color='orange'></Loading>

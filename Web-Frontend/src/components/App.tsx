@@ -10,6 +10,7 @@ import Theme from "../styles/Theme"
 import Routes from '../Routes/Index'
 import SignUp from '../Routes/signup'
 import Class from '../Routes/Class'
+import Three from './views/3DPage/Index'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/main/" component={Routes} />
           <Route path="/signup/" component={SignUp} />
           <Route path="/class/" component={Class} />
+          <Route path="/3d" component={Three} />
           <Route path="/" component={Login} />
         </Switch>
       </Router>
