@@ -20,7 +20,8 @@ const doc = {
         { "name": "Emotion" },
         { "name": "Understanding" },
         { "name": "Subtitle" },
-        { "name": "Question" }
+        { "name": "Question" },
+        { "name": "Assignment" }
     ],
     definitions: {
         signUp: {
@@ -127,7 +128,8 @@ const endpointsFiles = [
     './routes/emotion.js',
     './routes/understanding.js',
     './routes/subtitle.js',
-    './routes/question.js'
+    './routes/question.js',
+    './routes/assignment.js'
 ]
 
 swaggerAutogen(outputFile, endpointsFiles, doc).then(()=>{

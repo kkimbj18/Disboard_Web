@@ -115,7 +115,7 @@ router.put('/close', professorAuth, (req, res)=>{
                     end_time: '12:00',
                     students: [{
                         student: 0,
-                        attendance: true
+                        attendance: 'O'
                     }]
                 }
             }
