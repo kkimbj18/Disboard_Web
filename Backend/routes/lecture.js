@@ -244,7 +244,7 @@ router.get('/get/inProgress/subject/:id', auth, (req, res)=>{
             description: 'user가 로그인이 되지 않은 경우',
             schema: { $ref: "#/definitions/authFailed" }
         } */
-    Subject.findOne({ _id: req.params.subjectId }).populate('lectures').exec((err, subject)=>{
+    Subject.findOne({ _id: req.params.id }).populate('lectures').exec((err, subject)=>{
         if (err) res.status(500).json(err);
 
         for (let i = subject.lectures.length; i >= 0; i--) {
