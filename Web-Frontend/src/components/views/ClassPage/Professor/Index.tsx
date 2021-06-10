@@ -13,13 +13,11 @@ import Question from '../utils/Contents/Question/Index'
 import Etc from './util/Etc/Index'
 import Comp from './util/Comp/Index.js'
 import Sub from './util/Sub/Index'
-import Popup from './util/Popup/Index'
 import My from '../../../../images/utils/myscreen.png'
 import Part from '../../../../images/utils/part.png'
 import Share from '../../../../images/utils/share.png'
 import './Index.css'
-import { textSpanIsEmpty } from 'typescript'
-import StartAnim from './util/Animation/Index'
+/* import StartAnim from './util/Animation/Index' */
 
 interface aaa {
   subjectId: number
@@ -281,6 +279,7 @@ function Index(props: TestProps) {
       "RgEUnU0BDoSEozxsw8ySNWs8C0WvTfpDsUxA",
       "harry"
     );
+    console.log('joining...');
     client.join("harry", token, user.email)
       .then(() => {
         console.log("Successfully joined a session.");
@@ -366,6 +365,7 @@ function Index(props: TestProps) {
 
   useEffect(() => {
     !isLoading && SetCanvasSize();
+    console.log(isLoading);
   }, [isLoading])
 
   //for Active 1 
@@ -470,9 +470,9 @@ function Index(props: TestProps) {
     socket.on('disConnected', (data:any)=>{
       console.log(data);
     }) */
-    setTimeout(() => {
+/*     setTimeout(() => {
       StartAnim();
-    }, 5000);
+    }, 5000); */
   }, [])
 
   if (isLoading) return <Loading type="spin" color='orange'></Loading>

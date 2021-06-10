@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+/* import * as THREE from 'three'
 
 export default function startAnim() {
     const canvas = document.querySelector('#canvas2');
@@ -41,4 +41,4 @@ export default function startAnim() {
     }
 
     requestAnimationFrame(render);
-}
+} */

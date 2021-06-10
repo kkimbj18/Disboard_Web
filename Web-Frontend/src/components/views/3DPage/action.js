@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+/* import React, { useEffect, useState } from 'react'
 import './style.css'
 import * as THREE from 'three'
 import OBJLoader from 'three-obj-loader';
@@ -103,3 +103,4 @@ function Index() {
 }
 
 export default Index
+ */
