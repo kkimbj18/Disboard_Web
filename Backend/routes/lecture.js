@@ -211,7 +211,7 @@ router.put('/get/inProgress', auth, (req, res)=>{
             else {
                 res.status(200).json({
                     success: true,
-                    lecture: lectures[0]
+                    lecture: lecture
                 });
             }
         });
@@ -247,7 +247,7 @@ router.get('/get/inProgress/subject/:id', auth, (req, res)=>{
     Subject.findOne({ _id: req.params.id }).populate('lectures').exec((err, subject)=>{
         if (err) res.status(500).json(err);
 
-        for (let i = subject.lectures.length; i >= 0; i--) {
+        for (let i = subject.lectures.length - 1; i >= 0; i--) {
             if (subject.lectures[i].status === 'inProgress') {
                 return res.status(200).json({
                     success: true,
