@@ -48,8 +48,8 @@
     }
   ],
   "schemes": [
-    "http",
-    "https"
+    "https",
+    "http"
   ],
   "consumes": [],
   "produces": [],
@@ -998,19 +998,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "obj",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "subjectId": {
-                  "type": "string",
-                  "example": "any"
-                }
-              }
-            }
           }
         ],
         "responses": {
