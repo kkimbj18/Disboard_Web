@@ -3,6 +3,7 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 
 function Index() {
     useEffect(() => {
@@ -15,14 +16,14 @@ function Index() {
         const near = 0.1;
         const far = 100;
         const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-        camera.position.set(0, 10, 20);
+        camera.position.set(10, 3, 7);
 
 
         const scene = new THREE.Scene();
         scene.background = new THREE.Color('black');
         {
             const controls = new OrbitControls(camera, canvas);
-            controls.target.set(0, 5, 0);
+            controls.target.set(0, 5, 1);
             controls.update();
         }
         {
@@ -64,18 +65,21 @@ function Index() {
             scene.add(light.target);
         }
 
+        //load material
         {
-            const objLoader = new OBJLoader();
-            objLoader.load('https://threejsfundamentals.org/threejs/resources/models/windmill/windmill.obj', (root) => {
-                console.log(root);
-                scene.add(root);
-            }, (a) => {
-                console.log(a);
-            }, (a) => {
-                console.log(a);
+            const mtlLoader = new MTLLoader();
+            mtlLoader.load('/3d/GeneralClassroom_uv.mtl', (mtl) => {
+                mtl.preload();
+                for (const material of Object.values(mtl.materials)) {
+                    console.log(material);
+                    material.side = THREE.DoubleSide;
+                }
+                const objLoader = new OBJLoader();
+                objLoader.setMaterials(mtl);
+                objLoader.load(process.env.PUBLIC_URL + '/3d/GeneralClassroom_uv.obj', (root) => {
+                    scene.add(root);
+                });
             });
-
-            console.log(objLoader);
         }
 
         function resizeRendererToDisplaySize(renderer) {
@@ -106,7 +110,10 @@ function Index() {
     }, [])
 
     return (
-        <canvas width="1200" height='600' id="c"></canvas>
+        <>
+            <canvas width="600" height='300' id="c"></canvas>
+            <img src={process.env.PUBLIC_URL + '/abocado.jpg'} />
+        </>
     )
 }
 
