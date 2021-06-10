@@ -249,12 +249,13 @@ interface TestProps {
   }
 }
 
-<<<<<<< HEAD
+/* const socket = socketio('http://disboard13.kro.kr:3000', {
+  transports : ['polling']
+});
+console.log(socket); */
+
 const socket = socketio('http://disboard13.kro.kr:3000', {
-=======
-const socket = socketio('https://disboard13.kro.kr', {
->>>>>>> b12463531cd9f8e9bb84a66954ad7a626d050936
-  transports: ['polling']
+  transports : ['polling']
 });
 console.log(socket);
 
@@ -269,6 +270,7 @@ function Index(props: TestProps) {
   const [ref, setref] = useState<any>(React.createRef());
   const [subType, setsubType] = useState<number>(1);
   const [compRef, setcompRef] = useState(React.createRef());
+  const [subject_id, setSubject_id] = useState(props.match.params.subject_id);
   const [lecture_id, setlecture_id] = useState<number>(1);
 
   //------useeffect------
