@@ -42,6 +42,9 @@
     },
     {
       "name": "Question"
+    },
+    {
+      "name": "Assignment"
     }
   ],
   "schemes": [
@@ -491,7 +494,7 @@
                   "example": true
                 },
                 "subject": {
-                  "$ref": "#/definitions/subject "
+                  "$ref": "#/definitions/subject"
                 }
               },
               "xml": {
@@ -591,7 +594,7 @@
           "200": {
             "description": "성공적으로 해당 강의 정보를 수정했을 경우",
             "schema": {
-              "$ref": "#/definitions/subject "
+              "$ref": "#/definitions/subject"
             }
           },
           "401": {
@@ -4931,6 +4934,695 @@
             "description": "user가 로그인이 되지 않은 경우",
             "schema": {
               "$ref": "#/definitions/authFailed"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/assignment/get/subject/{id}": {
+      "get": {
+        "tags": [
+          "Assignment"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "해당 과목의 퀴즈들을 성공적으로 가져올 경우",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "assignments": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "number",
+                        "example": 0
+                      },
+                      "subject": {
+                        "$ref": "#/definitions/subject"
+                      },
+                      "title": {
+                        "type": "string",
+                        "example": "아니 인공지능"
+                      },
+                      "content": {
+                        "type": "string",
+                        "example": "아니 인공지능 성적 언제 나옴???"
+                      },
+                      "date": {
+                        "type": "string",
+                        "example": "2021-05-05T15:38:19.424Z"
+                      },
+                      "deadline": {
+                        "type": "string",
+                        "example": "2021-05-08T00:00:00.000Z"
+                      },
+                      "comments": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "user": {
+                              "$ref": "#/definitions/user"
+                            },
+                            "content": {
+                              "type": "string",
+                              "example": "진심 몇 일째냐고~~~~~"
+                            },
+                            "date": {
+                              "type": "string",
+                              "example": "2021-05-05T15:40:19.424Z"
+                            }
+                          }
+                        }
+                      },
+                      "emotions": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "user": {
+                              "type": "number",
+                              "example": 0
+                            },
+                            "emotion": {
+                              "type": "string",
+                              "example": "angry"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "user가 로그인이 되지 않은 경우",
+            "schema": {
+              "$ref": "#/definitions/authFailed"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/assignment/get/{id}": {
+      "get": {
+        "tags": [
+          "Assignment"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "해당 과제를 성공적으로 받아올 경우",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "assignment": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "subject": {
+                      "$ref": "#/definitions/subject"
+                    },
+                    "title": {
+                      "type": "string",
+                      "example": "아~ 이제 이거 너무 귀찮은데"
+                    },
+                    "content": {
+                      "type": "string",
+                      "example": "그래도 해야겠지ㅠ"
+                    },
+                    "date": {
+                      "type": "string",
+                      "example": "2021-05-05T15:38:19.424Z"
+                    },
+                    "deadline": {
+                      "type": "string",
+                      "example": "2021-05-08T00:00:00.000Z"
+                    },
+                    "comments": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user": {
+                            "$ref": "#/definitions/user"
+                          },
+                          "content": {
+                            "type": "string",
+                            "example": "ㅋㅋ"
+                          },
+                          "date": {
+                            "type": "string",
+                            "example": "2021-05-05T15:40:19.424Z"
+                          }
+                        }
+                      }
+                    },
+                    "emotions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "emotion": {
+                            "type": "string",
+                            "example": "smile"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "user가 로그인이 되지 않은 경우",
+            "schema": {
+              "$ref": "#/definitions/authFailed"
+            }
+          },
+          "404": {
+            "description": "해당하는 강의노트가 존재하지 않을 경우",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "existAssignment": {
+                  "type": "boolean",
+                  "example": false
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/assignment/create": {
+      "post": {
+        "tags": [
+          "Assignment"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "type": "object",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "subject": {
+                  "type": "number",
+                  "example": 0
+                },
+                "title": {
+                  "type": "string",
+                  "example": "오늘은 여기까지만..."
+                },
+                "content": {
+                  "type": "string",
+                  "example": "힘들드아"
+                },
+                "fileURL": {
+                  "type": "string",
+                  "example": ""
+                },
+                "deadline": {
+                  "type": "string",
+                  "example": "2021-05-08T00:00:00.000Z"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "정상적으로 과제를 생성했을 경우",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "assignment": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "subject": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "title": {
+                      "type": "string",
+                      "example": "오늘은 여기까지만..."
+                    },
+                    "content": {
+                      "type": "string",
+                      "example": "힘들드아"
+                    },
+                    "fileURL": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "date": {
+                      "type": "string",
+                      "example": "2021-05-05T15:38:19.424Z"
+                    },
+                    "deadline": {
+                      "type": "string",
+                      "example": "2021-05-08T00:00:00.000Z"
+                    },
+                    "comments": {
+                      "type": "array",
+                      "example": [],
+                      "items": {}
+                    },
+                    "emotions": {
+                      "type": "array",
+                      "example": [],
+                      "items": {}
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "user가 로그인이 되지 않은 경우",
+            "schema": {
+              "$ref": "#/definitions/authFailed"
+            }
+          },
+          "403": {
+            "description": "type이 professor가 아닌 경우",
+            "schema": {
+              "$ref": "#/definitions/proAuthFailed"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/assignment/update": {
+      "put": {
+        "tags": [
+          "Assignment"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "type": "object",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "example": 0
+                },
+                "title": {
+                  "type": "string",
+                  "example": "오늘은 여기까지만..."
+                },
+                "content": {
+                  "type": "string",
+                  "example": "힘들드아"
+                },
+                "fileURL": {
+                  "type": "string",
+                  "example": ""
+                },
+                "deadline": {
+                  "type": "string",
+                  "example": "2021-05-08T00:00:00.000Z"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "정상적으로 과제를 수정했을 경우",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "Assignment": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "subject": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "title": {
+                      "type": "string",
+                      "example": "오늘은 여기까지만..."
+                    },
+                    "content": {
+                      "type": "string",
+                      "example": "힘들드아"
+                    },
+                    "fileURL": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "date": {
+                      "type": "string",
+                      "example": "2021-05-05T15:38:19.424Z"
+                    },
+                    "deadline": {
+                      "type": "string",
+                      "example": "2021-05-08T00:00:00.000Z"
+                    },
+                    "comments": {
+                      "type": "array",
+                      "example": [],
+                      "items": {}
+                    },
+                    "emotions": {
+                      "type": "array",
+                      "example": [],
+                      "items": {}
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "user가 로그인이 되지 않은 경우",
+            "schema": {
+              "$ref": "#/definitions/authFailed"
+            }
+          },
+          "403": {
+            "description": "type이 professor가 아닌 경우",
+            "schema": {
+              "$ref": "#/definitions/proAuthFailed"
+            }
+          },
+          "404": {
+            "description": "해당 Assignment가 존재하지 않는 경우",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "existAssignment": {
+                  "type": "boolean",
+                  "example": false
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/assignment/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Assignment"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "정상적으로 과제를 삭제했을 경우",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "user가 로그인이 되지 않은 경우",
+            "schema": {
+              "$ref": "#/definitions/authFailed"
+            }
+          },
+          "403": {
+            "description": "type이 professor가 아닌 경우",
+            "schema": {
+              "$ref": "#/definitions/proAuthFailed"
+            }
+          },
+          "404": {
+            "description": "해당 Assignment가 존재하지 않는 경우",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "existAssignment": {
+                  "type": "boolean",
+                  "example": false
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/assignment/submit": {
+      "put": {
+        "tags": [
+          "Assignment"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "type": "object",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "assignmentId": {
+                  "type": "number",
+                  "example": 0
+                },
+                "submission": {
+                  "type": "object",
+                  "properties": {
+                    "fileURL": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "content": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              },
+              "required": [
+                "assignmentId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "학생이 해당 과제에 대한 답을 정상적으로 제출한 경우",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "assignment": {
+                  "type": "object",
+                  "properties": {
+                    "assignmentId": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "title": {
+                      "type": "string",
+                      "example": "assignment#1"
+                    },
+                    "subjectName": {
+                      "type": "string",
+                      "example": "캡스톤 디자인"
+                    },
+                    "content": {
+                      "type": "string",
+                      "example": "TDD를 구현하세요"
+                    },
+                    "date": {
+                      "type": "string",
+                      "example": "2021-05-05T15:38:19.424Z"
+                    },
+                    "deadLine": {
+                      "type": "string",
+                      "example": "2021-05-08T00:00:00.000Z"
+                    },
+                    "submission": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "date": {
+                            "type": "string",
+                            "example": "2021-05-05T15:59:19.424Z"
+                          },
+                          "user": {
+                            "type": "number",
+                            "example": 0
+                          },
+                          "content": {
+                            "type": "string",
+                            "example": ""
+                          },
+                          "fileURL": {
+                            "type": "string",
+                            "example": ""
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "content"
+                  ]
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "user가 로그인이 되지 않은 경우",
+            "schema": {
+              "$ref": "#/definitions/authFailed"
+            }
+          },
+          "409": {
+            "description": "assignment의 status가 done일 경우",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "isOver": {
+                  "type": "boolean",
+                  "example": true
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
             }
           },
           "500": {

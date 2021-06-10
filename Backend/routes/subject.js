@@ -148,7 +148,7 @@ router.get('/info/:id', auth, (req, res)=>{
             description: '성공적으로 해당 강의 정보 받아온 경우',
             schema: {
                 success: true,
-                subject: { $ref : "#/definitions/subject "}
+                subject: { $ref : "#/definitions/subject" }
             }
         }
         #swagger.responses[401] = {
@@ -187,7 +187,7 @@ router.put('/info/update/:id', professorAuth, (req, res)=>{
         #swagger.path = '/subject/info/update/{id}' 
         #swagger.responses[200] = {
             description: '성공적으로 해당 강의 정보를 수정했을 경우',
-            schema: { $ref : "#/definitions/subject "}
+            schema: { $ref : "#/definitions/subject" }
         }
         #swagger.responses[401] = {
             description: 'user가 로그인이 되지 않은 경우',

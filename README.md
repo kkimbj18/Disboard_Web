@@ -62,7 +62,7 @@ Therefore, in order to solve the above problems, we aim to improve the quality o
 
 ## 4. Setup
 ### Our domain
-Visit our Servie Domain http://disboard13.kro.kr/ to fully experience our system!
+Visit our Servie Domain https://disboard13.kro.kr/ to fully experience our system!
 ### Local
 ~~~
 cd Web-Frontend

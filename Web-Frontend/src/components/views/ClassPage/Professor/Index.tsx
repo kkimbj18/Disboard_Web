@@ -249,7 +249,11 @@ interface TestProps {
   }
 }
 
+<<<<<<< HEAD
 const socket = socketio('http://disboard13.kro.kr:3000', {
+=======
+const socket = socketio('https://disboard13.kro.kr', {
+>>>>>>> b12463531cd9f8e9bb84a66954ad7a626d050936
   transports: ['polling']
 });
 console.log(socket);
