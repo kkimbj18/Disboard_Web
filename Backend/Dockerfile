@@ -15,7 +15,6 @@ ENV ACCESSKEY AKIAQZXIFS4YV5TNM77O
 ENV SECRETKEY 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
 ENV BUCKET_NAME disboard-capstone
 
-
 COPY . .
 
 CMD ["pm2-runtime", "start", "./bin/www"]

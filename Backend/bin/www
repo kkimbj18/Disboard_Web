@@ -31,7 +31,8 @@ var server = http.createServer(app);
 
 const socketOpt = {
   cors: {
-    origin: '*'
+    origin: '*',
+    credentials: true
   }
 }
 
