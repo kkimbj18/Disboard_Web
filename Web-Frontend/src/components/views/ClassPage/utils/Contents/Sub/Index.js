@@ -62,7 +62,6 @@ function Index(props) {
     const [subContent, setsubContent] = useState("");
 
     function addSub(str) {
-        console.log("added!");
         const box = document.createElement('div');
         const timeStamp = document.createElement('span');
         const content = document.createElement('span');
@@ -74,7 +73,6 @@ function Index(props) {
         content.setAttribute('id', inputRef.current.num++);
         box.appendChild(timeStamp);
         box.appendChild(content);
-        console.log(flexRef.current);
         flexRef.current.appendChild(box);
         box.scrollIntoView({
             behavior: 'smooth', block: 'nearest'

@@ -176,7 +176,7 @@ color : ${props => props.theme.color.font_light_gray};
 }
 `
 
-const Fuck  = styled.div`
+const Fuck = styled.div`
 display : flex;
 flex-direction : column;
 align-items : center;
@@ -226,10 +226,10 @@ interface TestProps {
   }
 }
 
-const socket = socketio('http://disboard13.kro.kr', {
+const socket = socketio('http://disboard13.kro.kr/3000', {
   transports: ['polling']
 });
-const user = sessionStorage.userInfo && JSON.parse(window.sessionStorage.userInfo);
+const user = sessionStorage && sessionStorage.userInfo && JSON.parse(window.sessionStorage.userInfo);
 function Index(props: TestProps) {
   //------states------
   const [isLoading, setisLoading] = useState<boolean>(true);
@@ -238,94 +238,109 @@ function Index(props: TestProps) {
   const [Active1Num, setActive1Num] = useState<number>(1);
   const [Active2Num, setActive2Num] = useState<number>(1);
   const [ref, setref] = useState<any>(React.createRef());
+  const [subject_id, setsubject_id] = useState(props.match.params.subject_id);
   const [lecture_id, setlecture_id] = useState<number>(1);
 
   //------useeffect------
 
-  function zoomInit(){
-    setisLoading(true);
-    const client = ZoomInstant.createClient();
-    client.init("en-US", `${window.location.origin}/lib`);
-    const token = generateInstantToken(
-      "BkxDIpVzJ3wIa0Wwt7HIGg9hdMeit8qtg5BL",
-      "RgEUnU0BDoSEozxsw8ySNWs8C0WvTfpDsUxA",
-      "harry"
-    );
-    client.join("harry", token, user.email)
-      .then(() => {
-        console.log("Successfully joined a session.");
-        setclient(client);
-        setisLoading(false);
-      })
-      .catch((error) => {
-        console.error(error);
+  function zoomInit() {
+    try {
+      setisLoading(true);
+      const client = ZoomInstant.createClient();
+      client.init("en-US", `${window.location.origin}/lib`);
+      const token = generateInstantToken(
+        "BkxDIpVzJ3wIa0Wwt7HIGg9hdMeit8qtg5BL",
+        "RgEUnU0BDoSEozxsw8ySNWs8C0WvTfpDsUxA",
+        "harry"
+      );
+      client.join("harry", token, user.email)
+        .then(() => {
+          console.log("Successfully joined a session.");
+          setclient(client);
+          setisLoading(false);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      client.on("connection-change", (payload) => {
+        if (payload.state === "Connected") {
+          console.log("connected!");
+        } else {
+          console.log("connected other");
+        }
       });
 
-    client.on("connection-change", (payload) => {
-      if (payload.state === "Connected") {
-        console.log("connected!");
-      } else {
-        console.log("connected other");
-      }
-    });
-
-    client.on('active-share-change', async (payload) => {
-      console.log('active-share-change');
-      const canvas = document.getElementById("canvas1") as HTMLCanvasElement;;
-      const stream = client.getMediaStream();
-      console.log(payload);
-      if (payload.state === 'Active') {
-        stream.startShareView(canvas, payload.userId);
-        console.log('sharing active');
-      } else if (payload.state === 'Inactive') {
-        await stream.stopShareView().then(response => {
-          console.log(response);
-        });
-      }
-    })
-
-    client.on('share-content-dimension-change', payload => {
-      console.log('share-content-dimension-change');
-      const canvas1 = document.getElementById("canvas1") as HTMLCanvasElement;
-      const arr = [canvas1];
-      arr.forEach((value, index) => {
-        const canvas = value;
-        const parent = canvas.parentElement as HTMLElement;
-        const contentWidth = payload.width;
-        const contentHeight = payload.height;
-        const cntWidth = parent.offsetWidth;
-        const cntHeight = parent.offsetHeight;
-        console.log(canvas.style);
-        if (cntWidth / contentWidth > cntHeight / contentHeight) {
-          canvas.style.height = `${cntHeight}px`;
-          canvas.style.width = `${cntHeight * contentWidth / contentHeight}px`;
-        } else {
-          canvas.style.width = `${cntWidth}px`;
-          canvas.style.height = `${cntWidth * contentHeight / contentWidth}px`;
+      client.on('active-share-change', async (payload) => {
+        console.log('active-share-change');
+        const canvas = document.getElementById("canvas1") as HTMLCanvasElement;;
+        const stream = client.getMediaStream();
+        console.log(payload);
+        if (payload.state === 'Active') {
+          stream.startShareView(canvas, payload.userId);
+          console.log('sharing active');
+        } else if (payload.state === 'Inactive') {
+          await stream.stopShareView().then(response => {
+            console.log(response);
+          });
         }
       })
-    })
 
-    client.on("event_share_content_change", async (payload) => {
-      console.log("event_share_content_change");
-    });
+      client.on('share-content-dimension-change', payload => {
+        console.log('share-content-dimension-change');
+        const canvas1 = document.getElementById("canvas1") as HTMLCanvasElement;
+        const arr = [canvas1];
+        arr.forEach((value, index) => {
+          const canvas = value;
+          const parent = canvas.parentElement as HTMLElement;
+          const contentWidth = payload.width;
+          const contentHeight = payload.height;
+          const cntWidth = parent.offsetWidth;
+          const cntHeight = parent.offsetHeight;
+          console.log(canvas.style);
+          if (cntWidth / contentWidth > cntHeight / contentHeight) {
+            canvas.style.height = `${cntHeight}px`;
+            canvas.style.width = `${cntHeight * contentWidth / contentHeight}px`;
+          } else {
+            canvas.style.width = `${cntWidth}px`;
+            canvas.style.height = `${cntWidth * contentHeight / contentWidth}px`;
+          }
+        })
+      })
 
-    client.on("event_passively_stop_share", async (payload) => {
-      console.log("event_passively_stop_share");
-    });
+      client.on("event_share_content_change", async (payload) => {
+        console.log("event_share_content_change");
+      });
 
-    //resize canvas when window resizess
-    window.addEventListener('resize', () => {
-      const canvas = document.getElementById("canvas0") as HTMLCanvasElement;;
-      const parent = canvas.parentElement as HTMLElement;
-      const stream = client.getMediaStream();
-      stream.updateVideoCanvasDimension(canvas, parent.offsetWidth, parent.offsetHeight);
-      //stream.adjustRenderedVideoPosition(canvas, client.getCurrentUserInfo().userId, canvas.width, canvas.height, 0, 0);
-    });
+      client.on("event_passively_stop_share", async (payload) => {
+        console.log("event_passively_stop_share");
+      });
+
+      //resize canvas when window resizess
+      window.addEventListener('resize', () => {
+        const canvas = document.getElementById("canvas0") as HTMLCanvasElement;;
+        const parent = canvas.parentElement as HTMLElement;
+        const stream = client.getMediaStream();
+        stream.updateVideoCanvasDimension(canvas, parent.offsetWidth, parent.offsetHeight);
+        //stream.adjustRenderedVideoPosition(canvas, client.getCurrentUserInfo().userId, canvas.width, canvas.height, 0, 0);
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
-  interface ccc{
-    subjectId : String
+  const joinLecture = () => {
+    console.log('joinlecture');
+    axios.get(`/api/lecture/get/inProgress/subject/${subject_id}`)
+      .then(res => {
+        console.log(res.data)
+      }).catch(err => console.log(err));
+      axios.get('/api/user/get/current').then(res=>{
+        console.log(res);
+      })
+  }
+
+  interface ccc {
+    subjectId: String
   }
 
   //수업중인 lecture 받아오기
@@ -333,6 +348,7 @@ function Index(props: TestProps) {
   //zoom init
   useEffect(() => {
     zoomInit();
+    joinLecture();
   }, [])
 
   useEffect(() => {
@@ -381,8 +397,8 @@ function Index(props: TestProps) {
     const result = screens.map((value, index) => {
       return (
         <Fuck>
-          <ScreenMenu style={{ backgroundImage:   `url(${links[index]})` }} onClick={changeScrenBtn} id={index.toString()}></ScreenMenu>
-          <span style = {{color : 'white'}}>{value}</span>
+          <ScreenMenu style={{ backgroundImage: `url(${links[index]})` }} onClick={changeScrenBtn} id={index.toString()}></ScreenMenu>
+          <span style={{ color: 'white' }}>{value}</span>
         </Fuck>);
     })
     return result;
@@ -427,11 +443,11 @@ function Index(props: TestProps) {
     socket.emit('user', {
       name: user ? user.name : "default",
       code: '1234',
-      email : user ? user.email : "default"
+      email: user ? user.email : "default"
     });
-/*     socket.on('newUser', (data: any) => {
-      console.log(data);
-    }); */
+    /*     socket.on('newUser', (data: any) => {
+          console.log(data);
+        }); */
   }, [])
   if (isLoading) return <Loading type="spin" color='orange'></Loading>
 
@@ -449,9 +465,9 @@ function Index(props: TestProps) {
       <RightCnt>
         <Active1Cnt>
           <Active1ContentCnt>
-            <ContentWrapper className="content1 active" id="content1"><Participant socket = {socket} /></ContentWrapper>
-            <ContentWrapper className="content1" id="content2"><Chat socket={socket} user = {user.name} /></ContentWrapper>
-            <ContentWrapper className="content1" id="content3"><Question lecture_id = {lecture_id} socket={socket} /></ContentWrapper>
+            <ContentWrapper className="content1 active" id="content1"><Participant socket={socket} /></ContentWrapper>
+            <ContentWrapper className="content1" id="content2"><Chat socket={socket} user={user.name} /></ContentWrapper>
+            <ContentWrapper className="content1" id="content3"><Question lecture_id={lecture_id} socket={socket} /></ContentWrapper>
           </Active1ContentCnt>
           <Active1Menu>
             <ParticipantsBtn className="Active1Btn active" id="1" onClick={Active1BtnHandler}>참가자</ParticipantsBtn>
@@ -462,7 +478,7 @@ function Index(props: TestProps) {
         <Active2Cnt>
           <Active2ContentCnt>
             <ContentWrapper className="content2 active" id="content1"><Comp socket={socket} /></ContentWrapper>
-            <ContentWrapper className="content2" id="content2"><Sub lecture_id = {lecture_id} socket={socket} /></ContentWrapper>
+            <ContentWrapper className="content2" id="content2"><Sub lecture_id={lecture_id} socket={socket} /></ContentWrapper>
             <ContentWrapper className="content2" id="content3"><Etc socket={socket} /></ContentWrapper>
           </Active2ContentCnt>
           <Active2Menu>

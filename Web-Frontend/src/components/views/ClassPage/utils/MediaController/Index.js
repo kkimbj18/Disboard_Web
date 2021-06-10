@@ -6,7 +6,6 @@ import Videooff from '../../../../../images/utils/videooff.png'
 import Videoon from '../../../../../images/utils/videoon.png'
 import Screenoff from '../../../../../images/utils/screenoff.png'
 import Screenon from '../../../../../images/utils/screenon.png'
-import axios from 'axios'
 
 const MediaController = styled.div`
 width : 100%;
@@ -84,12 +83,15 @@ function Index(props) {
 
     useEffect(() => {
         setTimeout(() => {
+            try{
             const client1 = props.client;
             const stream = client1.getMediaStream();
             const canvas1 = document.getElementById("canvas0");
             const parent1 = canvas1.parentElement;
             stream.updateVideoCanvasDimension(canvas1, parent1.offsetWidth, parent1.offsetHeight);
-            stream.adjustRenderedVideoPosition(canvas1, client1.getCurrentUserInfo().userId, canvas1.width, canvas1.height, 0, 0);
+            }catch(err){
+                console.log(err);
+            }
         }, 500);
     }, [cnt])
 
@@ -109,12 +111,6 @@ function Index(props) {
         } catch (error) {
             console.error(error);
         }
-        /* console.log("this should be next");
-        const client1 = props.client;
-        const canvas1 = document.getElementById("canvas0");
-        const parent1 = canvas.parentElement;
-        stream.updateVideoCanvasDimension(canvas1, parent1.offsetWidth, parent1.offsetHeight);
-        stream.adjustRenderedVideoPosition(canvas1, client1.getCurrentUserInfo().userId, canvas1.width, canvas1.height, 0, 0); */
     }
 
     async function stopVideo() {
