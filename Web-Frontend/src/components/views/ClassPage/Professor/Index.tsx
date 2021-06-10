@@ -254,7 +254,7 @@ interface TestProps {
 });
 console.log(socket); */
 
-const socket = socketio('http://disboard13.kro.kr:3000', {
+const socket = socketio('https://disboard13.kro.kr', {
   transports : ['polling']
 });
 console.log(socket);
