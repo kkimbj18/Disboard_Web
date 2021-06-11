@@ -94,15 +94,10 @@ router.post('/signup', (req, res) => {
             User.findOne({ email: req.body.email }, (err, user) => {
                 if (err) return res.status(500).json(err);
                 
-                if (user) {
-                    res.status(409).json({
-                        success: false,
-                        userExist: true
-                    });
-                }
-                else res.status(400).json({
+                res.status(409).json({
                     success: false,
-                })
+                    userExist: true
+                });
             });
         }
         else res.status(201).json({ success: true });
