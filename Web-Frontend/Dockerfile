@@ -15,7 +15,7 @@ ENV NODE_ENV production
 
 RUN npm run build
 
-FROM nginx
+FROM nginx:latest
 
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /var/jenkins_home/workspace/13-teamZoom-sc21/Web-Frontend/build /usr/share/nginx/html
