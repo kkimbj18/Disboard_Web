@@ -33,7 +33,8 @@ const socketOpt = {
   cors: {
     origin: '*',
     credentials: true
-  }
+  },
+  path: '/socket.io'
 }
 
 const io = require('socket.io')(server, socketOpt);

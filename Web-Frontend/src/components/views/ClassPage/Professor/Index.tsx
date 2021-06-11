@@ -255,7 +255,8 @@ interface TestProps {
 console.log(socket); */
 
 const socket = socketio('https://disboard13.kro.kr', {
-  transports : ['websocket']
+  transports : ['websocket'],
+  path: '/socket.io'
 });
 console.log(socket);
 
