@@ -153,8 +153,7 @@ const recordSchema = new Schema({
 
 const fileSchema = new Schema({
     originalName: { type: String },
-    saveName: { type: String },
-    url: { type: String }
+    savedName: { type: String }
 });
 
 quizSchema.plugin(mongooseAutoInc.plugin, 'quiz');
