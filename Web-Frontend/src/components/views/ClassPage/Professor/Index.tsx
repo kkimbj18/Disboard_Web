@@ -256,7 +256,8 @@ console.log(socket); */
 
 const socket = socketio('https://disboard13.kro.kr', {
   transports : ['polling'],
-  path: '/socket.io'
+  path: '/socket.io',
+  withCredentials: true
 });
 console.log(socket);
 
