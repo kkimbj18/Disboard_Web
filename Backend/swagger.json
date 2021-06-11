@@ -45,6 +45,9 @@
     },
     {
       "name": "Assignment"
+    },
+    {
+      "name": "File"
     }
   ],
   "schemes": [
@@ -2649,9 +2652,9 @@
                   "type": "string",
                   "example": "힘들드아"
                 },
-                "fileURL": {
-                  "type": "string",
-                  "example": ""
+                "file": {
+                  "type": "number",
+                  "example": 0
                 }
               }
             }
@@ -2686,9 +2689,9 @@
                       "type": "string",
                       "example": "힘들드아"
                     },
-                    "fileURL": {
-                      "type": "string",
-                      "example": ""
+                    "file": {
+                      "type": "number",
+                      "example": 0
                     },
                     "date": {
                       "type": "string",
@@ -2756,9 +2759,9 @@
                   "type": "string",
                   "example": "힘들드아"
                 },
-                "fileURL": {
-                  "type": "string",
-                  "example": ""
+                "file": {
+                  "type": "number",
+                  "example": 0
                 }
               }
             }
@@ -2793,9 +2796,9 @@
                       "type": "string",
                       "example": "힘들드아"
                     },
-                    "fileURL": {
-                      "type": "string",
-                      "example": ""
+                    "file": {
+                      "type": "number",
+                      "example": 0
                     },
                     "date": {
                       "type": "string",
@@ -4958,7 +4961,7 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "_id": {
+                      "id": {
                         "type": "number",
                         "example": 0
                       },
@@ -4967,11 +4970,15 @@
                       },
                       "title": {
                         "type": "string",
-                        "example": "아니 인공지능"
+                        "example": "인공지능 과제 #2"
                       },
                       "content": {
                         "type": "string",
-                        "example": "아니 인공지능 성적 언제 나옴???"
+                        "example": "ㅋㅋ"
+                      },
+                      "score": {
+                        "type": "number",
+                        "example": 10
                       },
                       "date": {
                         "type": "string",
@@ -5073,11 +5080,11 @@
                     },
                     "title": {
                       "type": "string",
-                      "example": "아~ 이제 이거 너무 귀찮은데"
+                      "example": "인지과제 #2"
                     },
                     "content": {
                       "type": "string",
-                      "example": "그래도 해야겠지ㅠ"
+                      "example": "ㅋㅋ"
                     },
                     "date": {
                       "type": "string",
@@ -5187,13 +5194,21 @@
                   "type": "string",
                   "example": "힘들드아"
                 },
-                "fileURL": {
+                "file": {
+                  "type": "number",
+                  "example": 0
+                },
+                "score": {
+                  "type": "number",
+                  "example": 10
+                },
+                "date": {
                   "type": "string",
-                  "example": ""
+                  "example": "2021-05-05"
                 },
                 "deadline": {
                   "type": "string",
-                  "example": "2021-05-08T00:00:00.000Z"
+                  "example": "2021-05-08"
                 }
               }
             }
@@ -5222,15 +5237,19 @@
                     },
                     "title": {
                       "type": "string",
-                      "example": "오늘은 여기까지만..."
+                      "example": "인지과제 #3"
                     },
                     "content": {
                       "type": "string",
-                      "example": "힘들드아"
+                      "example": "ㅋㅅㅋ"
                     },
-                    "fileURL": {
-                      "type": "string",
-                      "example": ""
+                    "file": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "score": {
+                      "type": "number",
+                      "example": 10
                     },
                     "date": {
                       "type": "string",
@@ -5249,6 +5268,10 @@
                       "type": "array",
                       "example": [],
                       "items": {}
+                    },
+                    "checked": {
+                      "type": "boolean",
+                      "example": false
                     }
                   }
                 }
@@ -5302,13 +5325,25 @@
                   "type": "string",
                   "example": "힘들드아"
                 },
-                "fileURL": {
-                  "type": "string",
-                  "example": ""
+                "file": {
+                  "type": "number",
+                  "example": 0
+                },
+                "score": {
+                  "type": "number",
+                  "example": 15
                 },
                 "deadline": {
                   "type": "string",
-                  "example": "2021-05-08T00:00:00.000Z"
+                  "example": "2021-05-08"
+                },
+                "date": {
+                  "type": "string",
+                  "example": "2021-05-05"
+                },
+                "checked": {
+                  "type": "boolean",
+                  "example": true
                 }
               }
             }
@@ -5343,9 +5378,13 @@
                       "type": "string",
                       "example": "힘들드아"
                     },
-                    "fileURL": {
-                      "type": "string",
-                      "example": ""
+                    "file": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "score": {
+                      "type": "number",
+                      "example": 15
                     },
                     "date": {
                       "type": "string",
@@ -5364,6 +5403,10 @@
                       "type": "array",
                       "example": [],
                       "items": {}
+                    },
+                    "checked": {
+                      "type": "boolean",
+                      "example": true
                     }
                   }
                 }
@@ -5498,9 +5541,9 @@
                 "submission": {
                   "type": "object",
                   "properties": {
-                    "fileURL": {
-                      "type": "string",
-                      "example": ""
+                    "file": {
+                      "type": "number",
+                      "example": 0
                     },
                     "content": {
                       "type": "string",
@@ -5569,9 +5612,9 @@
                             "type": "string",
                             "example": ""
                           },
-                          "fileURL": {
-                            "type": "string",
-                            "example": ""
+                          "file": {
+                            "type": "number",
+                            "example": 0
                           }
                         }
                       }
@@ -5611,6 +5654,47 @@
                 "name": "main"
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/file/upload": {
+      "post": {
+        "tags": [
+          "File"
+        ],
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/file/read/{id}": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           },
           "500": {
             "description": "Internal Server Error"

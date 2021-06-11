@@ -31,7 +31,7 @@ var server = http.createServer(app);
 
 const socketOpt = {
   cors: {
-    origin: 'http://localhost/',
+    origin: '*',
     credentials: true
   }
 }
@@ -48,6 +48,8 @@ io.on('connection', (socket)=>{
     socket.code = data.code;
 
     socket.join(socket.code);
+
+    console.log(socket.code);
 
     io.to(socket.code).emit('newUser', {
       type: 'connect', 

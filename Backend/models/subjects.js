@@ -74,7 +74,7 @@ const subjectSchema = new Schema({
     },
     lectures: [{ type: Number, ref: 'lecture' }],
     students: [{ type: Number, ref: 'user' }],
-    introURL: { type: String }
+    intro: { type: Number, ref: 'file' }
 });
 
 lectureSchema.plugin(mongooseAutoInc.plugin, 'lecture');

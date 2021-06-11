@@ -95,7 +95,7 @@ const lectureNoteSchema = new Schema({
     subject: { type: Number, ref: 'subject' },
     title: { type: String, required: true },
     content: { type: String, required: true },
-    fileURL: { type: String },
+    file: { type: Number, ref: 'file' },
     date: { type: Date },
     comments: [{
         user: { type: Number, ref: 'user' },
@@ -112,7 +112,8 @@ const assignmentSchema = new Schema({
     subject: { type: Number, ref: 'subject' },
     title: { type: String, required: true },
     content: { type: String, required: true },
-    fileURL: { type: String },
+    file: { type: Number, ref: 'file' },
+    score: { type: Number },
     comments: [{
         user: { type: Number, ref: 'user' },
         content: { type: String },
@@ -124,11 +125,13 @@ const assignmentSchema = new Schema({
     }],
     deadline: { type: Date },
     date: { type: Date },
+    checked: { type: Boolean },
     submission: [{
         user: { type: Number, ref: 'user' },
-        fileURL: { type: String },
+        file: { type: Number, ref: 'file' },
         content: { type: String },
-        date: { type: Date }
+        date: { type: Date },
+        score: { type: Number }
     }]
 });
 
@@ -145,7 +148,13 @@ const scheduleSchema = new Schema({
 
 const recordSchema = new Schema({
     lecture: { type: Number, ref: 'lecture' },
-    fileURL: { type: String }
+    file: { type: Number, ref: 'file' }
+});
+
+const fileSchema = new Schema({
+    originalName: { type: String },
+    saveName: { type: String },
+    url: { type: String }
 });
 
 quizSchema.plugin(mongooseAutoInc.plugin, 'quiz');
@@ -159,6 +168,7 @@ lectureNoteSchema.plugin(mongooseAutoInc.plugin, 'lectureNote');
 assignmentSchema.plugin(mongooseAutoInc.plugin, 'assignment');
 scheduleSchema.plugin(mongooseAutoInc.plugin, 'schedule');
 recordSchema.plugin(mongooseAutoInc.plugin, 'record');
+fileSchema.plugin(mongooseAutoInc.plugin, 'file');
 
 const quizModel = model('quiz', quizSchema);
 const questionModel = model('question', questionSchema);
@@ -171,6 +181,7 @@ const lectureNoteModel = model('lectureNote', lectureNoteSchema);
 const assignmentModel = model('assignment', assignmentSchema);
 const scheduleModel = model('schedule', scheduleSchema);
 const recordModel = model('record', recordSchema);
+const fileModel = model('file', fileSchema);
 
 module.exports = {
     Quiz : quizModel,
@@ -183,5 +194,6 @@ module.exports = {
     LectureNote : lectureNoteModel,
     Assignment : assignmentModel,
     Schedule : scheduleModel,
-    Record : recordModel
+    Record : recordModel,
+    File : fileModel
 };

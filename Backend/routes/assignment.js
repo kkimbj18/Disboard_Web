@@ -16,10 +16,11 @@ router.get('/get/subject/:id', auth, (req, res)=>{
             schema: {
                 success: true,
                 assignments: [{
-                    _id: 0,
+                    id: 0,
                     subject: { $ref: "#/definitions/subject" },
-                    title: '아니 인공지능',
-                    content: '아니 인공지능 성적 언제 나옴???',
+                    title: '인공지능 과제 #2',
+                    content: 'ㅋㅋ',
+                    score: 10,
                     date: '2021-05-05T15:38:19.424Z',
                     deadline: '2021-05-08T00:00:00.000Z',
                     comments: [{
@@ -54,7 +55,7 @@ router.get('/get/subject/:id', auth, (req, res)=>{
                 id: assignment._id,
                 title: assignment.title,
                 content: assignment.content,
-                fileURL: assignment.fileURL,
+                score: assignment.score,
                 date: assignment.date,
                 comments: assignment.comments,
                 emotions: assignment.emotions,
@@ -80,8 +81,8 @@ router.get('/get/:id', auth, (req, res)=>{
                 assignment: {
                     _id: 0,
                     subject: { $ref: "#/definitions/subject" },
-                    title: '아~ 이제 이거 너무 귀찮은데',
-                    content: '그래도 해야겠지ㅠ',
+                    title: '인지과제 #2',
+                    content: 'ㅋㅋ',
                     date: '2021-05-05T15:38:19.424Z',
                     deadline: '2021-05-08T00:00:00.000Z',
                     comments: [{
@@ -137,13 +138,15 @@ router.post('/create', professorAuth, (req, res)=>{
                 assignment: {
                     _id: 0,
                     subject: 0,
-                    title: '오늘은 여기까지만...',
-                    content: '힘들드아',
-                    fileURL: '',
+                    title: '인지과제 #3',
+                    content: 'ㅋㅅㅋ',
+                    file: 0,
+                    score: 10,
                     date: '2021-05-05T15:38:19.424Z',
                     deadline: '2021-05-08T00:00:00.000Z',
                     comments: [],
-                    emotions: []
+                    emotions: [],
+                    checked: false
                 }
             }
         }
@@ -162,19 +165,22 @@ router.post('/create', professorAuth, (req, res)=>{
                 subject: 0,
                 title: '오늘은 여기까지만...',
                 content: '힘들드아',
-                fileURL: '',
-                deadline: '2021-05-08T00:00:00.000Z'
+                file: 0,
+                score: 10,
+                date: '2021-05-05',
+                deadline: '2021-05-08'
             }
         } */
-    console.log(moment());
+    date = req.body.date || moment();
     
     const assignment = new Assignment({
         subject: req.body.subject,
         title: req.body.title,
         content: req.body.content,
-        fileURL: req.body.fileURL,
+        file: req.body.file,
         deadline: req.body.deadline,
-        date: moment()
+        date: date,
+        checked: false
     });
     assignment.save((err, doc)=>{
         if (err) return res.status(500).json(err);
@@ -189,7 +195,7 @@ router.post('/create', professorAuth, (req, res)=>{
 router.put('/update', professorAuth, (req, res)=>{
     /*  #swagger.tags = ['Assignment']
         #swagger.path = '/assignment/update' 
-         #swagger.responses[200] = {
+        #swagger.responses[200] = {
             description: '정상적으로 과제를 수정했을 경우',
             schema: {
                 success: true,
@@ -198,11 +204,13 @@ router.put('/update', professorAuth, (req, res)=>{
                     subject: 0,
                     title: '오늘은 여기까지만...',
                     content: '힘들드아',
-                    fileURL: '',
+                    file: 0,
+                    score: 15,
                     date: '2021-05-05T15:38:19.424Z',
                     deadline: '2021-05-08T00:00:00.000Z',
                     comments: [],
-                    emotions: []
+                    emotions: [],
+                    checked: true
                 }
             }
         }
@@ -228,15 +236,21 @@ router.put('/update', professorAuth, (req, res)=>{
                 id: 0,
                 title: '오늘은 여기까지만...',
                 content: '힘들드아',
-                fileURL: '',
-                deadline: '2021-05-08T00:00:00.000Z'
+                file: 0,
+                score: 15,
+                deadline: '2021-05-08',
+                date: '2021-05-05',
+                checked: true
             }
         } */
     Assignment.findOneAndUpdate({ _id: req.body.id }, {
         title: req.body.title,
         content: req.body.content,
-        fileURL: req.body.fileURL,
+        file: req.body.file,
+        score: req.body.score,
         deadline: req.body.deadline,
+        date: req.body.date,
+        checked: req.body.checked
     }, { new: true }, (err, Assignment)=>{
         if (err) return res.status(500).json(err);
         if (Assignment === null) return res.status(404).json({
@@ -306,7 +320,7 @@ router.put('/submit', auth, (req, res)=>{
                        date: '2021-05-05T15:59:19.424Z',
                        user: 0,
                        content: '',
-                       fileURL: ''
+                       file: 0
                    }]
                }
            }
@@ -328,7 +342,7 @@ router.put('/submit', auth, (req, res)=>{
            schema: {
                $assignmentId: 0,
                submission: {
-                   fileURL: '',
+                   file: 0,
                    content: ''
                }
            }
@@ -348,7 +362,7 @@ router.put('/submit', auth, (req, res)=>{
        assignment.submission.push({
            date: now,
            user: req.session._id,
-           fileURL: req.body.fileURL,
+           file: req.body.file,
            content: req.body.content
        });
        assignment.save((err, doc)=>{

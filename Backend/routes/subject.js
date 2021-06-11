@@ -50,7 +50,7 @@ router.post('/create', professorAuth, (req, res) => {
             start_time: req.body.start_time,
             end_time: req.body.end_time,
             days: req.body.days,
-            code: hashCode
+            code: hashCode,
         });
         subject.save((err, doc) => {
             if (err) return res.status(500).json(err);

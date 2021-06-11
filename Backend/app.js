@@ -78,6 +78,7 @@ const understandingRouter = require('./routes/understanding');
 const subtitleRouter = require('./routes/subtitle');
 const questionRouter = require('./routes/question');
 const assignmentRouter = require('./routes/assignment');
+const fileRouter = require('./routes/file');
 
 // Passport for OAuth
 // app.use(passport.initialize());
@@ -103,6 +104,7 @@ app.use('/understanding', understandingRouter);
 app.use('/subtitle', subtitleRouter);
 app.use('/question', questionRouter);
 app.use('/assignemnt', assignmentRouter);
+app.use('/file', fileRouter);
 
 // Swagger Setting
 const swaggerUi = require('swagger-ui-express');

@@ -53,7 +53,7 @@ router.get('/get/subject/:id', auth, (req, res)=>{
                 id: lectureNote._id,
                 title: lectureNote.title,
                 content: lectureNote.content,
-                fileURL: lectureNote.fileURL,
+                file: lectureNote.file,
                 date: lectureNote.date,
                 comments: lectureNote.comments,
                 emotions: lectureNote.emotions
@@ -136,7 +136,7 @@ router.post('/create', professorAuth, (req, res)=>{
                     subject: 0,
                     title: '오늘은 여기까지만...',
                     content: '힘들드아',
-                    fileURL: '',
+                    file: 0,
                     date: '2021-05-05T15:38:19.424Z',
                     comments: [],
                     emotions: []
@@ -158,7 +158,7 @@ router.post('/create', professorAuth, (req, res)=>{
                 subject: 0,
                 title: '오늘은 여기까지만...',
                 content: '힘들드아',
-                fileURL: '',
+                file: 0,
             }
         } */
     console.log(moment());
@@ -167,7 +167,7 @@ router.post('/create', professorAuth, (req, res)=>{
         subject: req.body.subject,
         title: req.body.title,
         content: req.body.content,
-        fileURL: req.body.fileURL,
+        file: req.body.file,
         date: moment()
     });
     lectureNote.save((err, doc)=>{
@@ -192,7 +192,7 @@ router.put('/update', professorAuth, (req, res)=>{
                     subject: 0,
                     title: '오늘은 여기까지만...',
                     content: '힘들드아',
-                    fileURL: '',
+                    file: 0,
                     date: '2021-05-05T15:38:19.424Z',
                     comments: [],
                     emotions: []
@@ -221,13 +221,13 @@ router.put('/update', professorAuth, (req, res)=>{
                 id: 0,
                 title: '오늘은 여기까지만...',
                 content: '힘들드아',
-                fileURL: ''
+                file: 0
             }
         } */
     LectureNote.findOneAndUpdate({ _id: req.body.id }, {
         title: req.body.title,
         content: req.body.content,
-        fileURL: req.body.fileURL
+        file: req.body.file
     }, { new: true }, (err, lectureNote)=>{
         if (err) return res.status(500).json(err);
         if (lectureNote === null) return res.status(404).json({
