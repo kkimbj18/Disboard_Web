@@ -6,7 +6,12 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const s3 = require('../config/s3');
 
+const moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault('Asia/Seoul');
+
 const { File } = require('../models/models');
+const iconv = require('iconv-lite');
 
 router.post('/upload', upload.single('file'), (req, res)=>{
     /*  #swagger.tags = ['File']
@@ -15,17 +20,25 @@ router.post('/upload', upload.single('file'), (req, res)=>{
     const s3Params = s3.params;
 
     const file = req.file;
+    const originalname = iconv.decode(file.originalname, 'euc-kr');
+
+    console.log(originalname);
+
+    const savedName = moment().format('hh-mm-ss') + originalname;
 
     const uploadedFile = new File({
-        originalName: file.originalname,
-        savedName: file.filename
+        originalName: originalname,
+        savedName: savedName
     });
     uploadedFile.save((err)=>{
         if (err) return res.status(500).json(err);
     })
 
-    s3Params.Key = file.filename;
+    s3Params.Key = savedName;
     s3Params.Body = file.buffer;
+    s3Params.ACL = 'public-read';
+
+    console.log(s3Params);
 
     storage.upload(s3Params, (err, data)=>{
         if (err) return res.status(500).json(err);

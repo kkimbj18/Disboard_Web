@@ -26,8 +26,6 @@ services:
          - '27017:27017'
       networks:
          - network
-      volumes:
-         - ./mongo-data:/data/db
    nginx:
       restart: always
       build:

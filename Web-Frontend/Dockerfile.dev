@@ -10,6 +10,8 @@ ENV NODE_ENV development
 
 COPY . .
 
+RUN npm link my_modules/zoomus/instantsdk
+
 RUN npm run build
 
 FROM nginx
