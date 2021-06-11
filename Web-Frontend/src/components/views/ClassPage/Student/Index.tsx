@@ -228,7 +228,8 @@ interface TestProps {
 
 
 const socket = socketio('https://disboard13.kro.kr', {
-  transports: ['websocket']
+  transports : ['polling'],
+  path: '/socket.io'
 });
 const user = sessionStorage && sessionStorage.userInfo && JSON.parse(window.sessionStorage.userInfo);
 function Index(props: TestProps) {
