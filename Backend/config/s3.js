@@ -8,8 +8,7 @@ const storage = new AWS.S3({
     region: 'ap-northeast-2'
 });
 const params = {
-    'Bucket': process.env.BUCKET_NAME,
-    'Key': '',
+    'Bucket': process.env.BUCKET_NAME
 }
 
 s3.storage = storage;

@@ -12,6 +12,7 @@ moment.tz.setDefault('Asia/Seoul');
 
 const { File } = require('../models/models');
 const iconv = require('iconv-lite');
+const dcenc = require('detect-character-encoding');
 
 router.post('/upload', upload.single('file'), (req, res)=>{
     /*  #swagger.tags = ['File']
@@ -20,18 +21,20 @@ router.post('/upload', upload.single('file'), (req, res)=>{
     const s3Params = s3.params;
 
     const file = req.file;
-    const originalname = iconv.decode(file.originalname, 'euc-kr');
+    
+    const originalName = req.body.fileName;
+    let fileId = 0;
 
-    console.log(originalname);
-
-    const savedName = moment().format('hh-mm-ss') + originalname;
+    const savedName = moment().format('hh-mm-ss') + originalName;
 
     const uploadedFile = new File({
-        originalName: originalname,
+        originalName: originalName,
         savedName: savedName
     });
-    uploadedFile.save((err)=>{
+    uploadedFile.save((err, doc)=>{
         if (err) return res.status(500).json(err);
+
+        fileId = doc._id;
     })
 
     s3Params.Key = savedName;
@@ -43,7 +46,11 @@ router.post('/upload', upload.single('file'), (req, res)=>{
     storage.upload(s3Params, (err, data)=>{
         if (err) return res.status(500).json(err);
 
-        res.status(201).json(data);
+        res.status(201).json({
+            fileURL: data.Location,
+            originalName: originalName,
+            fileId: fileId
+        });
     })
 });
 
@@ -62,7 +69,8 @@ router.get('/read/:id', (req, res)=>{
             if (err) return res.status(500).json(err);
 
             res.status(200).json({
-                url: data
+                fileURL: data,
+                originalName: file.originalName
             });
         })
     })
