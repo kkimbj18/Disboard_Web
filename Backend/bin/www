@@ -34,10 +34,16 @@ const socketOpt = {
     origin: 'http://localhost',
     credentials: true
   },
-  path: '/socket.io'
+  path: '/socket'
 }
 
-const io = require('socket.io')(server, socketOpt);
+const io = require('socket.io')(socketOpt);
+
+io.attach(server, {
+  pingInterval: 10000,
+  pingTimeout: 5000,
+  cookie: false
+})
 
 io.on('connection', (socket)=>{
   // console.log(socket.handshake);
