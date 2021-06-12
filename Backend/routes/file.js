@@ -11,8 +11,6 @@ require('moment-timezone');
 moment.tz.setDefault('Asia/Seoul');
 
 const { File } = require('../models/models');
-const iconv = require('iconv-lite');
-const dcenc = require('detect-character-encoding');
 
 router.post('/upload', upload.single('file'), (req, res)=>{
     /*  #swagger.tags = ['File']
@@ -73,6 +71,17 @@ router.get('/read/:id', (req, res)=>{
                 originalName: file.originalName
             });
         })
+    })
+})
+
+router.get('/get/all', (req, res) => {
+    /*  #swagger.tags = ['File']
+        #swagger.path = '/file/get/all' */
+    
+    File.find({}, (err, files) => {
+        if (err) return res.status(500).json(err);
+
+        res.status(200).json(files);
     })
 })
 
