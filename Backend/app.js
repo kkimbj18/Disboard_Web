@@ -64,7 +64,6 @@ connection.once('open', () => {
 })
 
 // Router 설정
-const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
 const subjectRouter = require('./routes/subject');
@@ -90,7 +89,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use('/subject', subjectRouter);

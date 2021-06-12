@@ -118,7 +118,6 @@ const doc = {
 const outputFile = './swagger.json';
 const endpointsFiles = [
     './routes/auth.js', 
-    './routes/index.js', 
     './routes/user.js', 
     './routes/subject.js',
     './routes/lecture.js',

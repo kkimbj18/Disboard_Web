@@ -74,7 +74,7 @@ const subtitleSchema = new Schema({
         time: { type: String }
     }]
 })
-    
+
 const noticeSchema = new Schema({
     subject: { type: Number, ref: 'subject' },
     title: { type: String, required: true },
@@ -183,16 +183,16 @@ const recordModel = model('record', recordSchema);
 const fileModel = model('file', fileSchema);
 
 module.exports = {
-    Quiz : quizModel,
-    Question : questionModel,
-    Chatting : chattingModel,
-    UnderstandingPro : understandingProModel,
-    UnderstandingStu : understandingStuModel,
-    Subtitle : subtitleModel,
-    Notice : noticeModel,
-    LectureNote : lectureNoteModel,
-    Assignment : assignmentModel,
-    Schedule : scheduleModel,
-    Record : recordModel,
-    File : fileModel
+    Quiz: quizModel,
+    Question: questionModel,
+    Chatting: chattingModel,
+    UnderstandingPro: understandingProModel,
+    UnderstandingStu: understandingStuModel,
+    Subtitle: subtitleModel,
+    Notice: noticeModel,
+    LectureNote: lectureNoteModel,
+    Assignment: assignmentModel,
+    Schedule: scheduleModel,
+    Record: recordModel,
+    File: fileModel
 };

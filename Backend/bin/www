@@ -33,8 +33,7 @@ const socketOpt = {
   cors: {
     origin: 'http://localhost',
     credentials: true
-  },
-  path: '/socket'
+  }
 }
 
 const io = require('socket.io')(socketOpt);
