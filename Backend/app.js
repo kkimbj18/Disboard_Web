@@ -101,7 +101,7 @@ app.use('/emotion', emotionRouter);
 app.use('/understanding', understandingRouter);
 app.use('/subtitle', subtitleRouter);
 app.use('/question', questionRouter);
-app.use('/assignemnt', assignmentRouter);
+app.use('/assignment', assignmentRouter);
 app.use('/file', fileRouter);
 
 // Swagger Setting
