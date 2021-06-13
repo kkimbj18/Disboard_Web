@@ -80,11 +80,11 @@ function Index({match}) {
 
     const goDetail = useCallback((id, e) => {
         e.preventDefault();
-        return window.location.href=`/main/${subjectId}/${subjectName}/pf/assignment/${id}`
+        return window.location.href=`/main/${subjectId}/${subjectName}/st/assignment/${id}`
     },[])
 
     function isSubmit(element){
-        if(element._id === user._id){return true;}
+        if(element.user === user._id){return true;}
     }
 
     const display = () => {
@@ -95,19 +95,19 @@ function Index({match}) {
                     <tr>
                         <th style={{padding: "10px 0", width: "30%"}}>과제 내용</th>
                         <th style={{padding: "10px 0", width: "30%"}}>과제 기간</th>
-                        <th style={{padding: "10px 0", width: "20%"}}>제출 상태</th>
+                        {/* <th style={{padding: "10px 0", width: "20%"}}>제출 상태</th> */}
                         <th style={{padding: "10px 0", width: "20%"}}>채점 상태</th>
                     </tr>
                 </thead>
                 <tbody>
                     {assignmentList.map((value, index) => 
-                    <tr style={{borderRadius: "5px", boxShadow: "0px 5px 5px 2px #eeeeee", cursor: "pointer", height: "80px"}} onClick={(e) => goDetail(value._id, e)}>
+                    <tr style={{borderRadius: "5px", boxShadow: "0px 5px 5px 2px #eeeeee", cursor: "pointer", height: "80px"}} onClick={(e) => goDetail(value.id, e)}>
                         <td style={{padding: "10px 0", backgroundColor: "white", borderRadius: "5px 0 0 5px"}}>
                             <div style={{fontSize: "20px", fontWeight: "700", color: "#3E3E3E", display: "block"}}>{value.title}</div>
                             {/* <div style={{fontSize: "12px", color: "#949494", height: "18.4px"}}>{value.content}</div> */}
                         </td>
                         <td style={{padding: "10px 0", backgroundColor: "white", alignItems: "center", alignContent: "center"}}>{stateDisplay(moment(value.date), moment(value.deadline), value.students)}</td>
-                        <td style={{padding: "10px 0", backgroundColor: "white", alignItems: "center", alignContent: "center"}}>{value.students.find(isSubmit) ? "제출" : "미제출"}</td>
+                        {/* <td style={{padding: "10px 0", backgroundColor: "white", alignItems: "center", alignContent: "center"}}>{value.submission.length !== 0 &&  value.submission.find(isSubmit) ? "제출" : "미제출"}</td> */}
                         <td style={{padding: "10px 0", backgroundColor: "white", borderRadius: "0 5px 5px 0"}}>{value.checked ? "채점 완료" : "채점 전"}</td>
                     </tr>
                     )}

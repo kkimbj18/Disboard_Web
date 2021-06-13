@@ -161,8 +161,6 @@ router.post('/create', professorAuth, (req, res)=>{
                 file: 0,
             }
         } */
-    console.log(moment());
-    
     const lectureNote = new LectureNote({
         subject: req.body.subject,
         title: req.body.title,

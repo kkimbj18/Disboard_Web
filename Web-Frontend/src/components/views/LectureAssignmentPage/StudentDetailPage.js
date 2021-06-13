@@ -73,7 +73,8 @@ function Index({match}) {
     const subjectName = match.params.name;
     const problemId = match.params.id;
 
-    const [problem, setProblem] = useState({id: 3, title: "과제 제목", score: 30, content: "내용", fileURL: "", startDate: "2021-05-01T00:00:00", endDate: "2021-05-15T23:59:59", checked: true, studentList: [2, 5, 3, 6, 7, 8, 9], comments: []});
+    const [problem, setProblem] = useState();
+    const [file, setFile] = useState();
     const [beforeAnswer, setBeforeAnswer] = useState({answer: "", fileURL: "", score: 0});
     const [studentAnswer, setStudentAnswer] = useState("");
     const [studentFile, setStudentFile] = useState("");
@@ -83,7 +84,7 @@ function Index({match}) {
     const [isLoading, setIsLoading] = useState(false);
 
     function isSubmit(element){
-        if(element._id === user._id){return true;}
+        if(element.user === user._id){return true;}
     }
 
     const getData = () => {
@@ -93,13 +94,31 @@ function Index({match}) {
                 const result = response.data;
                 console.log(result);
                 setProblem(result.assignment);
-                if(today.isBefore(result.assignment.deadline) && today.isAfter(result.assignment.date)){setisonGoing(true);}
-                let submit = result.students.find(isSubmit);
-                setBeforeAnswer({
-                    answer: submit.answer,
-                    fileURL: submit.fileURL,
-                    score: submit.score
+                axios.get('/api/file/read/' + result.assignment.file)
+                .then((res)=>{
+                    setFile(res.data);
                 })
+                .catch((err)=>{
+                    console.log(err)
+                    reject(err);
+                })
+                if(today.isBefore(result.assignment.deadline) && today.isAfter(result.assignment.date)){setisonGoing(true);}
+                if(result.assignment.submission.length !== 0){
+                    let submit = result.assignment.submission.find(isSubmit);
+                    setBeforeAnswer({
+                        answer: submit.answer,
+                        file: submit.file,
+                        score: submit.score
+                    })
+                    axios.get('/api/file/read/' + String(submit.file))
+                    .then((res)=>{
+                        setStudentFile(res.data)
+                    })
+                    .catch((err)=>{
+                        console.log(err)
+                        reject(err);
+                    })
+                }
                 resolve();
             })
             .catch((error)=>{
@@ -135,15 +154,7 @@ function Index({match}) {
         axios.post(url, formData)
         .then((response) => {
             console.log(response.data)
-            setStudentFile(response.data);
-            axios.get('/api/file/read/' + response.data.fileId)
-            .then((res)=>{
-                setStudentFile(res.data.fileURL)
-            })
-            .catch((error)=>{
-                console.log(error);  
-            })
-
+            setStudentFile(response.data.fileId);
         })
         .catch((error)=>{
             console.log(error);  
@@ -155,7 +166,7 @@ function Index({match}) {
         axios.put('/api/assignment/submit',{
             assignmentId: problemId,
             submission: {
-                fileURL: studentFile,
+                file: studentFile,
                 content : studentAnswer          
             }
         })
@@ -183,11 +194,11 @@ function Index({match}) {
                     <div>배점 {problem.score}</div>
                 </div>
                 <ProblemContent>
-                    <a href={problem.fileURL}>{problem.title}</a>
+                    {file && <a href={file.fileURL}>{file.originalName}</a>}
                     {ReactHtmlParser(problem.content)}
                 </ProblemContent>
                 <hr style={{width: "100%", margin: "10px 0px", display:"block", borderColor: '#ffffff'}}/>
-                {/* <ShowResponse commentList={problem.comments} emotionList={problem.emotions} postId={problem._id} subjectId={subjectId} subjectName={subjectName} userId={user._id} type={"assignment"}/> */}
+                <ShowResponse commentList={problem.comments} emotionList={problem.emotions} postId={problemId} subjectId={subjectId} subjectName={subjectName} userId={user._id} type={"assignment"}/>
             </ProblemContainer>
             <ProblemContainer style={{margin: "10px auto"}}>
                 <div style={{display: "flex", justifyContent: "space-between"}}>
@@ -204,7 +215,8 @@ function Index({match}) {
                     </div>
                 </div> : 
                 <div>
-                    <AnswerInput placeholder={beforeAnswer.answer} onChange={onChangeAnswer} readOnly/>
+                    <AnswerInput placeholder={beforeAnswer.content} onChange={onChangeAnswer} readOnly/>
+                    {studentFile && <a href={studentFile.fileURL}>{studentFile.originalName}</a>}
                     {problem.checked && <div> {beforeAnswer.score} / {problem.score}</div>}
                 </div>
                 }

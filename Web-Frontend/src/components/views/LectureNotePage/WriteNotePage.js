@@ -66,13 +66,14 @@ function Index({match}){
         .then((response) => {
             console.log(response.data)
             // setFileURL(response.data);
-            axios.get('/api/file/read/' + response.data.fileId)
+            setFileURL(response.data.fileId);
+            /* axios.get('/api/file/read/' + response.data.fileId)
             .then((res)=>{
                 setFileURL(res.data.fileURL);
             })
             .catch((error)=>{
                 console.log(error);  
-            })
+            }) */
 
         })
         .catch((error)=>{
@@ -88,7 +89,7 @@ function Index({match}){
             subject : subjectId,
             title : title,
             content : content,
-            fileURL : fileURL
+            file : fileURL
         })
         .then((response) => {
             console.log(response);

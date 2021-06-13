@@ -19,6 +19,7 @@ justify-content: center;
 align-items: center;
 margin: 10px auto;
 padding: 0 20px;
+padding-bottom: 30px;
 `
 const Title = styled.div`
 font-size : 30px;
@@ -115,6 +116,7 @@ function Index({match}) {
     const [isShowing, setisShowing] = useState(false)
     
     const [noteList, setNoteList] = useState([]);
+    const [fileList, setFileList] = useState([]);
 
     const getData = () => {
         const url = '/api/lectureNote/get/subject/' + subjectId;
@@ -124,7 +126,24 @@ function Index({match}) {
             console.log(result)
             setisEmpty(result.length === 0 ? true : false);
             setNoteList(result);
-            setisLoading(true);            
+            if(result.length === 0){
+                setisLoading(true);
+            }else{
+                result.map((lec, ind)=> {
+                    if(lec.file){
+                        axios.get('/api/file/read/' + lec.file)
+                        .then((res)=>{
+                            // fileList.push(res.data);
+                            setFileList(fileList.concat(res.data))
+                            // setFileURL(res.data.fileURL);
+                        })
+                        .catch((error)=>{
+                            console.log(error);  
+                        })
+                    }
+                    if(ind === (result.length - 1)){setisLoading(true);}
+                })
+            }
         })
         .catch((error)=>{
             console.log(error);
@@ -163,7 +182,7 @@ function Index({match}) {
                     </NoteMenuBox>}
                         <NoteContent>
                             {moment(value.date).format('YYYY년 M월 D일 HH:mm')}<br/>
-                            <a href={value.fileURL}>{value.title}</a>
+                            {fileList[index] && <a href={fileList[index].fileURL}>{fileList[index].originalName}</a>}
                             {ReactHtmlParser(value.content)}
                         </NoteContent>
                     </NoteBox>

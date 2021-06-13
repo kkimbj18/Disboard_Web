@@ -89,7 +89,7 @@ border-radius: 5px;
 `
 
 
-function StudentSubmit({studentList, changeScore, score}){
+function StudentSubmit({studentList, changeScore, score, fileList}){
     const [studentScore, setStudentScore] = useState();
 
     const onChangeScore = (e) => {
@@ -113,8 +113,8 @@ function StudentSubmit({studentList, changeScore, score}){
                     {studentList.map((student, index) => 
                     <tr style={{borderRadius: "5px", boxShadow: "0px 2px 2px 1px #eeeeee", cursor: "pointer"}}>
                         <td style={{padding: "10px 0", backgroundColor: "white", borderRadius: "5px 0 0 5px"}}>{student.name}</td>
-                        <td style={{padding: "10px 0", backgroundColor: "white"}}>{student.answer}</td>
-                        <td style={{padding: "10px 0", backgroundColor: "white"}}><a href={student.fileURL}>{student.name}</a></td>
+                        <td style={{padding: "10px 0", backgroundColor: "white"}}>{student.content}</td>
+                        <td style={{padding: "10px 0", backgroundColor: "white"}}>{fileList[index] && <a href={fileList[index].fileURL}>{fileList[index].originalName}</a>}</td>
                         <td style={{padding: "10px 0", backgroundColor: "white"}}>
                             <div style={{display: "flex", justifyContent: "space-between", margin: "0", padding: "0 5px"}}>
                                 <div><ScoreInput onChange={onChangeScore} placeholder={student.score}/><span style={{width:"20%"}}> / {score} </span></div>
@@ -136,23 +136,44 @@ function Index({match}) {
     const problemId = String(match.params.id);
 
     const [problem, setProblem] = useState({id: 3, title: "과제 제목", score: 30, content: "내용", fileURL: "", startDate: "2021-05-01T00:00:00", endDate: "2021-05-15T23:59:59", checked: true, studentList: [2, 5, 3, 6, 7, 8, 9], comments: [], emotions: []});
-    const [studentList, setStudentList] = useState([
-        {id: 2, name: "홍길동", answer: "", fileURL: "", score: 0},
-        {id: 2, name: "홍길동", answer: "", fileURL: "", score: 0},
-        {id: 2, name: "홍길동", answer: "", fileURL: "", score: 0}
-    ]);
+    const [file, setFile] = useState();
+    const [studentFile, setStudentFile] = useState([]);
+    const [studentList, setStudentList] = useState([ ]);
 
     const [isLoading, setIsLoading] = useState(true);
 
     const getData = () => {
         return new Promise((resolve, reject) => {
-            axios.get(`/api/assignment/get/` + problemId)
+            axios.get(`/api/assignment/get/` + String(problemId))
             .then((response)=>{
                 const result = response.data;
                 console.log(result);
                 setProblem(result.assignment);
-                setStudentList(result.assignment.students);
-                resolve();
+                setStudentList(result.assignment.submission);
+                axios.get('/api/file/read/' + result.assignment.file)
+                .then((res)=>{
+                    setFile(res.data);
+                })
+                .catch((err)=>{
+                    console.log(err)
+                    reject(err);
+                })
+                result.assignment.submission.map((student, stdInd) => {
+                    let temp = {};
+                    if(student.file){
+                        axios.get('/api/file/read/' + String(student.file))
+                        .then((res)=>{
+                            temp = res.data;
+                            studentFile.push(temp)
+                            
+                        })
+                        .catch((err)=>{
+                            console.log(err)
+                            reject(err);
+                        })
+                    }else{studentFile.push(temp)}
+                    if(stdInd === (result.assignment.submission.length - 1)){resolve();}
+                })
             })
             .catch((error)=>{
                 console.log(error);
@@ -207,12 +228,12 @@ function Index({match}) {
             id: problemId,
             title: problem.title,
             content: problem.content,
-            fileURL: problem.fileURL,
+            file: problem.file,
             date: problem.date,
             deadline: problem.deadline,
             score: problem.score,
             checked: problem.checked,
-            students: newList
+            submission: newList
         })
         .then((response) => {
             console.log(response);
@@ -228,12 +249,12 @@ function Index({match}) {
             id: problemId,
             title: problem.title,
             content: problem.content,
-            fileURL: problem.fileURL,
+            file: problem.file,
             date: problem.date,
             deadline: problem.deadline,
             score: problem.score,
             checked: true,
-            students: studentList
+            submission: studentList
         })
         .then((response) => {
             console.log(response);
@@ -262,13 +283,12 @@ function Index({match}) {
                         <div>배점 {problem.score}</div>
                     </div>
                     <ProblemContent>
-                        <a href={problem.fileURL}>{problem.title}</a>
+                        {file && <a href={file.fileURL}>{file.originalName}</a>}
                         {ReactHtmlParser(problem.content)}
                     </ProblemContent>
                     <hr style={{width: "100%", margin: "10px 0px", display:"block", borderColor: '#ffffff'}}/>
-                    <ShowResponse commentList={problem.comments} emotionList={problem.emotions} postId={problem._id} subjectId={subjectId} subjectName={subjectName} userId={user._id} type={"assignment"}/>
-                    <hr style={{width: "100%", margin: "10px 0px", display:"block", borderColor: '#ffffff'}}/>
-                    <StudentSubmit studentList={studentList} changeScore={onChangeScore} score={problem.score}/>
+                    <ShowResponse commentList={problem.comments} emotionList={problem.emotions} postId={problem.id} subjectId={subjectId} subjectName={subjectName} userId={user._id} type={"assignment"}/>
+                    <StudentSubmit studentList={studentList} changeScore={onChangeScore} score={problem.score} fileList={studentFile}/>
                     <CheckBtn onClick={updateScore}>채점 완료</CheckBtn>
                 </ProblemContainer>
             </Container>
