@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { Notice, LectureNote } = require('../models/models');
+const { Notice, LectureNote, Assignment } = require('../models/models');
 const { auth } = require('../middleware/authentication');
 
 const moment = require('moment');
@@ -37,7 +37,7 @@ router.put('/add', auth, (req, res)=>{
                 content: '롤 개마렵다 ㄹㅇ'
             }
         } */
-    const Post = (req.body.postType === 'notice') ? Notice : LectureNote;
+    const Post = (req.body.postType === 'notice') ? Notice : (req.body.postType === 'lectureNote') ? LectureNote : Assignment;
 
     Post.findOne({ _id: req.body.postId }, (err, post)=>{
         if (err) return res.status(500).json(err);
@@ -104,7 +104,7 @@ router.put('/edit', auth, (req, res)=>{
                 content: '중간발표 2주 남았네 ㅁㅊ'
             }
         } */
-    const Post = (req.body.postType === 'notice') ? Notice : LectureNote;
+    const Post = (req.body.postType === 'notice') ? Notice : (req.body.postType === 'lectureNote') ? LectureNote : Assignment;
 
     Post.findOne({ _id: req.body.postId }, (err, post)=>{
         if (err) return res.status(500).json(err);
@@ -178,7 +178,7 @@ router.put('/delete', auth, (req, res)=>{
                 $commentIndex: 0
             }
         } */
-    const Post = (req.body.postType === 'notice') ? Notice : LectureNote;
+    const Post = (req.body.postType === 'notice') ? Notice : (req.body.postType === 'lectureNote') ? LectureNote : Assignment;
 
     Post.findOne({ _id: req.body.postId }, (err, post)=>{
         if (err) return res.status(500).json(err);

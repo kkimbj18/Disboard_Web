@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { Notice, LectureNote } = require('../models/models');
+const { Notice, LectureNote, Assignment } = require('../models/models');
 const { auth } = require('../middleware/authentication');
 
 router.put('/add', auth, (req, res)=>{
@@ -33,7 +33,7 @@ router.put('/add', auth, (req, res)=>{
                 $emotion: 'heart'
             }
         } */
-    const Post = (req.body.postType === 'notice') ? Notice : LectureNote;
+    const Post = (req.body.postType === 'notice') ? Notice : (req.body.postType === 'lectureNote') ? LectureNote : Assignment;
 
     Post.findOne({ _id: req.body.postId }, (err, post)=>{
         if (err) return res.status(500).json(err);
@@ -96,7 +96,7 @@ router.put('/delete', auth, (req, res)=>{
                 $postId: 0
             }
         } */
-    const Post = (req.body.postType === 'notice') ? Notice : LectureNote;
+    const Post = (req.body.postType === 'notice') ? Notice : (req.body.postType === 'lectureNote') ? LectureNote : Assignment;
 
     Post.findOne({ _id: req.body.postId }, (err, post)=>{
         if (err) return res.status(500).json(err);
