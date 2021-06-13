@@ -46,9 +46,6 @@ io.attach(server, {
 })
 
 io.on('connection', (socket)=>{
-  // console.log(socket.handshake);
-  console.log('a user connected');
-
   // 수업 참가 시, 참가자 갱신
   socket.on('user', (data)=>{
     socket.name = data.name;
@@ -56,8 +53,6 @@ io.on('connection', (socket)=>{
     socket.email = data.email;
 
     socket.join(socket.code);
-
-    console.log(socket.code);
 
     io.to(socket.code).emit('newUser', {
       type: 'connect', 
@@ -82,7 +77,6 @@ io.on('connection', (socket)=>{
     data.time = time;
     data.name = socket.name;
 
-    console.log('name: ', data.name, 'message: ', data.content, 'time: ', data.time);
     socket.broadcast.to(socket.code).emit('sendMsg', data);
     // socket.to(socket.code).emit('sendMsg', data);
   });
@@ -166,8 +160,6 @@ io.on('connection', (socket)=>{
 
   // 수업 퇴장 시, 참가자 갱신
   socket.on('disconnect', (data)=>{
-    console.log('user disconnected');
-
     data.name = socket.name;
     data.email = socket.email;
 

@@ -8,7 +8,7 @@ router.get('/get/current', (req, res)=>{
     // #swagger.tags = ['User']
     // #swagger.path = '/user/get/current'
     User.findOne({ email: req.session.email }).populate('subject').exec((err, user) => {
-        if(err) console.log(err);
+        if(err) res.status(500).json(err);
         else {
             res.status(200).json(user);
         }

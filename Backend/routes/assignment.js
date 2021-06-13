@@ -203,6 +203,7 @@ router.post('/create', professorAuth, (req, res)=>{
         title: req.body.title,
         content: req.body.content,
         file: req.body.file,
+        score: req.body.score,
         deadline: req.body.deadline,
         date: date,
         checked: false
