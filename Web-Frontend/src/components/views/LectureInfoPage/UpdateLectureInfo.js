@@ -152,7 +152,7 @@ function Index({match}){
         endTime[i]=dateString[1];
     }
 
-    const onChangeFile = (e) => {
+   /*  const onChangeFile = (e) => {
         console.log(e.target);
         const formData = new FormData();
         formData.append("file", e.target.files[0]);
@@ -175,7 +175,7 @@ function Index({match}){
         .catch((error)=>{
             console.log(error);  
         })
-    }
+    } */
 
     const submitHandler = () => {
         console.log(introURL)
@@ -186,8 +186,7 @@ function Index({match}){
             end_period: endPeriod,
             start_time: startTime,
             end_time: endTime,
-            days: dayList,
-            introURL: introURL
+            days: dayList
          })
          .then((response)=>{
              return window.location.href = `/main/${subjectId}/info`;
@@ -241,12 +240,12 @@ function Index({match}){
                                 <li>{week[value-1]} : <TimePicker.RangePicker defaultValue={isEmpty ? ([moment(startTime[index], 'HH:mm'), moment(endTime[index], 'HH:mm')]) : ([""],[""])} format="HH:mm" onChange={(value, dateString)=>onChangeTime(index, dateString)}/></li>)}
                         </WhiteBox>
                     </tr>
-                    <tr>
+                    {/* <tr>
                         <GrayBox>강의 계획서</GrayBox>
                         <WhiteBox>
                             <input type="file" onChange={onChangeFile}/>
                         </WhiteBox>                        
-                    </tr>
+                    </tr> */}
                 </tbody>
             </table>
             </Container>
