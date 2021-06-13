@@ -6,7 +6,6 @@ import socketio from 'socket.io-client'
 const QuestionContainer = styled.div`
 width : 100%;
 height : 37vh;
-overflow-y : scroll;
 ::-webkit-scrollbar {
     display: none;
 }
@@ -71,13 +70,19 @@ function Index(props:any) {
         })
     }, [questions])
 
+    const onKeyPress=(e: React.KeyboardEvent<HTMLInputElement>)=>{
+        if(e.key === "Enter"){
+            mySubmit();
+      }
+}
+
     return (
         <QuestionContainer>
             <ChatContentCnt>
                 {questions}
             </ChatContentCnt>
             <ChatInputCnt>
-                <ChatInput ref = {inputRef} id="qInput" type="TextArea" placeholder="질문을 입력해주세요" />
+                <ChatInput ref = {inputRef} onKeyPress={onKeyPress} id="qInput" type="TextArea" placeholder="질문을 입력해주세요" />
                 <ChatSubmitBtn onClick={mySubmit}>내전송</ChatSubmitBtn>
             </ChatInputCnt>
         </QuestionContainer>

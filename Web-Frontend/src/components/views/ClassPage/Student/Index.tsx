@@ -228,7 +228,7 @@ interface TestProps {
 
 
 const socket = socketio('https://disboard13.kro.kr', {
-  transports : ['polling'],
+  transports: ['polling'],
   withCredentials: true,
   path: '/socket'
 });
@@ -335,11 +335,8 @@ function Index(props: TestProps) {
     console.log('joinlecture');
     axios.get(`/api/lecture/get/inProgress/subject/${subject_id}`)
       .then(res => {
-        console.log(res.data)
+        setlecture_id(res.data.lecture._id);
       }).catch(err => console.log(err));
-      axios.get('/api/user/get/current').then(res=>{
-        console.log(res);
-      })
   }
 
   interface ccc {
@@ -448,9 +445,9 @@ function Index(props: TestProps) {
       code: '1234',
       email: user ? user.email : "default"
     });
-    /*     socket.on('newUser', (data: any) => {
+        socket.on('newUser', (data: any) => {
           console.log(data);
-        }); */
+        });
   }, [])
   if (isLoading) return <Loading type="spin" color='orange'></Loading>
 
@@ -473,7 +470,7 @@ function Index(props: TestProps) {
             <ContentWrapper className="content1" id="content3"><Question lecture_id={lecture_id} socket={socket} /></ContentWrapper>
           </Active1ContentCnt>
           <Active1Menu>
-            <ParticipantsBtn className="Active1Btn active" id="1" onClick={Active1BtnHandler}>참가자</ParticipantsBtn>
+            <ParticipantsBtn className="Active1Btn active" id="1" onClick={Active1BtnHandler}>{lecture_id}</ParticipantsBtn>
             <ChatBtn className="Active1Btn" id="2" onClick={Active1BtnHandler}>채팅</ChatBtn>
             <QuestionBtn className="Active1Btn" id="3" onClick={Active1BtnHandler}>질문</QuestionBtn>
           </Active1Menu>

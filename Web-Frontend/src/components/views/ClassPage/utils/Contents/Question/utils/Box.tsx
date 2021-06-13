@@ -120,10 +120,17 @@ function Box(props: QuestionProps) {
             }
         })
     }, [answers])
+
+    const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            mySubmit();
+        }
+    }
+
     return (
         <>
             <BoxContainer ref={boxRef}>
-                <div style ={{fontSize : '1rem'}} id="Boxcontainer" onClick={showAnswers}>
+                <div style={{ fontSize: '1rem' }} id="Boxcontainer" onClick={showAnswers}>
                     {props.msg}
                     {showAnswer && <AnswerBox>
                         {answers}
@@ -132,7 +139,7 @@ function Box(props: QuestionProps) {
                 <AnswerShort>답변{answers.length}</AnswerShort>
                 {
                     showAnswer && <ChatInputCnt onClick={stopProp} onKeyDown={keyDown}>
-                        <ChatInput ref={inputRef} onClick={stopProp} id="chatInput" type="TextArea" placeholder="답변을 입력해주세요" />
+                        <ChatInput ref={inputRef} onKeyPress={onKeyPress} onClick={stopProp} id="chatInput" type="TextArea" placeholder="답변을 입력해주세요" />
                         <ChatSubmitBtn onClick={mySubmit}>내전송</ChatSubmitBtn>
                     </ChatInputCnt>
                 }

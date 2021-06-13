@@ -472,12 +472,12 @@ function Index(props: TestProps) {
       code: "1234",
       email : user ? user.email : "default"
     });
-/*     socket.on('newUser', (data: any) => {
+    socket.on('newUser', (data: any) => {
       console.log(data);
     });
     socket.on('disConnected', (data:any)=>{
       console.log(data);
-    }) */
+    })
 /*     setTimeout(() => {
       StartAnim();
     }, 5000); */
@@ -519,7 +519,7 @@ function Index(props: TestProps) {
             <ContentWrapper className="content1" id="content3"><Question lecture_id = {lecture_id} socket={socket} /></ContentWrapper>
           </Active1ContentCnt>
           <Active1Menu>
-            <ParticipantsBtn className="Active1Btn active" id="1" onClick={Active1BtnHandler}>참가자</ParticipantsBtn>
+            <ParticipantsBtn className="Active1Btn active" id="1" onClick={Active1BtnHandler}>{lecture_id}</ParticipantsBtn>
             <ChatBtn className="Active1Btn" id="2" onClick={Active1BtnHandler}>채팅</ChatBtn>
             <QuestionBtn className="Active1Btn" id="3" onClick={Active1BtnHandler}>질문</QuestionBtn>
           </Active1Menu>

@@ -39,10 +39,17 @@ word-break:break-all;
 `
 
 const Cont = styled.div`
-&:hover{
-    display : none;
-}
+ &:hover #time {
+    display : inline;
+  }
 `
+
+const TimeSpan = styled.span`
+  font-size : 0.6rem;
+  display : none;
+  margin-right : 5px;
+`
+
 
 function MyChat(props: chatProps) {
 
@@ -54,6 +61,7 @@ function MyChat(props: chatProps) {
                 <Partcipant>{props.name} <span style={{ display: 'none' }} id="chatSpan">03:13PM</span></Partcipant>
             </Container1>
             <Container ref={cntRef} id="msgCnt" style={{ width: '100%' }}>
+            <TimeSpan id="time" >03:13PM</TimeSpan>
                 <Msg>{props.msg}</Msg>
             </Container>
         </Cont>

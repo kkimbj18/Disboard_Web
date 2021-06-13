@@ -36,9 +36,15 @@ word-break:break-all;
 `
 
 const Cont = styled.div`
-&:hover{
-    display : none;
-}
+ &:hover #time {
+    display : inline;
+  }
+`
+
+const TimeSpan = styled.span`
+  font-size : 0.6rem;
+  display : none;
+  margin : 0 5px;
 `
 
 function OtherChat(props: chatProps) {
@@ -54,6 +60,7 @@ function OtherChat(props: chatProps) {
             </Container1>
             <Container id="msgCnt" style={{ width: '100%' }}>
                 <Msg>{props.msg}</Msg>
+                <TimeSpan id="time" >03:13PM</TimeSpan>
             </Container>
         </Cont>
     )

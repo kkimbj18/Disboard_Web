@@ -68,7 +68,7 @@ function Index(props: any) {
     useEffect(() => {
         socket.on('sendMsg', function (data: any) {
             console.log(data);
-            setmsgs([<OtherChat name = {data.user} msg={data.content}></OtherChat>].concat(msgs));
+            setmsgs([<OtherChat name={data.user} msg={data.content}></OtherChat>].concat(msgs));
         });
     }, [msgs])
 
@@ -78,14 +78,20 @@ function Index(props: any) {
             socket.emit('msg', {
                 time: '19:20',
                 content: chatInput.value,
-                user : props.user
+                user: props.user
             })
             console.log('msg sent');
-            setmsgs([<MyChat name = {props.user} msg={chatInput.value}></MyChat>].concat(msgs));
+            setmsgs([<MyChat name={props.user} msg={chatInput.value}></MyChat>].concat(msgs));
             chatInput.value = '';
         }
     }
-    
+
+    const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            mySubmit();
+        }
+    }
+
     /*     function otherSubmit(content: any) {
             setmsgs([<OtherChat msg="reandom text"></OtherChat>].concat(msgs));
         } */
@@ -98,7 +104,7 @@ function Index(props: any) {
                 </ChatFlexBox>
             </ChatContentCnt>
             <ChatInputCnt>
-                <ChatInput id="chatInput" type="TextArea" placeholder="채팅내용을 입력해주세요" />
+                <ChatInput id="chatInput" onKeyPress={onKeyPress} type="TextArea" placeholder="채팅내용을 입력해주세요" />
                 <ChatSubmitBtn onClick={mySubmit}>내전송</ChatSubmitBtn>
             </ChatInputCnt>
         </ChatCnt>

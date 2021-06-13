@@ -61,6 +61,12 @@ function Index(props : parProps) {
         })
         props.socket.on('disConnected', (data:any)=>{
             console.log("disconneected", data);
+            const toRemove =  document.querySelectorAll(`.participantsclass#${data.message.email}`) as NodeListOf<HTMLElement>;
+            console.log(toRemove);
+            toRemove.forEach((elm : HTMLElement)=>{
+                console.log(elm);
+                elm.remove();
+            })
         })
     }, [pars])
 

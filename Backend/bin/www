@@ -53,6 +53,7 @@ io.on('connection', (socket)=>{
   socket.on('user', (data)=>{
     socket.name = data.name;
     socket.code = data.code;
+    socket.email = data.email;
 
     socket.join(socket.code);
 
@@ -168,6 +169,7 @@ io.on('connection', (socket)=>{
     console.log('user disconnected');
 
     data.name = socket.name;
+    data.email = socket.email;
 
     socket.broadcast.to(socket.code).emit('disConnected', {
       type: 'disconnect',
