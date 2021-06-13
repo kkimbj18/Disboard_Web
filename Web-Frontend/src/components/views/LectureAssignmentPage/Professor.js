@@ -7,17 +7,17 @@ import {
     Switch,
     Route,
 } from "react-router-dom";
-import ReactHtmlParser from 'react-html-parser';
-import ShowResponse from "../../utils/Comment/Index"
+import { resolve } from 'dns';
 import WritePage from "./WritePFPage"
+import DetailPage from "./ProfessorDetailPage"
 
 const Container = styled.div`
 width : 97%;
-height : 100%;
-display : inline-block;
-//overflow-y: auto;
-//align-items : center;
-//justify-content : center;
+display: block;
+justify-content: center;
+align-items: center;
+margin: 10px auto;
+padding: 0 20px;
 `
 const Title = styled.div`
 font-size : 30px;
@@ -68,37 +68,50 @@ width 50%;
 `
 
 function Index({match}) {
-    const user = JSON.parse(window.sessionStorage.userInfo);
-    const subjectId = match.params.subject;
+    const subjectId = String(match.params.subject);
     const subjectName = match.params.name;
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [isEmpty, setisEmpty] = useState(false);
-    // const [assignmentList, setAssignmentList] = useState([]);
-    const assignmentList = [
-        {id: 0, title: "과제 제목2", content: "내용", fileURL: "", startDate: "2021-06-01T00:00:00", endDate: "2021-06-25T23:59:59", checked: false, studentList: []},
-        {id: 1, title: "과제 제목1", content: "내용", fileURL: "", startDate: "2021-05-15T00:00:00", endDate: "2021-06-05T23:00:00", checked: false, studentList: [5, 2]},
-        {id: 2, title: "과제 제목", content: "내용", fileURL: "", startDate: "2021-05-01T00:00:00", endDate: "2021-05-15T23:59:59", checked: false, studentList: [2, 5, 3, 6, 7, 8, 9]},
-        {id: 3, title: "과제 제목", content: "내용", fileURL: "", startDate: "2021-05-01T00:00:00", endDate: "2021-05-15T23:59:59", checked: true, studentList: [2, 5, 3, 6, 7, 8, 9]}
-    ]
-    const [studentNum, setStudentNum] = useState(20);
+    const [assignmentList, setAssignmentList] = useState([]);
+    const [studentNum, setStudentNum] = useState(0);
     
+    /* const assignmentList = [
+        {id: 0, title: "과제 제목2", content: "내용", fileURL: "", score: 20, startDate: "2021-06-01T00:00:00", endDate: "2021-06-25T23:59:59", checked: false, studentList: []},
+        {id: 1, title: "과제 제목1", content: "내용", fileURL: "", score: 40,startDate: "2021-05-15T00:00:00", endDate: "2021-06-05T23:00:00", checked: false, studentList: [5, 2]},
+        {id: 2, title: "과제 제목", content: "내용", fileURL: "", score: 10, startDate: "2021-05-01T00:00:00", endDate: "2021-05-15T23:59:59", checked: false, studentList: [2, 5, 3, 6, 7, 8, 9]},
+        {id: 3, title: "과제 제목", content: "내용", fileURL: "", score: 30, startDate: "2021-05-01T00:00:00", endDate: "2021-05-15T23:59:59", checked: true, studentList: [2, 5, 3, 6, 7, 8, 9]}
+    ] */
+
     const getData = () => {
-        // axios.get(url)
-        // .then((response)=>{
-        //     const result = response.data;
-        //     setisEmpty(result.length == 0 ? true : false);
-        //     console.log(result);
-        // })
-        // .catch((error)=>{
-        //     console.log(error);
-        // });
+        return new Promise((resolve, reject) => {
+            axios.get('/api/subject/info/'+ subjectId)
+            .then((response)=>{
+                const result = response.data.subject;
+                setStudentNum(result.students.length);
+            })
+            .catch((error)=>{
+                console.log(error);
+                reject(error);
+            });
+
+            axios.get(`/api/assignment/get/subject/` + subjectId)
+            .then((response)=>{
+                const result = response.data;
+                console.log(result);
+                setisEmpty(result.assignments.length == 0 ? true : false);
+                setAssignmentList(result.assignments);
+                resolve();
+            })
+            .catch((error)=>{
+                console.log(error);
+                reject(error);
+            });
+        })
     }
 
     const stateDisplay = (startDate, endDate, studentList) => {
         const today = moment();
-        console.log(today);
-
         if(today.isBefore(startDate)){
             return(<StateBox style={{backgroundColor: "#BFBFBF"}}>0 / {studentNum}</StateBox>);
         }else if(today.isBefore(endDate)){
@@ -116,44 +129,50 @@ function Index({match}) {
 
     const display = () => {
         return(
+            <div>
+                {isEmpty ? <div style={{textAlign:'center', marginTop:'300px', fontSize:'30px', fontStyle:'italic'}}>과제가 없습니다.</div> : 
 
-            <table style={{width: "100%", margin: "10px auto", borderTop: "1px solid #D5D5D5", textAlign: "center", borderSpacing: "0px 10px", borderCollapse: "separate"}}>
-                <thead style={{borderBottom: "1px solid #D5D5D5", fontStyle: "bold", fontWeight:"500", backgroundColor: "#f3f3f3"}}>
-                    <tr>
-                        <th style={{padding: "10px 0", width: "25%"}}>과제 내용</th>
-                        <th style={{padding: "10px 0", width: "25%"}}>과제 기간</th>
-                        <th style={{padding: "10px 0", width: "25%"}}>진행 상태</th>
-                        <th style={{padding: "10px 0", width: "25%"}}>채점 상태</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {assignmentList.map((value, index) => 
-                    <tr style={{borderRadius: "5px", boxShadow: "0px 5px 5px 2px #eeeeee", cursor: "pointer"}} onClick={(e) => goDetail(value.id, e)}>
-                        <td style={{padding: "10px 0", backgroundColor: "white", borderRadius: "5px 0 0 5px"}}>
-                            <div style={{fontSize: "20px", fontWeight: "700", color: "#3E3E3E", display: "block"}}>{value.title}</div>
-                            <div style={{fontSize: "12px", color: "#949494"}}>{value.content}</div>
-                        </td>
-                        <td style={{padding: "10px 0", backgroundColor: "white"}}>{moment(value.startDate).format('M월 D일 HH:mm')} - {moment(value.endDate).format('M월 D일 HH:mm')}</td>
-                        <td style={{padding: "10px 0", backgroundColor: "white", alignItems: "center", alignContent: "center"}}>{stateDisplay(moment(value.startDate), moment(value.endDate), value.studentList)}</td>
-                        <td style={{padding: "10px 0", backgroundColor: "white", borderRadius: "0 5px 5px 0"}}>{value.checked ? "채점 완료" : "채점 전"}</td>
-                    </tr>
-                    )}
-                </tbody>
-            </table>
+                <table style={{width: "100%", margin: "10px auto", borderTop: "1px solid #D5D5D5", textAlign: "center", borderSpacing: "0px 10px", borderCollapse: "separate"}}>
+                    <thead style={{borderBottom: "1px solid #D5D5D5", fontStyle: "bold", fontWeight:"500", backgroundColor: "#f3f3f3"}}>
+                        <tr>
+                            <th style={{padding: "10px 0", width: "30%"}}>과제 내용</th>
+                            <th style={{padding: "10px 0", width: "30%"}}>과제 기간</th>
+                            <th style={{padding: "10px 0", width: "20%"}}>진행 상태</th>
+                            <th style={{padding: "10px 0", width: "20%"}}>채점 상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {assignmentList.map((value, index) => 
+                        <tr style={{borderRadius: "5px", boxShadow: "0px 2px 2px 1px #eeeeee", cursor: "pointer"}} onClick={(e) => goDetail(value._id, e)}>
+                            <td style={{padding: "10px 0", backgroundColor: "white", borderRadius: "5px 0 0 5px"}}>
+                                <div style={{fontSize: "20px", fontWeight: "700", color: "#3E3E3E", display: "block"}}>{value.title}</div>
+                                {/* <div style={{fontSize: "12px", color: "#949494", height: "18.4px"}}>{value.content}</div> */}
+                            </td>
+                            <td style={{padding: "10px 0", backgroundColor: "white"}}>{moment(value.date).format('M월 D일 HH:mm')} - {moment(value.deadline).format('M월 D일 HH:mm')}</td>
+                            <td style={{padding: "10px 0", backgroundColor: "white", alignItems: "center", alignContent: "center"}}>{stateDisplay(moment(value.date), moment(value.deadline), value.students)}</td>
+                            <td style={{padding: "10px 0", backgroundColor: "white", borderRadius: "0 5px 5px 0"}}>{value.checked ? "채점 완료" : "채점 전"}</td>
+                        </tr>
+                        )}
+                    </tbody>
+                </table>
+                }
+            </div>
         );
     }
 
     useEffect(() => {
-        getData();
-        
+        getData().then(()=>{
+            setIsLoading(true);
+        })
     },[])
 
     return(
         <Router>
             <Switch>
                 <Route path="/main/:subject/:name/pf/assignment/write" component={WritePage}/>
+                <Route path="/main/:subject/:name/pf/assignment/:id" component={DetailPage}/>
                 <Route path="/">
-                    <Container style={{marginLeft: "20px", marginTop: '10px'}}>
+                    <Container>
                         <Title>Assignment</Title>
                         <div style={{width: "100%", display: "block"}}>
                             <SubTitle>내 강의 / <a style={{color: "black"}} href={`/main/${subjectId}/${subjectName}/home`}>{subjectName}</a> / 과제</SubTitle>

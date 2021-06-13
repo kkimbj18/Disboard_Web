@@ -9,28 +9,36 @@ import moment from 'moment';
 const { RangePicker } = DatePicker;
 
 const Container = styled.div`
-width: 100%;
-display: block;
+width : 100%;
+height : 100%;
+display : inline-block;
+margin: 10px auto;
+padding: 0px 20px;
 justify-content: center;
 align-items: center;
 `
 const Title = styled.div`
-font-size: 30px;
-font-style: italic;
-text-alignment: left;
+font-size : 30px;
+border-bottom : 1px solid #F7F9FC;
+height : 40px;
+line-height : 40px;
+font-style : italic;
 `
 const SubTitle = styled.div`
-font-size: 16px;
-display: inline-block;
-color: ${props => props.theme.color.font_dark_gray};
+float: left;
+margin-top: 3px;
+margin-right: 20px;
+color : #8b8b8b;
+font-size : 13px;
+font-weight: 400;
 `
 const GrayBox = styled.td`
-padding: 5px;
+padding: 10px;
 border: 1px soild ${props => props.theme.color.blue};
 background: ${props => props.theme.color.light_gray};
 `
 const WhiteBox = styled.td`
-padding: 5px;
+padding: 10px;
 border: 1px soild ${props => props.theme.color.blue};
 background: white;
 `
@@ -42,6 +50,7 @@ padding: 5px;
 background-color: ${props => props.theme.color.blue};
 color: white;
 border-radius: 5px;
+margin-right: 5px;
 `
 const NameInput = styled.input`
 padding : 5px;
@@ -83,7 +92,7 @@ function Index({match}){
     const [startTime, setStartTime] = useState([0]);
     const [endTime, setEndTime] = useState([]);
     const [dayList, setDayList] = useState([]);
-    const [introURL, setIntroURL] = useState('');
+    const [introURL, setIntroURL] = useState();
 
     const week = ["월", "화", "수", "목", "금", "토", "일"];
     
@@ -144,19 +153,33 @@ function Index({match}){
     }
 
     const onChangeFile = (e) => {
-        console.log(e);        
+        console.log(e.target);
+        const formData = new FormData();
+        formData.append("file", e.target.files[0]);
+        formData.append("fileName", e.target.files[0].name);
+
+        const url = '/api/file/upload';
+        axios.post(url, formData)
+        .then((response) => {
+            console.log(response.data)
+            setIntroURL(response.data);
+            /* axios.get('/api/file/read/' + response.data.fileId)
+            .then((res)=>{
+                console.log(res.data)
+            })
+            .catch((error)=>{
+                console.log(error);  
+            }) */
+
+        })
+        .catch((error)=>{
+            console.log(error);  
+        })
     }
 
     const submitHandler = () => {
+        console.log(introURL)
         const url = '/api/subject/info/update/'+ subjectId;
-
-        console.log(name);
-        console.log(startPeriod);
-        console.log(endPeriod);
-        console.log(startTime);
-        console.log(endTime);
-        console.log(dayList);
-
         axios.put(url, { 
             name: name,
             start_period: startPeriod,
@@ -167,7 +190,6 @@ function Index({match}){
             introURL: introURL
          })
          .then((response)=>{
-             console.log(response);
              return window.location.href = `/main/${subjectId}/info`;
          })
          .catch((response)=>{
@@ -182,10 +204,10 @@ function Index({match}){
             <Container>
             <Title>Lecture Info</Title>
             <div style={{width: "100%", display: "block"}}>
-                <SubTitle>내 강의 / <a style={{color: "inherit"}} href={`/main/${subjectId}/${defaultName}/home`}>{defaultName}</a> / <a style={{color: "inherit"}} href={`/main/${subjectId}/info`}>강의 정보</a> / 강의 정보 수정</SubTitle>                
+                <SubTitle>내 강의 / <a style={{color: "black"}} href={`/main/${subjectId}/${defaultName}/home`}>{defaultName}</a> / <a style={{color: "black"}} href={`/main/${subjectId}/info`}>강의 정보</a> / 강의 정보 수정</SubTitle>                
                 <SubmitBtn onClick={submitHandler} style={{display: "inline-block", float:"right"}}>저장하기</SubmitBtn>
             </div>
-            <hr style={{width: "100%", margin: "5px auto", marginTop: "15px", display: "block"}}/>
+            <hr style={{width: "100%", margin: "30px 0px", marginTop: "50px", display:"block", borderColor: '#ffffff'}}/>
             <table style={{width: "100%", margin: "1px auto", borderSpacing: "1px", borderCollapse: "separate"}}>
                 <tbody>
                     <tr>

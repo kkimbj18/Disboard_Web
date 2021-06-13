@@ -6,12 +6,11 @@ import moment from 'moment';
 const Container = styled.div`
 width : 97%;
 height : 100%;
-display : inline-block;
-margin-left : 20px;
-margin-top : 10px;
-//overflow-y: auto;
-//align-items : center;
-//justify-content : center;
+display: block;
+justify-content: center;
+align-items: center;
+margin: 10px auto;
+padding: 0 20px;
 `
 const Title = styled.div`
 font-size : 30px;
@@ -87,14 +86,12 @@ function Index({match}){
     const user = JSON.parse(window.sessionStorage.userInfo);
     const subjectId = match.params.subject;
     const subjectName = match.params.name;
-    const subjectCode = match.params.code;
 
     const isProfessor = user.type === "professor" ? true : false;
     const [isLoading, setisLoading] = useState(false);
     const [isEmpty, setisEmpty] = useState(false);
 
     const [noticeList, setNoticeList] = useState([]);
-    const [subject, setSubject] = useState({});
 
     const getData = () => {
         const url = '/api/notice/get/subject/' + String(subjectId);
@@ -110,14 +107,6 @@ function Index({match}){
             console.log(error);
         });
 
-        axios.get('/api/subject/info/'+ String(subjectId))
-        .then((response)=>{
-            const result = response.data.subject;
-            setSubject(result);
-        })
-        .catch((error)=>{
-            console.log(error);
-        });
     }
 
     const showNoticeList = () => {
@@ -155,17 +144,17 @@ function Index({match}){
                     </NoticeBox>
                     <MenuBox>
                         {isProfessor ? 
-                        <><a href={`/class/pf/${subject.code}`}>
+                        <><a href={`/class/pf/${subjectId}`}>
                         <MenuTitle>실시간<br/>강의 시작</MenuTitle>
                         <Img style={{maxWidth: "30%", bottom: "-5px", right: "5px"}} src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuY29tL3N2Z2pzIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgeD0iMCIgeT0iMCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMiA1MTIiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxnPjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0ibTExNCA4Mi4yNWgtNC45MTd2LTQ0Ljc1YTguNiA4LjYgMCAwIDAgLTguNTg3LTguNTg3aC03Mi45OTZhOC42IDguNiAwIDAgMCAtOC41ODMgOC41ODd2NDQuNzVoLTQuOTE3YTEuNzUxIDEuNzUxIDAgMCAwIC0xLjc1IDEuNzV2Ni41YTguNiA4LjYgMCAwIDAgOC41ODggOC41ODdoODYuMzI0YTguNiA4LjYgMCAwIDAgOC41ODgtOC41ODd2LTYuNWExLjc1MSAxLjc1MSAwIDAgMCAtMS43NS0xLjc1em0tOTEuNTgzLTQ0Ljc1YTUuMDkzIDUuMDkzIDAgMCAxIDUuMDgzLTUuMDgzaDczYTUuMDkzIDUuMDkzIDAgMCAxIDUuMDg3IDUuMDg3djQ0Ljc0NmgtMy4xNjZ2LTQ0LjkxN2ExLjc1MSAxLjc1MSAwIDAgMCAtMS43NS0xLjc1aC03My4zMzhhMS43NTEgMS43NTEgMCAwIDAgLTEuNzUgMS43NXY0NC45MTdoLTMuMTY2em01My4yNSA0NC43NWgtNDYuNTg0di00My4xNjdoNjkuODM0djQzLjE2N3ptLTIuMDY3IDMuNWE0LjkyNSA0LjkyNSAwIDAgMSAtNC42IDMuMTY3aC0xMGE0LjkyNSA0LjkyNSAwIDAgMSAtNC41OTUtMy4xNjd6bTM4LjY1IDQuNzVhNS4wOTMgNS4wOTMgMCAwIDEgLTUuMDg4IDUuMDg3aC04Ni4zMjRhNS4wOTMgNS4wOTMgMCAwIDEgLTUuMDg4LTUuMDg3di00Ljc1aDM1LjAxOWE4LjQyOSA4LjQyOSAwIDAgMCA4LjIzMSA2LjY2N2gxMGE4LjQyOSA4LjQyOSAwIDAgMCA4LjIzMS02LjY2N2gzNS4wMTl6IiBmaWxsPSIjM2UzZTNlIiBkYXRhLW9yaWdpbmFsPSIjMDAwMDAwIiBzdHlsZT0iIj48L3BhdGg+PHBhdGggZD0ibTgxLjMxNiA1NS43MDgtMTYuNjY2LTYuNjY2YTEuNzQ5IDEuNzQ5IDAgMCAwIC0xLjMgMGwtMTYuNjY2IDYuNjY2YTEuNzUgMS43NSAwIDAgMCAwIDMuMjVsNy4yMzMgMi44OTR2OC44MTVhMS43NSAxLjc1IDAgMCAwIDEuNzUgMS43NWgxNi42NjZhMS43NSAxLjc1IDAgMCAwIDEuNzUtMS43NXYtOC44MTVsNy4yMzMtMi44OTRhMS43NSAxLjc1IDAgMCAwIDAtMy4yNXptLTEwLjczMyAxMy4yMDloLTEzLjE2NnYtNS42NjVsNS45MzMgMi4zNzNhMS43NDkgMS43NDkgMCAwIDAgMS4zIDBsNS45MzMtMi4zNzN6bTEuMS05Ljg3Ni03LjY4MyAzLjA3NC03LjY4NC0zLjA3My00LjI2OS0xLjcwOCAxMS45NTMtNC43ODMgMTEuOTU1IDQuNzgyeiIgZmlsbD0iIzNlM2UzZSIgZGF0YS1vcmlnaW5hbD0iIzAwMDAwMCIgc3R5bGU9IiI+PC9wYXRoPjwvZz48L2c+PC9zdmc+" />
                         </a></>:
-                        <><a href={`/class/st/${subject.code}`}>
+                        <><a href={`/class/st/${subjectId}`}>
                         <MenuTitle>실시간<br/>강의 참여</MenuTitle>
                         <Img style={{maxWidth: "30%", bottom: "-5px", right: "5px"}} src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuY29tL3N2Z2pzIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgeD0iMCIgeT0iMCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMiA1MTIiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxnPjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0ibTExNCA4Mi4yNWgtNC45MTd2LTQ0Ljc1YTguNiA4LjYgMCAwIDAgLTguNTg3LTguNTg3aC03Mi45OTZhOC42IDguNiAwIDAgMCAtOC41ODMgOC41ODd2NDQuNzVoLTQuOTE3YTEuNzUxIDEuNzUxIDAgMCAwIC0xLjc1IDEuNzV2Ni41YTguNiA4LjYgMCAwIDAgOC41ODggOC41ODdoODYuMzI0YTguNiA4LjYgMCAwIDAgOC41ODgtOC41ODd2LTYuNWExLjc1MSAxLjc1MSAwIDAgMCAtMS43NS0xLjc1em0tOTEuNTgzLTQ0Ljc1YTUuMDkzIDUuMDkzIDAgMCAxIDUuMDgzLTUuMDgzaDczYTUuMDkzIDUuMDkzIDAgMCAxIDUuMDg3IDUuMDg3djQ0Ljc0NmgtMy4xNjZ2LTQ0LjkxN2ExLjc1MSAxLjc1MSAwIDAgMCAtMS43NS0xLjc1aC03My4zMzhhMS43NTEgMS43NTEgMCAwIDAgLTEuNzUgMS43NXY0NC45MTdoLTMuMTY2em01My4yNSA0NC43NWgtNDYuNTg0di00My4xNjdoNjkuODM0djQzLjE2N3ptLTIuMDY3IDMuNWE0LjkyNSA0LjkyNSAwIDAgMSAtNC42IDMuMTY3aC0xMGE0LjkyNSA0LjkyNSAwIDAgMSAtNC41OTUtMy4xNjd6bTM4LjY1IDQuNzVhNS4wOTMgNS4wOTMgMCAwIDEgLTUuMDg4IDUuMDg3aC04Ni4zMjRhNS4wOTMgNS4wOTMgMCAwIDEgLTUuMDg4LTUuMDg3di00Ljc1aDM1LjAxOWE4LjQyOSA4LjQyOSAwIDAgMCA4LjIzMSA2LjY2N2gxMGE4LjQyOSA4LjQyOSAwIDAgMCA4LjIzMS02LjY2N2gzNS4wMTl6IiBmaWxsPSIjM2UzZTNlIiBkYXRhLW9yaWdpbmFsPSIjMDAwMDAwIiBzdHlsZT0iIj48L3BhdGg+PHBhdGggZD0ibTgxLjMxNiA1NS43MDgtMTYuNjY2LTYuNjY2YTEuNzQ5IDEuNzQ5IDAgMCAwIC0xLjMgMGwtMTYuNjY2IDYuNjY2YTEuNzUgMS43NSAwIDAgMCAwIDMuMjVsNy4yMzMgMi44OTR2OC44MTVhMS43NSAxLjc1IDAgMCAwIDEuNzUgMS43NWgxNi42NjZhMS43NSAxLjc1IDAgMCAwIDEuNzUtMS43NXYtOC44MTVsNy4yMzMtMi44OTRhMS43NSAxLjc1IDAgMCAwIDAtMy4yNXptLTEwLjczMyAxMy4yMDloLTEzLjE2NnYtNS42NjVsNS45MzMgMi4zNzNhMS43NDkgMS43NDkgMCAwIDAgMS4zIDBsNS45MzMtMi4zNzN6bTEuMS05Ljg3Ni03LjY4MyAzLjA3NC03LjY4NC0zLjA3My00LjI2OS0xLjcwOCAxMS45NTMtNC43ODMgMTEuOTU1IDQuNzgyeiIgZmlsbD0iIzNlM2UzZSIgZGF0YS1vcmlnaW5hbD0iIzAwMDAwMCIgc3R5bGU9IiI+PC9wYXRoPjwvZz48L2c+PC9zdmc+" />
                         </a></>
                         }
                     </MenuBox>
-                    <MenuBox><a href={`/main/${subjectId}/${subjectName}/assignment`}>
+                    <MenuBox><a href={isProfessor? `/main/${subjectId}/${subjectName}/pf/assignment`: `/main/${subjectId}/${subjectName}/st/assignment`}>
                         <MenuTitle>과제</MenuTitle>
                         <Img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuY29tL3N2Z2pzIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgeD0iMCIgeT0iMCIgdmlld0JveD0iMCAwIDI0IDI0IiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIiBjbGFzcz0iIj48Zz48cGF0aCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGQ9Im0yLjUgMTkuMDJjLS4yNzYgMC0uNS0uMjI0LS41LS41di04Ljg1YzAtLjI3Ni4yMjQtLjUuNS0uNXMuNS4yMjQuNS41djguODVjMCAuMjc2LS4yMjQuNS0uNS41eiIgZmlsbD0iIzNlM2UzZSIgZGF0YS1vcmlnaW5hbD0iIzAwMDAwMCIgc3R5bGU9IiIgY2xhc3M9IiI+PC9wYXRoPjxwYXRoIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZD0ibTIxLjUgMS4wNDVjLS4wNTggMC0uMTE0LS4wMDktLjE2Ni0uMDI1aC0xMy42NDRjLS4yNzYgMC0uNS0uMjI0LS41LS41cy4yMjQtLjUuNS0uNWgxMy44MWMuMjc2IDAgLjUuMjI0LjUuNXMtLjIyNC41MjUtLjUuNTI1eiIgZmlsbD0iIzNlM2UzZSIgZGF0YS1vcmlnaW5hbD0iIzAwMDAwMCIgc3R5bGU9IiIgY2xhc3M9IiI+PC9wYXRoPjxwYXRoIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZD0ibTIzLjUgNS4wMjFoLTVjLS4yNzYgMC0uNS0uMjI0LS41LS41di0xLjVjMC0xLjY1NCAxLjM0Ni0zIDMtM3MzIDEuMzQ2IDMgM3YxLjVjMCAuMjc2LS4yMjQuNS0uNS41em0tNC41LTFoNHYtMWMwLTEuMTAzLS44OTctMi0yLTJzLTIgLjg5Ny0yIDJ6IiBmaWxsPSIjM2UzZTNlIiBkYXRhLW9yaWdpbmFsPSIjMDAwMDAwIiBzdHlsZT0iIiBjbGFzcz0iIj48L3BhdGg+PHBhdGggeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBkPSJtMTYgMjMuOTc5aC0xMy41Yy0xLjM3OCAwLTIuNS0xLjEyMS0yLjUtMi41di0yLjk1OWMwLS4yNzYuMjI0LS41LjUtLjVoMTNjLjI3NiAwIC41LjIyNC41LjV2Mi40NTljMCAxLjEwMy44OTcgMiAyIDJzMi0uODk3IDItMnYtMTYuNDU4YzAtLjI3Ni4yMjQtLjUuNS0uNXMuNS4yMjQuNS41djE2LjQ1OWMwIDEuNjU0LTEuMzQ2IDIuOTk5LTMgMi45OTl6bS0xNS00Ljk1OHYyLjQ1OWMwIC44MjcuNjczIDEuNSAxLjUgMS41aDExLjI2NmMtLjQ3Ni0uNTMxLS43NjYtMS4yMzItLjc2Ni0ydi0xLjk1OXoiIGZpbGw9IiMzZTNlM2UiIGRhdGEtb3JpZ2luYWw9IiMwMDAwMDAiIHN0eWxlPSIiIGNsYXNzPSIiPjwvcGF0aD48cGF0aCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGQ9Im0xMi41IDEzYy0uMDMzIDAtLjA2NS0uMDAzLS4wOTgtLjAxbC0zLjY1NS0uNzMxYy0uMDk3LS4wMi0uMTg2LS4wNjYtLjI1NS0uMTM3bC04LjA0My04LjA0MWMtLjU5OC0uNTk5LS41OTgtMS41NzEgMC0yLjE3bDEuNDYzLTEuNDYyYy41OTgtLjU5OCAxLjU3LS41OTggMi4xNjkgMGw4LjA0MiA4LjA0MmMuMDcuMDY5LjExNy4xNTguMTM3LjI1NmwuNzMxIDMuNjU1Yy4wMzMuMTYzLS4wMTkuMzMzLS4xMzcuNDUxLS4wOTUuMDk1LS4yMjMuMTQ3LS4zNTQuMTQ3em0tMy40MDktMS42OTIgMi43NzEuNTU1LS41NTQtMi43NzEtNy45MzQtNy45MzZjLS4yMDgtLjIwNy0uNTQ3LS4yMDctLjc1NSAwbC0xLjQ2MyAxLjQ2MmMtLjIwOC4yMDgtLjIwOC41NDggMCAuNzU2eiIgZmlsbD0iIzNlM2UzZSIgZGF0YS1vcmlnaW5hbD0iIzAwMDAwMCIgc3R5bGU9IiIgY2xhc3M9IiI+PC9wYXRoPjwvZz48L3N2Zz4=" />
                     </a></MenuBox>

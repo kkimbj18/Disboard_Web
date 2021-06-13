@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
 import logo_mark from '../../../images/logo/logo_mark.png'
 import logo_word from '../../../images/logo/logo_word.png'
@@ -125,6 +125,8 @@ function Index() {
         })
         .catch((error)=>{
             console.log(error);
+            alert("세션이 만료되었습니다.");
+            return window.location.href = '/';
         })
     }, [])
 
@@ -145,6 +147,41 @@ function Index() {
         if (ShowMenu3 === false) setShowMenu3(true);
         else setShowMenu3(false);
     }
+
+    const onLogout = useCallback((e)=>{
+        axios.get('/api/auth/logout')
+        .then((response)=>{
+            const result = response.data.success;
+            console.log(result);
+            sessionStorage.removeItem("userInfo");
+            alert("로그아웃 되었습니다.");
+            return window.location.href = '/';
+        })
+        .catch((error)=>{
+            console.log(error);
+        })
+    });
+
+    const onSignout = useCallback((e)=>{
+        axios.delete('/api/user/delete')
+        .then((response)=>{
+            const result = response.data.success;
+            console.log(result);
+            sessionStorage.removeItem("userInfo");
+            alert("회원 탈퇴가 완료되었습니다.");
+            return window.location.href = '/';
+        })
+        .catch((error)=>{
+            console.log(error);
+        })
+    });
+
+    const confirmSignout = () => {
+        if(window.confirm("정말로 회원 탈퇴하시겠습니까?")){
+            onSignout();
+        }
+    }
+
 
 
     return (
@@ -194,12 +231,17 @@ function Index() {
                 </div>
                 }
                 
-                <Menu onClick={toggle3}>  
-                        <img style={{ height:"26px", paddingLeft:'5px', paddingRight:'10px', paddingBottom:'3px'}} src={account} alt="account" />
-                        계정
-                        {!ShowMenu3 && <img style={{ height:"15px", marginTop:'7px', float: 'right'}} src={right_arrow} alt="right_arrow" />}
-                        {ShowMenu3 && <img style={{ height:"15px", marginTop:'7px', float: 'right'}} src={bottom_arrow} alt="bottom_arrow" />} 
+                <Menu onClick={toggle3}>
+                    <img style={{ height:"26px", paddingLeft:'5px', paddingRight:'10px', paddingBottom:'3px'}} src={account} alt="account" />
+                    계정
+                    {!ShowMenu3 && <img style={{ height:"15px", marginTop:'7px', float: 'right'}} src={right_arrow} alt="right_arrow" />}
+                    {ShowMenu3 && <img style={{ height:"15px", marginTop:'7px', float: 'right'}} src={bottom_arrow} alt="bottom_arrow" />} 
                 </Menu>
+                {ShowMenu3 && <div  style={{marginBottom:"10px"}}>
+                    <SubMenu href="/main/account/mypage">#  내 정보</SubMenu>
+                    <SubMenu href="#" onClick={onLogout}>#  로그아웃</SubMenu>
+                    <SubMenu href="#" onClick={confirmSignout}>#  회원탈퇴</SubMenu>
+                </div>}
             </Content>
             <Footer>
                 <FooterAvater style={{backgroundImage: `url(${user.photourl})`}}/>

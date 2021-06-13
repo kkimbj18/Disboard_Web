@@ -24,7 +24,7 @@ display: inline-block;
 background-color: #BFBFBF;
 color: #3E3E3E;
 position: absolute;
-width: 5%;
+width: 10%;
 height: 40px;
 border: solid 1px #ababab;
 cursor: pointer;
@@ -32,7 +32,7 @@ border-radius: 0 5px 5px 0;
 `
 const CommentInputBox = styled.textarea`
 display: inline-block;
-width : 74%;
+width : 90%;
 height: 40px;
 padding : 10px;
 resize: none;
@@ -48,9 +48,11 @@ background-size: cover;
 display : inline-block;
 margin : 5px;
 `
-function ShowComment ({value, index, postId, subjectId, subjectName, userId, type}){
+function ShowComment ({value, index, postId, subjectId, subjectName, userId, type, url}){
+    
     const [isEditing, setisEditing] = useState(false);
     const [comment, setComment] = useState('');
+    
 
     const editComment = (e, commenetId) => {
         axios.put('/api/comment/edit', {
@@ -65,7 +67,7 @@ function ShowComment ({value, index, postId, subjectId, subjectName, userId, typ
             if(result.success){
                 setComment('');
                 alert("댓글 수정을 완료했습니다.");
-                return window.location.href = `/main/${subjectId}/${subjectName}/${type}`;                
+                return window.location.href = url;
             }
         })
         .catch((error)=>{
@@ -85,7 +87,7 @@ function ShowComment ({value, index, postId, subjectId, subjectName, userId, typ
             console.log(result);
             if(result.success){
                 alert("댓글 삭제를 완료했습니다.");
-                return window.location.href = `/main/${subjectId}/${subjectName}/${type}`;                
+                return window.location.href = url;                
             }
         })
         .catch((error)=>{
@@ -100,7 +102,7 @@ function ShowComment ({value, index, postId, subjectId, subjectName, userId, typ
                 <CommentInputBox onChange={(e) => setComment(e.target.value)} style={{resize : "none"}} placeholder={value.content}/>
                 <CommentBtn onClick={(e) => editComment(e, index)}>수정</CommentBtn>
             </div>:
-            <div style={{width: "80%", height: "40px", position: "relative"}}>
+            <div style={{width: "100%", height: "40px", position: "relative"}}>
                 <div style={{display: "inline-block", height: "40px"}}><Profile style={{backgroundImage: `url(${value.user.photourl})`}}/>
                 <div style={{position: "absolute", left: "40px", top: "10px"}}>{value.user.name} : {value.content}</div></div>
                 {value.user._id == userId && <div style={{float:"right", marginRight: "5px"}}>
@@ -112,6 +114,11 @@ function ShowComment ({value, index, postId, subjectId, subjectName, userId, typ
 }
 
 function Index({commentList, emotionList, postId, subjectId, subjectName, userId, type}){
+    const user = JSON.parse(window.sessionStorage.userInfo);
+    const userType = user.type === "professor" ? "pf":"st";
+    const isAssignment = type === "assignment";
+    const url = isAssignment ? `/main/${subjectId}/${subjectName}/${userType}/${type}/${postId}` : `/main/${subjectId}/${subjectName}/${type}`;
+
     const [isShowing, setisShowing] = useState(false);
     const [comment, setComment] = useState('');
     const [isRed, setisRed] = useState(false);
@@ -180,7 +187,7 @@ function Index({commentList, emotionList, postId, subjectId, subjectName, userId
             if(result){
                 setComment('');
                 alert("댓글 작성을 완료했습니다.");
-                return window.location.href = `/main/${subjectId}/${subjectName}/${type}`;                
+                return window.location.href = url;
             }
         })
         .catch((error)=>{
@@ -193,15 +200,15 @@ function Index({commentList, emotionList, postId, subjectId, subjectName, userId
     },[])
 
     return(
-    <>
-        <ReactBtn onClick={(e) => setisShowing(!isShowing)}>
-            <CommentImg width="14px" height="14px"/> 댓글({commentList.length})</ReactBtn>
-        <ReactBtn onClick={(e)=> (isRed ? deleteEmotion() : addEmotion())}>
-            <LikeImg width="12px" height="12px" fill={isRed ? "red":"gray"}/> 좋아요({emotionsLength})</ReactBtn>
+    <div style={{width: "100%"}}>
+        <div style={{display: "flex", justifyContent: "space-between", margin: "0", padding: "0 5px", fontWeight: "700"}}>
+            <ReactBtn onClick={(e) => setisShowing(!isShowing)}><CommentImg width="14px" height="14px"/> 댓글({commentList.length})</ReactBtn>
+            <ReactBtn onClick={(e)=> (isRed ? deleteEmotion() : addEmotion())}><LikeImg width="12px" height="12px" fill={isRed ? "red":"gray"}/> 좋아요({emotionsLength})</ReactBtn>
+        </div>
         <div style={{width: "100%", display:"block"}}>
             {isShowing && commentList.map((value, index) => 
             <div style={{display: "block", width: "100%", margin: "10px auto"}}>
-                <ShowComment value={value} index ={index} postId={postId} subjectId={subjectId} subjectName={subjectName} userId={userId} type={type}/>
+                <ShowComment url={url} value={value} index ={index} postId={postId} subjectId={subjectId} subjectName={subjectName} userId={userId} type={type}/>
             </div>)
             }
         </div>
@@ -210,7 +217,7 @@ function Index({commentList, emotionList, postId, subjectId, subjectName, userId
             <CommentBtn onClick={(e) => submitComment()}>등록</CommentBtn>
         </div>}
 
-    </>
+    </div>
                         
     )
 }

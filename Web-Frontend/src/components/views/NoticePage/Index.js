@@ -15,11 +15,11 @@ import { resolve } from 'dns';
 
 const Container = styled.div`
 width : 97%;
-height : 100%;
-display : inline-block;
-//overflow-y: auto;
-//align-items : center;
-//justify-content : center;
+display: block;
+justify-content: center;
+align-items: center;
+margin: 10px auto;
+padding: 0 20px;
 `
 const Title = styled.div`
 font-size : 30px;
@@ -43,7 +43,7 @@ margin : 0px 5px 10px 0px;
 padding : 10px;
 background: white;
 border-radius: 5px;
-box-shadow: 0px 5px 5px 2px #e0e0e0;
+box-shadow: 0px 2px 3px 1px #e0e0e0;
 position: relative;
 `
 const WriteBtn = styled.a`
@@ -135,13 +135,13 @@ function DisplayNotices({subjectId, subjectName, noticeList, user}) {
 
     return(
         <div>
-            {noticeList.length === 0 ? "등록된 공지 사항이 없습니다." : noticeList.map((value, index) =>
+            {noticeList.length === 0 ? <div style={{textAlign:'center', marginTop:'300px', fontSize:'30px', fontStyle:'italic'}}>등록된 공지 사항이 없습니다.</div> : noticeList.map((value, index) =>
                 <Box>
                     <NoticeTitle>{value.title}</NoticeTitle>
                     <NoticeContent>
                         {ReactHtmlParser(value.content)}     
                     </NoticeContent> 
-                    <div style={{fontSize:"11px", margin: "0px 10px", position: "absolute", top: "10px", left: "80%"}}>
+                    <div style={{fontSize:"11px", margin: "0px 10px", position: "absolute", top: "25px", left: "80%"}}>
                         {subjectName}<br/>게시 날짜: {moment(value.date).format('YYYY년 M월 D일 HH:mm')}
                     </div>
                     {isProfessor && <NoticeMenuButton type="button" onClick={()=>setisShowing(!isShowing)}><img style={{maxHeight: "15px", maxWidth: "15px"}} src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuY29tL3N2Z2pzIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgeD0iMCIgeT0iMCIgdmlld0JveD0iMCAwIDI0IDI0IiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIiBjbGFzcz0iIj48Zz48Y2lyY2xlIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgY3g9IjEyIiBjeT0iMTIiIHI9IjMiIGZpbGw9IiM3NTc1NzUiIGRhdGEtb3JpZ2luYWw9IiMwMDAwMDAiIHN0eWxlPSIiIGNsYXNzPSIiPjwvY2lyY2xlPjxjaXJjbGUgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBjeD0iMTIiIGN5PSIzIiByPSIzIiBmaWxsPSIjNzU3NTc1IiBkYXRhLW9yaWdpbmFsPSIjMDAwMDAwIiBzdHlsZT0iIiBjbGFzcz0iIj48L2NpcmNsZT48Y2lyY2xlIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgY3g9IjEyIiBjeT0iMjEiIHI9IjMiIGZpbGw9IiM3NTc1NzUiIGRhdGEtb3JpZ2luYWw9IiMwMDAwMDAiIHN0eWxlPSIiIGNsYXNzPSIiPjwvY2lyY2xlPjwvZz48L3N2Zz4=" /></NoticeMenuButton>}
@@ -150,7 +150,7 @@ function DisplayNotices({subjectId, subjectName, noticeList, user}) {
                         <SmallBtn onClick={(e) => deleteNotice(e, value._id)}>삭제하기</SmallBtn>
                     </NoticeMenuBox>}
                     <Line/>
-                    <div><ShowResponse commentList={value.comments} emotionList={value.emotions} postId={value._id} subjectId={subjectId} subjectName={subjectName} userId={user._id} type={"notice"}/></div>
+                    <div style={{width: "80%"}}><ShowResponse commentList={value.comments} emotionList={value.emotions} postId={value._id} subjectId={subjectId} subjectName={subjectName} userId={user._id} type={"notice"}/></div>
                 </Box>
             )}
         </div>
@@ -193,10 +193,10 @@ function Index({match}) {
                 <Route path="/main/:subject/:name/notice/write" component={WritePage}/>
                 <Route path="/main/:subject/:name/notice/update/:id" component={UpdatePage}/>
                 <Route path="/">
-                    <Container style={{marginLeft: "20px", marginTop: '10px'}}>
+                    <Container>
                     <Title>Notice</Title>
                     <div style={{width: "100%", display: "block"}}>
-                        <SubTitle>{isAll ? "강의 / 종합공지사항" : `내 강의 / ${subjectName} / 공지 사항`}</SubTitle>
+                        <SubTitle>{isAll ? "강의 / 종합공지사항" : <div>내 강의 / <a style={{color: "black"}} href={`/main/${subjectId}/${subjectName}/home`}>{subjectName}</a> / 공지 사항</div>}</SubTitle>
                         {isProfessor && !isAll && <WriteBtn href={`/main/${subjectId}/${subjectName}/notice/write`} style={{display: "inline-block", float:"right"}}>작성하기</WriteBtn>}
                     </div>
                     <hr style={{width: "100%", margin: "30px 0px", marginTop: "50px",display:"block", borderColor: '#ffffff'}}/>

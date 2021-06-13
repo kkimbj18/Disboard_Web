@@ -2,9 +2,10 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import moment from 'moment';
-import {DatePicker, Space} from 'antd';
+import {DatePicker} from 'antd';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { resolve } from 'dns';
 
 const { RangePicker } = DatePicker;
 
@@ -82,16 +83,20 @@ box-shadow: 0 5px 5px 0 #eeeeee;
 `
 
 function Index({match}) {
-    const user = JSON.parse(window.sessionStorage.userInfo);
-    const subjectId = match.params.subject;
+    const subjectId = String(match.params.subject);
     const subjectName = match.params.name;
+    const problemId = String(match.params.id);
+
+    const [problem, setProblem] = useState({id: 3, title: "과제 제목", score: 30, content: "내용", fileURL: "", startDate: "2021-05-01T00:00:00", endDate: "2021-05-15T23:59:59", checked: true, studentList: [2, 5, 3, 6, 7, 8, 9]});
 
     const [title, setTitle] = useState("");
     const [descript, setDescript] = useState("");
     const [period, setPeriod] = useState("");
     const [score, setScore] = useState(0);
-    const [fileURL, setFileURL] = useState();
+    const [fileURL, setFileURL] = useState("");
     // const [lateSubmit, setlateSubmit] = useState(false);
+
+    const [isLoading, setisLoading] = useState(false);
 
     const onChangePeriod = (e, dateString) => {
         setPeriod({...period, 
@@ -102,19 +107,19 @@ function Index({match}) {
 
     const submitHandler = (e) => {
         e.preventDefault();
-        axios.post('/api/assignment/create',{
-            subject : subjectId,
-            title : title,
-            content : descript,
+        axios.put('/api/assignment/update',{
+            id: problemId,
+            title: title,
+            content: descript,
             fileURL: fileURL,
-            score: score,
             date: period.start,
-            deadline: period.end
-
+            deadline: period.end,
+            score: score,
+            checked: problem.checked
         })
         .then((response) => {
             console.log(response);
-            return window.location.href=`/main/${subjectId}/${subjectName}/pf/assignment/`;
+            return window.location.href=`/main/${subjectId}/${subjectName}/pf/assignment/${problemId}`;
         })
         .catch((response) => {
             console.log('Error: ' + response);
@@ -131,38 +136,64 @@ function Index({match}) {
         const url = '/api/file/upload';
         axios.post(url, formData)
         .then((response) => {
-            console.log(response.data);
+            console.log(response.data)
             setFileURL(response.data);
-            // axios.get('/api/file/read/' + String(response.data.fileId))
-            // .then((res)=>{
-            //     console.log(res.data);
-            // })
-            // .catch((err)=>{
-            //     console.log(err)
-            // })
+            // setFileURL(response.data.fileURL)
+            /* axios.get('/api/file/read/' + response.data.fileId)
+            .then((res)=>{
+                console.log(res.data)
+            })
+            .catch((error)=>{
+                console.log(error);  
+            }) */
+
         })
         .catch((error)=>{
             console.log(error);  
         })
     }
 
-    return(
-        <Container>
+    const getData = () => {
+        return new Promise((resolve, reject) => {
+            axios.get(`/api/assignment/get/` + problemId)
+            .then((response)=>{
+                const result = response.data;
+                console.log(result);
+                setProblem(result.assignment);
+                setTitle(result.assignment.title);
+                setDescript(result.assignment.content);
+                setPeriod({
+                    start: result.assignment.date,
+                    end: result.assignment.deadline
+                })
+                setScore(result.assignment.score);
+                resolve();
+            })
+            .catch((error)=>{
+                console.log(error);
+                reject(error);
+            });
+        })
+    }
+    
+    const diaplay = () => {
+        return(
+            <Container>
             <Title>Assignment</Title>
             <div style={{width: "100%", display: "block"}}>
-                <SubTitle>내 강의 / <a style={{color: "black"}} href={`/main/${subjectId}/${subjectName}/home`}>{subjectName}</a> / <a style={{color: "black"}} href={`/main/${subjectId}/${subjectName}/pf/assignment`}>과제</a> / 과제 작성하기</SubTitle>
+                <SubTitle>내 강의 / <a style={{color: "black"}} href={`/main/${subjectId}/${subjectName}/home`}>{subjectName}</a> / <a style={{color: "black"}} href={`/main/${subjectId}/${subjectName}/pf/assignment`}>과제</a> / 과제 수정하기</SubTitle>
                 <SubmitBtn onClick={submitHandler} style={{display: "inline-block", float:"right"}}>저장하기</SubmitBtn>
             </div>
             <hr style={{width: "100%", margin: "30px 0px", marginTop: "50px", display:"block", borderColor: '#ffffff'}}/>
             <ListContainer>
-                <TitleInput type="text" name="title" onChange={(e)=> setTitle(e.target.value)} placeholder="과제 제목"/>
+                <TitleInput type="text" name="title" onChange={(e)=> setTitle(e.target.value)} placeholder={title}/>
                 <div style={{display: "flex", justifyContent: "space-between"}}>
                     <div style={{paddingLeft: "5px", lineHeight: "31.6px"}}>과제 기한</div> 
-                    <div><RangePicker showTime={{hideDisabledOptions: true, defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]}} format="YYYY-MM-DD HH:mm:ss" onChange={onChangePeriod}/></div>
+                    <div><RangePicker defaultValue={[moment(period.start, "YYYY-MM-DD HH:mm:ss"), moment(period.end, "YYYY-MM-DD HH:mm:ss")]} showTime={{hideDisabledOptions: true, defaultValue: [moment(period.start, "HH:mm:ss"), moment(period.end, "HH:mm:ss")]}} format="HH:mm:ss" onChange={onChangePeriod}/></div>
                 </div>
                 <div style={{display: "flex", justifyContent: "space-between", margin: "5px 0"}}>
                     <div style={{paddingLeft: "5px", lineHeight: "41.6px"}}>배점</div> 
-                    <ScoreInput type="number" onChange={(e)=> setScore(e.target.value)}/>
+                    <ScoreInput type="number" placeholder={score} onChange={(e)=> setScore(e.target.value)}/>
                 </div>
                 <div style={{display: "flex", justifyContent: "space-between", margin: "5px 0"}}>
                     <div style={{paddingLeft: "5px", lineHeight: "41.6px"}}>파일 첨부</div> 
@@ -170,7 +201,7 @@ function Index({match}) {
                 </div>
 
                 <div style={{margin: "10px auto"}}>
-                    <CKEditor editor={ ClassicEditor } data=""
+                    <CKEditor editor={ ClassicEditor } data={descript}
                         onReady={ editor => {
                             console.log( 'Editor is ready to use!', editor );
                             editor.editing.view.change((writer) => {
@@ -195,6 +226,18 @@ function Index({match}) {
                 </div>
             </ListContainer>
         </Container>
+
+        )
+    }
+
+    useEffect(() => {
+        getData().then(()=>{
+            setisLoading(true);
+        })
+    },[])
+
+    return(
+        <div>{isLoading && diaplay()}</div>
     );
 }
 

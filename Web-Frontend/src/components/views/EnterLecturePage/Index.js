@@ -5,8 +5,11 @@ import axios from 'axios'
 const Container = styled.div`
 width : 97%;
 height : 100%;
-align-items : center;
-justify-content : center;
+display: block;
+justify-content: center;
+align-items: center;
+margin: 10px auto;
+padding: 0 20px;
 `
 const Containers = styled.div`
 width : 100%;
@@ -112,7 +115,7 @@ function Index() {
 
 
     return (
-        <Container style={{marginLeft: "20px", marginTop: '10px'}}>
+        <Container>
             <Containers>
                 <Title>Enter Lecture</Title>
                 <div style={{width: "100%", display: "block"}}>
