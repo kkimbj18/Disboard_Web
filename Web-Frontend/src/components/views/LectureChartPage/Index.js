@@ -11,12 +11,11 @@ const {Option} = Select;
 
 const Container = styled.div`
 width : 97%;
-height : 100%;
-display : inline-block;
-margin-left : 20px;
-margin-top : 10px; 
-//align-items : center;
-//justify-content : center;
+display: block;
+justify-content: center;
+align-items: center;
+margin: 10px auto;
+padding: 0 20px;
 `
 const Title = styled.div`
 font-size : 30px;
@@ -204,8 +203,8 @@ function LineChart ({studentData, averageData, studentName, label}){
    return(<Line data={lineData} legend={lineLegend} width={200} height={50} options={lineOptions}/>);
 }
 
-function BarChart ({modeIndex, dayList, goodList, badList, averList}){
-   const modeList = ["이해도", "참여점수", "몰입", "출석"];
+function BarChart ({modeIndex, dayList, goodList, badList, averList, scoreList, attendanceList}){
+   const modeList = ["이해도", "참여점수", "출석"];
 
    let Color = ["#edf7ed", "#ECECEC", "#feeceb"];
    let borderColor = ["#4caf54", "#BFBFBF", "#f44a4b"];
@@ -228,11 +227,9 @@ function BarChart ({modeIndex, dayList, goodList, badList, averList}){
       //maintainAspectRatio: false // false로 설정 시 사용자 정의 크기에 따라 그래프 크기가 결정됨.
    }
 
-   const barData = {
+   const barData = [{
       labels: dayList,
-      datasets: 
-      [
-        {
+      datasets: [{
          backgroundColor: Color[0],
          borderColor: borderColor[0],
          borderWidth: 1,
@@ -258,14 +255,58 @@ function BarChart ({modeIndex, dayList, goodList, badList, averList}){
          hoverBorderColor: Color[2],
          data: badList,
          label: "이해 안됨"
+        }]
+     },
+     {
+      labels: dayList,
+      datasets: 
+      [
+        {
+         backgroundColor: Color[0],
+         borderColor: borderColor[0],
+         borderWidth: 1,
+         hoverBackgroundColor: Color[0],
+         hoverBorderColor: Color[0],
+         data: scoreList,
+         label: "참여점수"
         }
-
       ]
-     }; 
-   return (<Bar data={barData} width={200} height={50} options={barOptions}/>);
+     },
+     {
+      labels: dayList,
+      datasets: [{
+         backgroundColor: Color[0],
+         borderColor: borderColor[0],
+         borderWidth: 1,
+         hoverBackgroundColor: Color[0],
+         hoverBorderColor: Color[0],
+         data: attendanceList.attend,
+         label: "출석"
+        },
+        {
+         backgroundColor: Color[1],
+         borderColor: borderColor[1],
+         borderWidth: 1,
+         hoverBackgroundColor: Color[1],
+         hoverBorderColor: Color[1],
+         data: attendanceList.late,
+         label: "지각"
+        },
+        {
+         backgroundColor: Color[2],
+         borderColor: borderColor[2],
+         borderWidth: 1,
+         hoverBackgroundColor: Color[2],
+         hoverBorderColor: Color[2],
+         data: attendanceList.absence,
+         label: "결석"
+        }]
+     }
+   ]
+   return (<Bar data={barData[modeIndex]} width={200} height={50} options={barOptions}/>);
 }
 
-function Info ({title, day, data, rate, rateInfo}){
+function Info ({title, day, data, rate, rateInfo, isStudentAttend}){
    console.log(title + " : " + data);
    var fixRate = rate.toFixed(0);
    return(
@@ -273,13 +314,33 @@ function Info ({title, day, data, rate, rateInfo}){
          <BoxTitle>{title}</BoxTitle>
          <DayBox>{day}</DayBox>
          <NumTitle>{data}</NumTitle>
-         {fixRate > 0 ? <RateBoxGreen>{fixRate}%</RateBoxGreen>:<RateBoxRed>{fixRate}%</RateBoxRed>}
-         <InfoBox>{rateInfo}</InfoBox>
+         {isStudentAttend && <div>
+            {fixRate > 0 ? <RateBoxGreen>{fixRate}%</RateBoxGreen>:<RateBoxRed>{fixRate}%</RateBoxRed>}
+            <InfoBox>{rateInfo}</InfoBox>
+         </div>}
       </Box>         
    )
 }
 
-function ShowStudentScoreList({day, scoreList, isProfessor, userName}){
+function ShowStudentScoreList({day, studentList, isProfessor, userId, dayIndex, scoreList}){
+
+   function calcRate(dayIndex, studentIndex){
+      let lastIndex = dayIndex - 1;
+      let result = 0
+
+      if(lastIndex >= 0){
+         let change = studentList[studentIndex].activeScore[dayIndex] - studentList[studentIndex].activeScore[lastIndex];
+         let lastLecture = studentList[studentIndex].good[lastIndex] === 0 ? 1 : studentList[studentIndex].activeScore[lastIndex];
+         result = (change / lastLecture) * 100;
+      }
+
+      if(result > 0){
+         return(<RateBoxGreen>{result}%</RateBoxGreen>);
+      }else{
+         return(<RateBoxRed>{result}%</RateBoxRed>);
+      }
+   }
+
    return(
       <Box colSpan="2" style={{display: "table-cell", verticalAlign: "top"}}>
          <BoxTitle style={{}}>학생별 점수</BoxTitle>
@@ -288,10 +349,17 @@ function ShowStudentScoreList({day, scoreList, isProfessor, userName}){
             <thead style={{borderBottom: "1px solid #D5D5D5"}}><tr>
                <th style={{padding: "10px 0", width: "15%"}}>이름</th>
                <th style={{padding: "10px 0", width: "15%"}}>점수</th>
-               <th style={{padding: "10px 0", width: "20%"}}>전날 대비</th>
+               <th style={{padding: "10px 0", width: "20%"}}>전 수업 대비</th>
                <th style={{padding: "10px 0", width: "50%"}}>%학생</th></tr></thead>
             <tbody>
-               {/* {scoreList.map((value) => <ShowStudentScore value={value} />)} */}
+               {studentList.map((value, stdInd) => 
+                  <tr>
+                     <td style={{padding: "5px 0", borderBottom: "1px solid #D5D5D5"}}>{isProfessor ? value.name : <>{value.id === userId ? value.name : "anonymous"}</>}</td>
+                     <td style={{padding: "5px 0", borderBottom: "1px solid #D5D5D5"}}>{value.activeScore[dayIndex]}</td>
+                     <td style={{padding: "5px 0", borderBottom: "1px solid #D5D5D5"}}>{calcRate(dayIndex, stdInd)}</td>
+                     <td style={{padding: "5px 0", borderBottom: "1px solid #D5D5D5"}}><Progress percent={(value.activeScore[dayIndex] / scoreList[dayIndex])*100} status="active"/></td>
+                  </tr>
+               )}
             </tbody>
          </table>
       </Box>
@@ -299,19 +367,6 @@ function ShowStudentScoreList({day, scoreList, isProfessor, userName}){
 
 }
 
-function ShowStudentScore({value, userName, isProfessor}){
-   const [rate, setRate] = useState(0);
-
-   return(
-      <tr>
-         <td style={{padding: "5px 0", borderBottom: "1px solid #D5D5D5"}}>{isProfessor ? value.name : <>{value.name === userName ? value.name : "anonymous"}</>}</td>
-         <td style={{padding: "5px 0", borderBottom: "1px solid #D5D5D5"}}>{value.score}</td>
-         <td style={{padding: "5px 0", borderBottom: "1px solid #D5D5D5"}}>{rate > 0 ? <RateBoxGreen>{rate}%</RateBoxGreen>:<RateBoxRed>{rate}%</RateBoxRed>}</td>
-         <td style={{padding: "5px 0", borderBottom: "1px solid #D5D5D5"}}><Progress percent={50} status="active"/></td>
-      </tr>
-
-   )
-}
 
 function Index({match}){
    const user = JSON.parse(window.sessionStorage.userInfo);
@@ -321,32 +376,16 @@ function Index({match}){
    const isProfessor = user.type === "professor" ? true : false;
    const [isLoading, setisLoading] = useState(false);
    const [isLoadingLine, setisLoadingLine] = useState(false);
-   const [isAllStudent, setisAllStudent] = useState(true);
+   const [isAllStudent, setisAllStudent] = useState(isProfessor);
    const [isEmpty, setisEmpty] = useState(false);
 
-   // const [lectureList, setLectureList] = useState([]);
-   // const [studentList, setStudentList] = useState([]);
-   // const [dayList, setDayList] = useState([]);
-   const [studentList, setStudentList] = useState([{id: 0, name: "김민건", good: [], bad: []}, {id: 1, name: "김수민", good: [], bad: []}, {id: 2, name: "노민도", good: [], bad: []}, {id: 3, name: "윤다연", good: [], bad: []}, {id: 4, name: "최민우", good: [], bad: []}]);
-   const [dayList, setDayList] = useState(["5월16일", "5월20일", "5월25일","5월28일", "6월1일","6월2일"]);
+   const [lectureList, setLectureList] = useState([]);
+   const [studentList, setStudentList] = useState([]);
+   const [dayList, setDayList] = useState([]);
    const [rateInfo, setRateInfo] = useState("");
    
-   const [understandingGoodList, setUnderstandingGoodList] = useState([
-      [{"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "10:03", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:30", "isCounted": false}, {"student": {"_id": 1, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "10:35", "isCounted": false}], 
-      [{"student": {"_id": 3, "name": "윤다연"}, "lecture": 0, "response": "O", "minutes": "10:20", "isCounted": false}, {"student": {"_id": 4, "name": "최민우"}, "lecture": 0, "response": "O", "minutes": "11:30", "isCounted": false}, {"student": {"_id": 1, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:35", "isCounted": false}], 
-      [{"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "10:25", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:30", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:55", "isCounted": false}, {"student": {"_id": 4, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:05", "isCounted": false}], 
-      [{"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "10:37", "isCounted": false}, {"student": {"_id": 4, "name": "최민우"}, "lecture": 0, "response": "O", "minutes": "11:00", "isCounted": false}, {"student": {"_id": 4, "name": "최민우"}, "lecture": 0, "response": "O", "minutes": "11:15", "isCounted": false}], 
-      [{"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "10:10", "isCounted": false}, {"student": {"_id": 3, "name": "윤다연"}, "lecture": 0, "response": "O", "minutes": "10:55", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "11:00", "isCounted": false}, {"student": {"_id": 1, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:05", "isCounted": false}], 
-      [{"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "10:40", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:55", "isCounted": false}, {"student": {"_id": 1, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:35", "isCounted": false}]
-   ]);
-   const [understandingBadList, setUnderstandingBadList] = useState([
-      [{"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "10:03", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:30", "isCounted": false}, {"student": {"_id": 0, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "10:35", "isCounted": false}], 
-      [{"student": {"_id": 3, "name": "윤다연"}, "lecture": 0, "response": "O", "minutes": "10:10", "isCounted": false}, {"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "11:30", "isCounted": false}, {"student": {"_id": 3, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:35", "isCounted": false}], 
-      [{"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:25", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:30", "isCounted": false}, {"student": {"_id": 2, "name": "노민도"}, "lecture": 0, "response": "O", "minutes": "10:55", "isCounted": false}], 
-      [{"student": {"_id": 4, "name": "최민우"}, "lecture": 0, "response": "O", "minutes": "10:37", "isCounted": false}, {"student": {"_id": 4, "name": "최민우"}, "lecture": 0, "response": "O", "minutes": "11:00", "isCounted": false}, {"student": {"_id": 2, "name": "최민우"}, "lecture": 0, "response": "O", "minutes": "11:20", "isCounted": false}], 
-      [{"student": {"_id": 0, "name": "김민건"}, "lecture": 0, "response": "O", "minutes": "10:20", "isCounted": false}, {"student": {"_id": 1, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:00", "isCounted": false}, {"student": {"_id": 4, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:05", "isCounted": false}], 
-      [{"student": {"_id": 1, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "10:40", "isCounted": false}, {"student": {"_id": 4, "name": "김수민"}, "lecture": 0, "response": "O", "minutes": "11:15", "isCounted": false}]
-   ]);
+   const [understandingGoodList, setUnderstandingGoodList] = useState([]);
+   const [understandingBadList, setUnderstandingBadList] = useState([]);
    const [understandingGoodRate, setUnderstandingGoodRate] = useState(0);
    const [understandingBadRate, setUnderstandingBadRate] = useState(0);
    const [understandingGood, setUnderstandingGood] = useState(0);
@@ -355,6 +394,11 @@ function Index({match}){
    const [barGood, setbarGood] = useState([]);
    const [barBad, setbarBad] = useState([]);
    const [barAver, setbarAver] = useState([]);
+   const [barAttend, setbarAttend] = useState({
+      attend: [],
+      late: [],
+      absence: []
+   })
 
    const [lineLable, setlineLable] = useState([]);
    const [lineAver, setlineAver] = useState([]);
@@ -368,11 +412,11 @@ function Index({match}){
    const [attendanceRate, setAttendanceRate] = useState(0);
    const [attendance, setAttendance] = useState(0);
    
-   const [day, setDay] = useState(dayList[0]);
+   const [day, setDay] = useState();
    const [dayIndex, setDayIndex] = useState(0);
    const [studentIndex, setStudentIndex] = useState("all");
    const [mode, setMode] = useState(0);
-   const modeList = ["이해도", "참여점수", "몰입", "출석"];
+   const modeList = ["이해도", "참여점수", "출석"];
    
    const getData = () => {
       return new Promise((resolve, reject) => {
@@ -380,15 +424,12 @@ function Index({match}){
          .then((response)=>{
             const result = response.data.subject;
             console.log(result);
-            console.log(result.lectures.length === 0)
-            resolve();
-            /*
             setisEmpty(result.lectures.length === 0);
-            if(result.lectures.length === 0){
+            if(result.students.length === 0){
                setisLoading(true);
                resolve();
             }
-            else{
+            else if(result.lectures.length === 0){
                result.students.map((value, index) => {
                   axios.get('/api/user/get/'+ String(value))
                   .then((output) => {
@@ -396,7 +437,34 @@ function Index({match}){
                         id: output.data._id,
                         name: output.data.name,
                         good: [],
-                        bad: []
+                        bad: [],
+                        activeScore: [],
+                        attendance: []
+                     }
+                     studentList[index] = student;
+                     if(index === (result.students.length - 1)){
+                        setisLoading(true);
+                        resolve();
+                     }
+                  })
+                  .catch((error) => {
+                     console.log(error);
+                     reject(error);
+                  })
+               })
+            }
+            else{
+               result.students.map((value, index) => {
+                  if(!isProfessor && value===user._id ){setStudentIndex(index)}
+                  axios.get('/api/user/get/'+ String(value))
+                  .then((output) => {
+                     const student = {
+                        id: output.data._id,
+                        name: output.data.name,
+                        good: [],
+                        bad: [],
+                        activeScore: [],
+                        attendance: []
                      }
                      studentList[index] = student;
                   })
@@ -410,10 +478,27 @@ function Index({match}){
                .then((response) => {
                   const result = response.data;
                   console.log(result);
-                  // setLectureList(result.lecture);
+                  setLectureList(result.lecture);
                   setDay(moment(result.lectures[0].date).format('M월 D일'));
                   result.lectures.map((value, index) => {
                      dayList[index] = moment(value.date).format('M월 D일');
+                     let totalScore = 0;
+                     let attend = 0;
+                     let late = 0;
+                     let absence = 0;
+                     value.students.map((student, stdInd)=>{
+                        totalScore = student.activeScore + totalScore;
+                        if(student.attendance === 'O'){attend = attend + 1;}
+                        else if(student.attendance === 'x'){late = late + 1}
+                        else{absence = absence + 1}
+
+                        studentIndex[stdInd].attendance.push(student.attendance);
+                        studentList[stdInd].activeScore.push(student.activeScore);
+                    })
+
+                    attendanceList.push({attend: attend, late: late, absence: absence});
+                    scoreList.push(totalScore);
+
                      axios.get('/api/understanding/get/lecture/' + String(value._id))
                      .then((understand)=>{
                         if(Object.keys(understand.data.countResponse).length === 0){
@@ -439,9 +524,8 @@ function Index({match}){
                   console.log(error);
                   reject(error);
                })
-
             }
-*/
+
          })
          .catch((error) => {
             console.log(error);
@@ -547,6 +631,8 @@ function Index({match}){
          setRateInfo("지난 강의가 없습니다.");
          setUnderstandingGoodRate(0);
          setUnderstandingBadRate(0);
+         setScoreRate(0);
+         setAttendanceRate(0);
       }
       else{
          setRateInfo("Since last class");
@@ -558,6 +644,15 @@ function Index({match}){
             change = understandingBadList[dayIndex].length - understandingBadList[lastIndex].length;
             lastLecture = understandingBadList[lastIndex].length === 0 ? 1 : understandingBadList[lastIndex].length; 
             setUnderstandingBadRate((change / lastLecture) * 100);
+
+            change = attendanceList[dayIndex].attend - attendanceList[lastIndex].attend;
+            lastLecture = attendanceList[lastIndex].attend === 0 ? 1 : attendanceList[lastIndex].attend;
+            setAttendanceRate((change / lastLecture) * 100);
+
+            change = scoreList[dayIndex] - scoreList[lastIndex];
+            lastLecture = scoreList[lastIndex] === 0 ? 1 : scoreList[lastIndex];
+            setScoreRate((change / lastLecture) * 100);
+
          }else {
             let change = studentList[studentIndex].good[dayIndex].length - studentList[studentIndex].good[lastIndex].length;
             let lastLecture = studentList[studentIndex].good[lastIndex].length === 0 ? 1 : studentList[studentIndex].good[lastIndex].length; 
@@ -566,6 +661,10 @@ function Index({match}){
             change = studentList[studentIndex].bad[dayIndex].length - studentList[studentIndex].bad[lastIndex].length;
             lastLecture = studentList[studentIndex].bad[lastIndex].length === 0 ? 1 : studentList[studentIndex].bad[lastIndex].length;
             setUnderstandingBadRate((change / lastLecture) * 100)
+
+            change = studentList[studentIndex].activeScore[dayIndex] - studentList[studentIndex].activeScore[lastIndex];
+            lastLecture = studentList[studentIndex].activeScore[lastIndex] === 0 ? 1 : studentList[studentIndex].activeScore[lastIndex];
+            setScoreRate((change / lastLecture) * 100)
          }
          
       }
@@ -582,6 +681,7 @@ function Index({match}){
          understandingBadList.map((value, index) => {
             barBad[index] = value.length;
          })
+
       }else{
          console.log(studentList[studentIndex]);
          setUnderstandingGood(studentList[studentIndex].good[dayIndex].length);
@@ -627,7 +727,9 @@ function Index({match}){
                {dayList.map((value, index) => <option value={index}>{value}</option>)}
             </SelectCust>
             <SelectCust style={{border: "1px solid #e0e0e0", background: "#e0e0e0"}} onChange={onChangeMode}>
-               {modeList.map((value, index) => <option value={index}>{value}</option>)}
+               <option value={0}>{modeList[0]}</option>
+               <option value={1}>{modeList[1]}</option>
+               {isProfessor && <option value={2}>{modeList[2]}</option>}
             </SelectCust>
          </div>
       )
@@ -640,8 +742,8 @@ function Index({match}){
       <table style={{width: "100%", borderSpacing: "10px", borderCollapse: "separate", margin: "0px auto", marginBottom: "20px"}}>
          <tbody>
             <tr>
-               <Info title={"이해가 잘돼요"} day={day} data={understandingGood} rate={understandingGoodRate} rateInfo={rateInfo}/>
-               <Info title={"이해가 안돼요"} day={day} data={understandingBad} rate={understandingBadRate} rateInfo={rateInfo}/>
+               <Info title={"이해가 잘돼요"} day={day} data={understandingGood} rate={understandingGoodRate} rateInfo={rateInfo} isStudentAttend={true}/>
+               <Info title={"이해가 안돼요"} day={day} data={understandingBad} rate={understandingBadRate} rateInfo={rateInfo} isStudentAttend={true}/>
                <Box rowSpan="2" colSpan="2">
                   <BoxTitle>시간별 보기</BoxTitle>
                   <DayBox>{day}</DayBox>
@@ -649,15 +751,15 @@ function Index({match}){
                </Box>
             </tr>
             <tr>
-               <Info title={"참여 점수"} day={day} data={score} rate={scoreRate} rateInfo={rateInfo}/>
-               <Info title={"출석 비율"} day={day} data={attendance} rate={attendanceRate} rateInfo={rateInfo}/>
+               <Info title={"참여 점수"} day={day} data={score} rate={scoreRate} rateInfo={rateInfo} isStudentAttend={true}/>
+               <Info title={"출석 비율"} day={day} data={attendance} rate={attendanceRate} rateInfo={rateInfo} isAllStudent={isAllStudent} isStudentAttend={isAllStudent}/>
             </tr>
             <tr>
-               <ShowStudentScoreList day={day}/>
+               <ShowStudentScoreList day={day} scoreList={studentList} isProfessor={isProfessor} userId={user._id} dayIndex={dayIndex} scoreList={scoreList}/>
                <Box colSpan="2">
                   <BoxTitle>날짜별 보기</BoxTitle>
                   {/* <DayBox>{moment(day).format('M월 DD일')}</DayBox> */}
-                  <BarChart dayList={dayList} modeIndex={mode} goodList={barGood} badList={barBad} averList = {barAver}/>
+                  <BarChart dayList={dayList} modeIndex={mode} goodList={barGood} badList={barBad} averList={barAver} scoreList={isAllStudent? scoreList : studentList[studentIndex].activeScore} attendanceList={barAttend}/>
                </Box>
             </tr>
          </tbody>
@@ -669,19 +771,50 @@ function Index({match}){
       console.log("This is chart page");
       getData().then(()=>{
          if(dayList.length != 0){
-            setUnderstandingGood(understandingGoodList[dayIndex].length);
-            setUnderstandingBad(understandingBadList[dayIndex].length);
             setRate(0);
-             understandingGoodList.map((value, index) => {
-                barGood[index] = value.length;
-                barAver[index] = value.length - understandingBadList[index].length;
-             })
-             understandingBadList.map((value, index) => {
-                barBad[index] = value.length;
-             })
             setDefaultStudentData(dayList, studentList);
             setLineData();
-            setisLoading(true);
+            if(isProfessor){
+               setUnderstandingGood(understandingGoodList[dayIndex].length);
+               setUnderstandingBad(understandingBadList[dayIndex].length);
+               let attend = ((attendanceList[dayIndex].attend / studentList.length) * 100).toFixed(0);
+               setAttendance(`${attend}% (${attendanceList[dayIndex].attend}/${studentList.length})`);
+               setScore(scoreList[dayIndex])
+               understandingGoodList.map((value, index) => {
+                  barGood[index] = value.length;
+                  barAver[index] = value.length - understandingBadList[index].length;
+               })
+               understandingBadList.map((value, index) => {
+                  barBad[index] = value.length;
+               })
+               attendanceList.map((value, index)=>{
+                  barAttend.attend.push(value.attend);
+                  barAttend.late.push(value.late);
+                  barAttend.absence.push(value.absence);
+               })
+               setisLoading(true);
+            }else{
+               setUnderstandingGood(studentList[studentIndex].good[dayIndex].length);
+               setUnderstandingBad(studentList[studentIndex].bad[dayIndex].length);
+               switch (studentList[studentIndex].attendance[dayIndex]) {
+                  case "O":
+                     setAttendance("출석");
+                     break;
+                  case "X":
+                     setAttendance("지각");
+                     break;
+                  default:
+                     setAttendance("결석");
+                     break;
+               }
+               setScore(studentList[studentIndex].activeScore[dayIndex]);
+               dayList.map((day, index) => {
+                  barGood[index] = studentList[studentIndex].good[index].length;
+                  barBad[index] = studentList[studentIndex].bad[index].length;
+                  barAver[index] = studentList[studentIndex].good[index].length - studentList[studentIndex].bad[index].length
+               })
+               setisLoading(true);
+            }
          }
       })
       
@@ -691,7 +824,7 @@ function Index({match}){
       <Container>
          <Title>Lecture Chart</Title>
          <div style={{width: "100%", display: "block"}}>
-            <SubTitle>내 강의 / <a style={{color: "inherit"}} href={`/main/${subjectId}/${subjectName}/home`}>{subjectName}</a> / 학습 분석 차트</SubTitle>
+            <SubTitle>내 강의 / <a style={{color: "black"}} href={`/main/${subjectId}/${subjectName}/home`}>{subjectName}</a> / 학습 분석 차트</SubTitle>
             {isLoading && selectOption()}
          </div>
          <hr style={{width: "100%", margin: "30px 0px", marginTop: "50px", display:"block", borderColor: '#ffffff'}}/>

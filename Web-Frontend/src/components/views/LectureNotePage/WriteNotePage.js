@@ -6,13 +6,11 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const Container = styled.div`
 width : 97%;
-height : 100%;
-display : inline-block;
-margin-left: 20px;
-margin-top: 10px;
-//overflow-y: auto;
-//align-items : center;
-//justify-content : center;
+display: block;
+justify-content: center;
+align-items: center;
+margin: 10px auto;
+padding: 0 20px;
 `
 const Title = styled.div`
 font-size : 30px;
@@ -58,15 +56,28 @@ function Index({match}){
     }
 
     const getFile = (e) => {
-        console.log(e.target)
-        if(e.target.files !== null){
-            const fileData = new FormData();
-            
-        }
-        const result = e.target.files[0];
-        console.log(result);
-        // setFileURL(result);
-        fileURL.append(result);
+        console.log(e.target);
+        const formData = new FormData();
+        formData.append("file", e.target.files[0]);
+        formData.append("fileName", e.target.files[0].name);
+
+        const url = '/api/file/upload';
+        axios.post(url, formData)
+        .then((response) => {
+            console.log(response.data)
+            setFileURL(response.data);
+            /* axios.get('/api/file/read/' + response.data.fileId)
+            .then((res)=>{
+                console.log(res.data)
+            })
+            .catch((error)=>{
+                console.log(error);  
+            }) */
+
+        })
+        .catch((error)=>{
+            console.log(error);  
+        })
     }
 
     const submitBtn = () => {
@@ -101,6 +112,13 @@ function Index({match}){
                 <CKEditor editor={ ClassicEditor } data=""
                 onReady={ editor => {
                     console.log( 'Editor is ready to use!', editor );
+                    editor.editing.view.change((writer) => {
+                        writer.setStyle(
+                            "height",
+                            "300px",
+                            editor.editing.view.document.getRoot()
+                        )
+                    })
                 } }
                 onChange={ ( event, editor ) => {
                     const data = editor.getData();
@@ -113,7 +131,7 @@ function Index({match}){
                 onFocus={ ( event, editor ) => {
                     console.log( 'Focus.', editor );
                 } }/>
-                <input type="file" onChange={getFile}/>
+                <input type="file" onChange={getFile} style={{margin: "10px 0"}}/>
             </form>
         </Container>
     );

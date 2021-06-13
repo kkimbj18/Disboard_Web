@@ -6,20 +6,27 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const Container = styled.div`
-width: 100%;
+width : 97%;
 display: block;
 justify-content: center;
 align-items: center;
+margin: 10px auto;
+padding: 0 20px;
 `
 const Title = styled.div`
-font-size: 30px;
-font-style: italic;
-text-alignment: left;
+font-size : 30px;
+border-bottom : 1px solid #F7F9FC;
+height : 40px;
+line-height : 40px;
+font-style : italic;
 `
 const SubTitle = styled.div`
-font-size: 16px;
-display: inline-block;
-color: ${props => props.theme.color.font_dark_gray};
+float: left;
+margin-top: 3px;
+margin-right: 20px;
+color : #8b8b8b;
+font-size : 13px;
+font-weight: 400;
 `
 const SubmitBtn = styled.button`
 display: inline-block;
@@ -95,10 +102,10 @@ function Index({match}){
             <Container>
                 <Title>Notice</Title>
                     <div style={{width: "100%", display: "block"}}>
-                        <SubTitle>내 강의 / <a style={{color: "inherit"}} href={`/main/${subject.id}/${subject.name}/home`}>{subject.name}</a> / <a style={{color: "inherit"}} href={`/main/${subject.id}/${subject.name}/notice`}>공지사항</a> / 공지 사항 수정</SubTitle>
+                        <SubTitle>내 강의 / <a style={{color: "black"}} href={`/main/${subject.id}/${subject.name}/home`}>{subject.name}</a> / <a style={{color: "black"}} href={`/main/${subject.id}/${subject.name}/notice`}>공지사항</a> / 공지 사항 수정</SubTitle>
                         <SubmitBtn onClick={submitBtn} style={{display: "inline-block", float:"right"}}>저장하기</SubmitBtn>
                     </div>
-                    <hr style={{width: "100%", margin: "5px auto", marginTop: "15px", display: "block"}}/>
+                    <hr style={{width: "100%", margin: "30px 0px", marginTop: "50px", display:"block", borderColor: '#ffffff'}}/>
                     <TitleInput type="text" name="title" onChange={getTitle} placeholder={title}/>
                     <CKEditor
                     editor={ ClassicEditor }
@@ -106,6 +113,13 @@ function Index({match}){
                     onReady={ editor => {
                         // You can store the "editor" and use when it is needed.
                         console.log( 'Editor is ready to use!', editor );
+                        editor.editing.view.change((writer) => {
+                            writer.setStyle(
+                                "height",
+                                "300px",
+                                editor.editing.view.document.getRoot()
+                            )
+                        })
                     } }
                     onChange={ ( event, editor ) => {
                         const data = editor.getData();

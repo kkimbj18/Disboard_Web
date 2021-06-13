@@ -4,12 +4,12 @@ import styled, {css} from 'styled-components';
 
 const Container = styled.div`
 width : 97%;
-// height : 100%;
-// display : inline-block;
-margin : 0px 20px;
-margin-top : 10px;
-// align-items : center;
-// justify-content : center;
+height : 100%;
+display: block;
+justify-content: center;
+align-items: center;
+margin: 10px auto;
+padding: 0 20px;
 `
 const Title = styled.div`
 font-size : 30px;
@@ -19,7 +19,7 @@ line-height : 40px;
 font-style : italic;
 `
 const SubTitle = styled.div`
-display: block;
+float: left;
 margin-top: 3px;
 margin-right: 20px;
 color : #8b8b8b;
@@ -36,7 +36,7 @@ background-size: cover;
 display : inline-block;
 `
 const InfoTable = styled.table`
-width: 100%;
+width: 80%;
 margin: 0px auto;
 border-collapse: collapse;
 // border-spacing: 5px;
@@ -50,6 +50,7 @@ border-collapse: collapse;
 `
 const Box = css`
 padding: 10px;
+height: 50px;
 border: 1px soild ${props => props.theme.color.blue};
 `
 const GrayBox = styled.td`
@@ -114,8 +115,8 @@ function Index(){
     return(
         <Container>
             <Title>Mypage</Title>
-            <SubTitle>계정 / 내 정보</SubTitle>
-            <hr style={{width: "100%", margin: "10px auto", display: "block", borderColor: '#ffffff'}}/>
+            <div style={{width: "100%", display: "block"}}><SubTitle>계정 / 내 정보</SubTitle></div>
+            <hr style={{width: "100%", margin: "30px 0px", marginTop: "50px",display:"block", borderColor: '#ffffff'}}/>
             {isLoading && displayMyInfo()}
         </Container>
     )

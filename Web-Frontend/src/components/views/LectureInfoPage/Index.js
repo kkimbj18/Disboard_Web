@@ -12,10 +12,11 @@ import UpdatePage from './UpdateLectureInfo';
 const Container = styled.div`
 width : 97%;
 height : 100%;
-display : inline-block;
-//overflow-y: auto;
-//align-items : center;
-//justify-content : center;
+display: block;
+justify-content: center;
+align-items: center;
+margin: 10px auto;
+padding: 0 20px;
 `
 const Title = styled.div`
 font-size : 30px;
@@ -43,12 +44,12 @@ color: white;
 border-radius: 5px;
 `
 const GrayBox = styled.td`
-padding: 5px;
+padding: 10px;
 border: 1px soild ${props => props.theme.color.blue};
 background: ${props => props.theme.color.light_gray};
 `
 const WhiteBox = styled.td`
-padding: 5px;
+padding: 10px;
 border: 1px soild ${props => props.theme.color.blue};
 background: white;
 `
@@ -77,7 +78,7 @@ function Index({match}){
 
     const display = () => {
         return(
-            <Container  style={{marginLeft: "20px", marginTop: '10px'}}>
+            <Container>
             <Title>Lecture Info</Title>
             <div style={{width: "100%", display: "block"}}>
                 <SubTitle>내 강의 / <a style={{color: "black"}} href={`/main/${subjectId}/${subjectInfo.name}/home`}>{subjectInfo.name}</a> / 강의 정보</SubTitle>                
@@ -109,7 +110,7 @@ function Index({match}){
                     <tr>
                         <GrayBox>강의 계획서</GrayBox>
                         <WhiteBox>
-                            {subjectInfo.introURL}
+                            <a href={subjectInfo.introURL}>{subjectInfo.name}강의 계획서</a>
                         </WhiteBox>
                     </tr>
                     </tbody>
