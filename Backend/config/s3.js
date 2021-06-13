@@ -19,7 +19,7 @@ const readParams = {
 }
 
 s3.storage = storage;
-s3.params = uploadParams;
+s3.uploadParams = uploadParams;
 s3.readParams = readParams;
 
 module.exports = s3;
