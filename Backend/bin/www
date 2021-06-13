@@ -62,7 +62,8 @@ io.on('connection', (socket)=>{
     io.to(socket.code).emit('newUser', {
       type: 'connect', 
       name: 'SERVER', 
-      message: data
+      message: data,
+      tmp_data : data
     });
   });
 
@@ -174,7 +175,8 @@ io.on('connection', (socket)=>{
     socket.broadcast.to(socket.code).emit('disConnected', {
       type: 'disconnect',
       name: 'SERVER',
-      message: data
+      message: data,
+      data : data
     })
 
     socket.leave(socket.code);

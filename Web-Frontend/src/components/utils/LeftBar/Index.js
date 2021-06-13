@@ -216,8 +216,8 @@ function Index() {
                     {subjectList.map((subject) => 
                     <SubMenu>{'# '}{subject.name}
                         <SubjectMenu>
-                            {isStudent && <li style={{marginBottom:"12px"}}><SubjectMenuCom href={`/class/st/${subject._id}`}>실시간 강의 참여</SubjectMenuCom></li>}
-                            {isProfessor && <li style={{marginBottom:"12px"}}><SubjectMenuCom href={`/class/pf/${subject._id}`}>실시간 강의 시작</SubjectMenuCom></li>}
+                            {isStudent && <li style={{marginBottom:"12px"}}><SubjectMenuCom href={`/class/st/${subject._id}/${subject.code}`}>실시간 강의 참여</SubjectMenuCom></li>}
+                            {isProfessor && <li style={{marginBottom:"12px"}}><SubjectMenuCom href={`/class/pf/${subject._id}/${subject.code}`}>실시간 강의 시작</SubjectMenuCom></li>}
                             <li style={{marginBottom:"12px"}}><SubjectMenuCom href={`/main/${subject._id}/info`}>강의 정보</SubjectMenuCom></li>
                             <li style={{marginBottom:"12px"}}><SubjectMenuCom href={`/main/${subject._id}/${subject.name}/notice`}>공지 사항</SubjectMenuCom></li>
                             <li style={{marginBottom:"12px"}}><SubjectMenuCom href={`/main/${subject._id}/${subject.name}/lectureNote`}>강의 노트</SubjectMenuCom></li>

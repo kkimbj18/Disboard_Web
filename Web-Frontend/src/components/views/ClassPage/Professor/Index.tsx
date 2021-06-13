@@ -245,6 +245,7 @@ interface TestProps {
   match: {
     params: {
       subject_id: string
+      subject_code: string
     }
   }
 }
@@ -255,7 +256,7 @@ interface TestProps {
 console.log(socket); */
 
 const socket = socketio('https://disboard13.kro.kr', {
-  transports : ['polling'],
+  transports: ['polling'],
   withCredentials: true,
   path: '/socket'
 });
@@ -469,18 +470,18 @@ function Index(props: TestProps) {
     })
     socket.emit('user', {
       name: user ? user.name : "default",
-      code: "1234",
-      email : user ? user.email : "default"
+      code: props.match.params.subject_code,
+      email: user ? user.email : "default"
     });
     socket.on('newUser', (data: any) => {
       console.log(data);
     });
-    socket.on('disConnected', (data:any)=>{
+    socket.on('disConnected', (data: any) => {
       console.log(data);
     })
-/*     setTimeout(() => {
-      StartAnim();
-    }, 5000); */
+    /*     setTimeout(() => {
+          StartAnim();
+        }, 5000); */
   }, [])
 
   if (isLoading) return <Loading type="spin" color='orange'></Loading>
@@ -508,15 +509,15 @@ function Index(props: TestProps) {
             {RenderMenuBtns()}
           </ScreenMenuCnt>
           {RenderCanvas()}
-          <MediaController client={client} />
+          <MediaController socket = {socket} client={client} />
         </ZoomScreen>
       </LeftCnt>
       <RightCnt>
         <Active1Cnt>
           <Active1ContentCnt>
-            <ContentWrapper className="content1 active" id="content1"><Participant socket = {socket} /></ContentWrapper>
-            <ContentWrapper className="content1" id="content2"><Chat socket={socket} user = {user.name}/></ContentWrapper>
-            <ContentWrapper className="content1" id="content3"><Question lecture_id = {lecture_id} socket={socket} /></ContentWrapper>
+            <ContentWrapper className="content1 active" id="content1"><Participant socket={socket} /></ContentWrapper>
+            <ContentWrapper className="content1" id="content2"><Chat socket={socket} user={user.name} /></ContentWrapper>
+            <ContentWrapper className="content1" id="content3"><Question lecture_id={lecture_id} socket={socket} /></ContentWrapper>
           </Active1ContentCnt>
           <Active1Menu>
             <ParticipantsBtn className="Active1Btn active" id="1" onClick={Active1BtnHandler}>{lecture_id}</ParticipantsBtn>

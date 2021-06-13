@@ -222,6 +222,7 @@ interface TestProps {
   match: {
     params: {
       subject_id: string,
+      subject_code : string
     }
   }
 }
@@ -442,7 +443,7 @@ function Index(props: TestProps) {
   useEffect(() => {
     socket.emit('user', {
       name: user ? user.name : "default",
-      code: '1234',
+      code: props.match.params.subject_code,
       email: user ? user.email : "default"
     });
         socket.on('newUser', (data: any) => {
@@ -459,7 +460,7 @@ function Index(props: TestProps) {
             {RenderMenuBtns()}
           </ScreenMenuCnt>
           {RenderCanvas()}
-          <MediaController client={client} />
+          <MediaController socket = {socket} client={client} />
         </ZoomScreen>
       </LeftCnt>
       <RightCnt>
