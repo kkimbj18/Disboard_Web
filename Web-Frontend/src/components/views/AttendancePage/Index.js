@@ -455,7 +455,7 @@ function Index({match}) {
                 
             </div> : 
             <div style={{width: "100%", display: "block"}}>
-                <SubTitle>내 강의 / <a style={{color: "inherit"}} href={`/main/${subjectId}/${subjectName}/home`}>{subjectName}</a> / 출석</SubTitle>
+                <SubTitle>내 강의 / <a style={{color: "black"}} href={`/main/${subjectId}/${subjectName}/home`}>{subjectName}</a> / 출석</SubTitle>
                 <div style={{display: "inline-block", float:"right"}}>
                     {isProfessor && <div>
                         <SelectCust style={{border: "1px solid #e0e0e0", background: "#e0e0e0"}} onChange={onChangeStudent}>
@@ -527,16 +527,9 @@ function Index({match}) {
 
     useEffect(() => {
         getData().then(()=>{
-            console.log(isAll)
-            console.log(subjectId)
-            console.log(studentList)
-            console.log(studentIndex)
             if(!isEmpty){ExtractExcel(0);}
             if(!isProfessor){
-                studentList.map((student, index)=>{
-                    if(student.id === user._id){onChangeCount(0, index)}
-
-                })
+                studentList[subjectIndex].map((student, index)=>{if(student.id === user._id){onChangeCount(0, index)}})
             }
             setisLoading(true);
         })
