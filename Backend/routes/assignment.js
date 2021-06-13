@@ -107,7 +107,7 @@ router.get('/get/:id', auth, (req, res)=>{
                     }],
                     checked: false,
                     submission: [{
-                        user: 0,
+                        user: { $ref: '#/definitions/user' },
                         file: 1,
                         content: '',
                         date: '2021-05-06T20:00:00.000Z',
@@ -129,6 +129,12 @@ router.get('/get/:id', auth, (req, res)=>{
         } */
     Assignment.findOne({ _id: req.params.id }).populate('subject').populate({
         path: 'comments',
+        populate: {
+            path: 'user',
+            model: 'user'
+        }
+    }).populate({
+        path: 'submission',
         populate: {
             path: 'user',
             model: 'user'
