@@ -65,14 +65,14 @@ function Index({match}){
         axios.post(url, formData)
         .then((response) => {
             console.log(response.data)
-            setFileURL(response.data);
-            /* axios.get('/api/file/read/' + response.data.fileId)
+            // setFileURL(response.data);
+            axios.get('/api/file/read/' + response.data.fileId)
             .then((res)=>{
-                console.log(res.data)
+                setFileURL(res.data.fileURL);
             })
             .catch((error)=>{
                 console.log(error);  
-            }) */
+            })
 
         })
         .catch((error)=>{

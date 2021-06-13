@@ -114,7 +114,7 @@ function StudentSubmit({studentList, changeScore, score}){
                     <tr style={{borderRadius: "5px", boxShadow: "0px 2px 2px 1px #eeeeee", cursor: "pointer"}}>
                         <td style={{padding: "10px 0", backgroundColor: "white", borderRadius: "5px 0 0 5px"}}>{student.name}</td>
                         <td style={{padding: "10px 0", backgroundColor: "white"}}>{student.answer}</td>
-                        <td style={{padding: "10px 0", backgroundColor: "white"}}><a href={student.file.fileURL}>{student.file.originalName}</a></td>
+                        <td style={{padding: "10px 0", backgroundColor: "white"}}><a href={student.fileURL}>{student.name}</a></td>
                         <td style={{padding: "10px 0", backgroundColor: "white"}}>
                             <div style={{display: "flex", justifyContent: "space-between", margin: "0", padding: "0 5px"}}>
                                 <div><ScoreInput onChange={onChangeScore} placeholder={student.score}/><span style={{width:"20%"}}> / {score} </span></div>

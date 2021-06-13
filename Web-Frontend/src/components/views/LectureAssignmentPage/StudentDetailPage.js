@@ -136,13 +136,13 @@ function Index({match}) {
         .then((response) => {
             console.log(response.data)
             setStudentFile(response.data);
-            /* axios.get('/api/file/read/' + response.data.fileId)
+            axios.get('/api/file/read/' + response.data.fileId)
             .then((res)=>{
-                console.log(res.data)
+                setStudentFile(res.data.fileURL)
             })
             .catch((error)=>{
                 console.log(error);  
-            }) */
+            })
 
         })
         .catch((error)=>{

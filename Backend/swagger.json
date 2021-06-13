@@ -158,9 +158,6 @@
               }
             }
           },
-          "400": {
-            "description": "Bad Request"
-          },
           "409": {
             "description": "해당 고유값을 지니는 유저가 이미 존재할 경우",
             "schema": {
@@ -214,18 +211,6 @@
             "schema": {
               "$ref": "#/definitions/authFailed"
             }
-          }
-        }
-      }
-    },
-    "/": {
-      "get": {
-        "tags": [],
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
           }
         }
       }
@@ -4956,70 +4941,103 @@
                   "type": "boolean",
                   "example": true
                 },
-                "assignments": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "number",
-                        "example": 0
-                      },
-                      "subject": {
-                        "$ref": "#/definitions/subject"
-                      },
-                      "title": {
-                        "type": "string",
-                        "example": "인공지능 과제 #2"
-                      },
-                      "content": {
-                        "type": "string",
-                        "example": "ㅋㅋ"
-                      },
-                      "score": {
-                        "type": "number",
-                        "example": 10
-                      },
-                      "date": {
-                        "type": "string",
-                        "example": "2021-05-05T15:38:19.424Z"
-                      },
-                      "deadline": {
-                        "type": "string",
-                        "example": "2021-05-08T00:00:00.000Z"
-                      },
-                      "comments": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "user": {
-                              "$ref": "#/definitions/user"
-                            },
-                            "content": {
-                              "type": "string",
-                              "example": "진심 몇 일째냐고~~~~~"
-                            },
-                            "date": {
-                              "type": "string",
-                              "example": "2021-05-05T15:40:19.424Z"
-                            }
+                "assignment": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "subject": {
+                      "$ref": "#/definitions/subject"
+                    },
+                    "title": {
+                      "type": "string",
+                      "example": "인지과제 #2"
+                    },
+                    "content": {
+                      "type": "string",
+                      "example": "ㅋㅋ"
+                    },
+                    "file": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "score": {
+                      "type": "number",
+                      "example": 10
+                    },
+                    "date": {
+                      "type": "string",
+                      "example": "2021-05-05T15:38:19.424Z"
+                    },
+                    "deadline": {
+                      "type": "string",
+                      "example": "2021-05-08T00:00:00.000Z"
+                    },
+                    "comments": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user": {
+                            "$ref": "#/definitions/user"
+                          },
+                          "content": {
+                            "type": "string",
+                            "example": "ㅋㅋ"
+                          },
+                          "date": {
+                            "type": "string",
+                            "example": "2021-05-05T15:40:19.424Z"
                           }
                         }
-                      },
-                      "emotions": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "user": {
-                              "type": "number",
-                              "example": 0
-                            },
-                            "emotion": {
-                              "type": "string",
-                              "example": "angry"
-                            }
+                      }
+                    },
+                    "emotions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "emotion": {
+                            "type": "string",
+                            "example": "smile"
+                          }
+                        }
+                      }
+                    },
+                    "checked": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "submission": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user": {
+                            "type": "number",
+                            "example": 0
+                          },
+                          "file": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "content": {
+                            "type": "string",
+                            "example": ""
+                          },
+                          "date": {
+                            "type": "string",
+                            "example": "2021-05-06T20:00:00.000Z"
+                          },
+                          "score": {
+                            "type": "number",
+                            "example": 0
                           }
                         }
                       }
@@ -5086,6 +5104,14 @@
                       "type": "string",
                       "example": "ㅋㅋ"
                     },
+                    "file": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "score": {
+                      "type": "number",
+                      "example": 10
+                    },
                     "date": {
                       "type": "string",
                       "example": "2021-05-05T15:38:19.424Z"
@@ -5125,6 +5151,37 @@
                           "emotion": {
                             "type": "string",
                             "example": "smile"
+                          }
+                        }
+                      }
+                    },
+                    "checked": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "submission": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user": {
+                            "$ref": "#/definitions/user"
+                          },
+                          "file": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "content": {
+                            "type": "string",
+                            "example": ""
+                          },
+                          "date": {
+                            "type": "string",
+                            "example": "2021-05-06T20:00:00.000Z"
+                          },
+                          "score": {
+                            "type": "number",
+                            "example": 0
                           }
                         }
                       }
@@ -5667,7 +5724,21 @@
           "File"
         ],
         "description": "",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fileName": {
+                  "type": "string",
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created"
@@ -5692,6 +5763,23 @@
             "type": "string"
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/file/get/all": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "description": "",
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK"
