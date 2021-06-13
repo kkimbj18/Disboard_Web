@@ -176,7 +176,7 @@ io.on('connection', (socket)=>{
       type: 'disconnect',
       name: 'SERVER',
       message: data,
-      data : data
+      data : socket.email
     })
 
     socket.leave(socket.code);

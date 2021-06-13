@@ -57,11 +57,13 @@ function Index(props : parProps) {
     useEffect(() => {
         props.socket.on('newUser', (data:any)=>{
             console.log('newUser', data);
-            addPar(data.message.name, "-", "-", data.message.email);
+            let email = data.message.email;
+            console.log(data.message.email.split("@")[0]);
+            addPar(data.message.name, "-", "-", data.message.email.split("@")[0]);
         })
         props.socket.on('disConnected', (data:any)=>{
             console.log("disconneected", data);
-            const toRemove =  document.querySelectorAll(`.participantsclass#${data.message.email}`) as NodeListOf<HTMLElement>;
+            const toRemove =  document.querySelectorAll(`.participantsclass#${data.split("@")[0]}`) as NodeListOf<HTMLElement>;
             console.log(toRemove);
             toRemove.forEach((elm : HTMLElement)=>{
                 console.log(elm);

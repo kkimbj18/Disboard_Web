@@ -229,6 +229,7 @@ function Index(props) {
         socket.disconnect({
             test : 'test'
         });
+        window.location.href = '/main';
     }
 
     useEffect(() => {
