@@ -139,13 +139,13 @@ function Index({match}) {
             console.log(response.data)
             setFileURL(response.data);
             // setFileURL(response.data.fileURL)
-            /* axios.get('/api/file/read/' + response.data.fileId)
+            axios.get('/api/file/read/' + response.data.fileId)
             .then((res)=>{
-                console.log(res.data)
+                setFileURL(res.data.fileURL)
             })
             .catch((error)=>{
                 console.log(error);  
-            }) */
+            })
 
         })
         .catch((error)=>{
