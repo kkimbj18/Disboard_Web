@@ -73,7 +73,7 @@ function Index({match}) {
     const subjectName = match.params.name;
     const problemId = match.params.id;
 
-    const [problem, setProblem] = useState({id: 3, title: "과제 제목", score: 30, content: "내용", fileURL: "", startDate: "2021-05-01T00:00:00", endDate: "2021-05-15T23:59:59", checked: true, studentList: [2, 5, 3, 6, 7, 8, 9], comments: []});
+    const [problem, setProblem] = useState();
     const [file, setFile] = useState();
     const [beforeAnswer, setBeforeAnswer] = useState({answer: "", fileURL: "", score: 0});
     const [studentAnswer, setStudentAnswer] = useState("");
@@ -198,7 +198,7 @@ function Index({match}) {
                     {ReactHtmlParser(problem.content)}
                 </ProblemContent>
                 <hr style={{width: "100%", margin: "10px 0px", display:"block", borderColor: '#ffffff'}}/>
-                <ShowResponse commentList={problem.comments} emotionList={problem.emotions} postId={problem.id} subjectId={subjectId} subjectName={subjectName} userId={user._id} type={"assignment"}/>
+                <ShowResponse commentList={problem.comments} emotionList={problem.emotions} postId={problemId} subjectId={subjectId} subjectName={subjectName} userId={user._id} type={"assignment"}/>
             </ProblemContainer>
             <ProblemContainer style={{margin: "10px auto"}}>
                 <div style={{display: "flex", justifyContent: "space-between"}}>
