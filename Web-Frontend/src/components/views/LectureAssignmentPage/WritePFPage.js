@@ -132,14 +132,14 @@ function Index({match}) {
         axios.post(url, formData)
         .then((response) => {
             console.log(response.data);
-            setFileURL(response.data);
-            // axios.get('/api/file/read/' + String(response.data.fileId))
-            // .then((res)=>{
-            //     console.log(res.data);
-            // })
-            // .catch((err)=>{
-            //     console.log(err)
-            // })
+            // setFileURL(response.data);
+            axios.get('/api/file/read/' + String(response.data.fileId))
+            .then((res)=>{
+                setFileURL(res.data.fileURL);
+            })
+            .catch((err)=>{
+                console.log(err)
+            })
         })
         .catch((error)=>{
             console.log(error);  

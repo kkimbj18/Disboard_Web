@@ -162,9 +162,9 @@ function Index({match}) {
                             <SmallBtn onClick={(e) => deleteNote(value.id)}>삭제</SmallBtn>
                     </NoteMenuBox>}
                         <NoteContent>
-                            {moment(value.date).format('YYYY년 M월 D일 HH:mm')}
-                            {ReactHtmlParser(value.content)}
+                            {moment(value.date).format('YYYY년 M월 D일 HH:mm')}<br/>
                             <a href={value.fileURL}>{value.title}</a>
+                            {ReactHtmlParser(value.content)}
                         </NoteContent>
                     </NoteBox>
                     <hr style={{width: "100%", margin: "10px 0px", display:"block"}}/>
