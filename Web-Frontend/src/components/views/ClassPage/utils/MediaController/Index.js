@@ -74,7 +74,15 @@ background-size : contain;
 background-repeat : no-repeat;
 `
 
+const LeaveBtn = styled.button`
+position : absolute;
+right :0;
+margin-right: 30px;
+color : red;
+`
+
 function Index(props) {
+    const socket = props.socket;
 
     const [isVideoOn, setisVideoOn] = useState(false);
     const [isAudioOn, setisAudioOn] = useState(false);
@@ -83,13 +91,13 @@ function Index(props) {
 
     useEffect(() => {
         setTimeout(() => {
-            try{
-            const client1 = props.client;
-            const stream = client1.getMediaStream();
-            const canvas1 = document.getElementById("canvas0");
-            const parent1 = canvas1.parentElement;
-            stream.updateVideoCanvasDimension(canvas1, parent1.offsetWidth, parent1.offsetHeight);
-            }catch(err){
+            try {
+                const client1 = props.client;
+                const stream = client1.getMediaStream();
+                const canvas1 = document.getElementById("canvas0");
+                const parent1 = canvas1.parentElement;
+                stream.updateVideoCanvasDimension(canvas1, parent1.offsetWidth, parent1.offsetHeight);
+            } catch (err) {
                 console.log(err);
             }
         }, 500);
@@ -217,6 +225,12 @@ function Index(props) {
         }
     }, [isVideoOn])
 
+    const getOut = () => {
+        socket.disconnect({
+            test : 'test'
+        });
+    }
+
     useEffect(() => {
         const screenCnt = document.getElementById("screenCnt");
         const screenText = document.getElementById("screenText");
@@ -230,7 +244,7 @@ function Index(props) {
     }, [isShareOn])
 
     return (
-        <MediaController id = "mediaController">
+        <MediaController id="mediaController">
             <AudioController onClick={audioToggleHandler}>
                 <AudioCnt id="audioCnt"></AudioCnt>
                 <span id="audioText" style={{ color: '#A8A8A8' }}>Mute</span>
@@ -243,6 +257,7 @@ function Index(props) {
                 <ScreenCnt id="screenCnt" />
                 <span id="screenText" style={{ color: '#A8A8A8' }}>Share</span>
             </ScreenController>
+            <LeaveBtn onClick={getOut}>나가기</LeaveBtn>
         </MediaController>
     )
 }

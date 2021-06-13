@@ -16,8 +16,8 @@ function Class() {
     return (
         <Router>
             <Switch>
-                <Route path="/class/pf/:subject_id/" component={PfClass} />
-                <Route path="/class/st/:subject_id/" component={StClass} />
+                <Route path="/class/pf/:subject_id/:subject_code" component={PfClass} />
+                <Route path="/class/st/:subject_id/:subject_code" component={StClass} />
             </Switch>
         </Router>
     )
