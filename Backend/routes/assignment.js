@@ -15,24 +15,33 @@ router.get('/get/subject/:id', auth, (req, res)=>{
             description: '해당 과목의 퀴즈들을 성공적으로 가져올 경우',
             schema: {
                 success: true,
-                assignments: [{
-                    id: 0,
+                assignment: {
+                    _id: 0,
                     subject: { $ref: "#/definitions/subject" },
-                    title: '인공지능 과제 #2',
+                    title: '인지과제 #2',
                     content: 'ㅋㅋ',
+                    file: 0,
                     score: 10,
                     date: '2021-05-05T15:38:19.424Z',
                     deadline: '2021-05-08T00:00:00.000Z',
                     comments: [{
                         user: { $ref: "#/definitions/user" },
-                        content: '진심 몇 일째냐고~~~~~',
+                        content: 'ㅋㅋ',
                         date: '2021-05-05T15:40:19.424Z'
                     }],
                     emotions: [{
+                        user: 1,
+                        emotion: 'smile'
+                    }],
+                    checked: false,
+                    submission: [{
                         user: 0,
-                        emotion: 'angry'
+                        file: 1,
+                        content: '',
+                        date: '2021-05-06T20:00:00.000Z',
+                        score: 0
                     }]
-                }]
+                }
             }
         }
         #swagger.responses[401] = {
@@ -83,6 +92,8 @@ router.get('/get/:id', auth, (req, res)=>{
                     subject: { $ref: "#/definitions/subject" },
                     title: '인지과제 #2',
                     content: 'ㅋㅋ',
+                    file: 0,
+                    score: 10,
                     date: '2021-05-05T15:38:19.424Z',
                     deadline: '2021-05-08T00:00:00.000Z',
                     comments: [{
@@ -93,6 +104,14 @@ router.get('/get/:id', auth, (req, res)=>{
                     emotions: [{
                         user: 1,
                         emotion: 'smile'
+                    }],
+                    checked: false,
+                    submission: [{
+                        user: 0,
+                        file: 1,
+                        content: '',
+                        date: '2021-05-06T20:00:00.000Z',
+                        score: 0
                     }]
                 }
             }
