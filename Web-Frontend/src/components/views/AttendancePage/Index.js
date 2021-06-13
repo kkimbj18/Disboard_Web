@@ -508,7 +508,7 @@ function Index({match}) {
                 <tr>
                     <Box style={{width: "100%", marginLeft: "5px"}} colSpan="2">
                         <BoxTitle>출결 상태</BoxTitle>
-                        {isProfessor ? <div>
+                        {isProfessor && (studentList.length !== 0)? <div>
                             {isAllStudent ? <ShowAllAttendance attendList={allAttend[subjectIndex]}/> : 
                             <div>
                                 <BoxText style={{display: "block", float: 'right'}}>출석 <NumText style={{color: "#0E7ED1"}}> {count.attend[0]}</NumText>회 / 지각 <NumText style={{color: "#61C679"}}> {count.late[0]}</NumText>회 / 결석 <NumText style={{color: "#E24C4B"}}> {count.absence[0]}</NumText>회</BoxText>

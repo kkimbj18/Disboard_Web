@@ -112,12 +112,13 @@ function Index({match}) {
 
     const stateDisplay = (startDate, endDate, studentList) => {
         const today = moment();
+        const submit = studentList ? studentList.length : 0;
         if(today.isBefore(startDate)){
             return(<StateBox style={{backgroundColor: "#BFBFBF"}}>0 / {studentNum}</StateBox>);
         }else if(today.isBefore(endDate)){
-            return(<StateBox style={{backgroundColor: "#ffcc36"}}>{studentList.length} / {studentNum}</StateBox>);
+            return(<StateBox style={{backgroundColor: "#ffcc36"}}>{submit} / {studentNum}</StateBox>);
         }else{
-            return(<StateBox style={{backgroundColor: "#E24C4B"}}>{studentList.length} / {studentNum}</StateBox>);
+            return(<StateBox style={{backgroundColor: "#E24C4B"}}>{submit} / {studentNum}</StateBox>);
         }
 
     }
@@ -143,13 +144,13 @@ function Index({match}) {
                     </thead>
                     <tbody>
                         {assignmentList.map((value, index) => 
-                        <tr style={{borderRadius: "5px", boxShadow: "0px 2px 2px 1px #eeeeee", cursor: "pointer"}} onClick={(e) => goDetail(value._id, e)}>
+                        <tr style={{borderRadius: "5px", boxShadow: "0px 2px 2px 1px #eeeeee", cursor: "pointer"}} onClick={(e) => goDetail(value.id, e)}>
                             <td style={{padding: "10px 0", backgroundColor: "white", borderRadius: "5px 0 0 5px"}}>
                                 <div style={{fontSize: "20px", fontWeight: "700", color: "#3E3E3E", display: "block"}}>{value.title}</div>
                                 {/* <div style={{fontSize: "12px", color: "#949494", height: "18.4px"}}>{value.content}</div> */}
                             </td>
                             <td style={{padding: "10px 0", backgroundColor: "white"}}>{moment(value.date).format('M월 D일 HH:mm')} - {moment(value.deadline).format('M월 D일 HH:mm')}</td>
-                            <td style={{padding: "10px 0", backgroundColor: "white", alignItems: "center", alignContent: "center"}}>{stateDisplay(moment(value.date), moment(value.deadline), value.students)}</td>
+                            <td style={{padding: "10px 0", backgroundColor: "white", alignItems: "center", alignContent: "center"}}>{stateDisplay(moment(value.date), moment(value.deadline), value.submission)}</td>
                             <td style={{padding: "10px 0", backgroundColor: "white", borderRadius: "0 5px 5px 0"}}>{value.checked ? "채점 완료" : "채점 전"}</td>
                         </tr>
                         )}

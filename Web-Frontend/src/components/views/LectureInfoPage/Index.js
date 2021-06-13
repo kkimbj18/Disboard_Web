@@ -107,12 +107,12 @@ function Index({match}){
                             {subjectInfo.days.map((value, index) => <li style={{listStyleType: "none"}}>{week[value-1]} {subjectInfo.start_time[index]} ~ {subjectInfo.end_time[index]}</li>)} 
                         </WhiteBox>
                     </tr>
-                    <tr>
+                    {/* <tr>
                         <GrayBox>강의 계획서</GrayBox>
                         <WhiteBox>
                             <a href={subjectInfo.introURL}>{subjectInfo.name}강의 계획서</a>
                         </WhiteBox>
-                    </tr>
+                    </tr> */}
                     </tbody>
                 </table>
             </Container>
