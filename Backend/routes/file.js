@@ -16,7 +16,7 @@ router.post('/upload', upload.single('file'), (req, res)=>{
     /*  #swagger.tags = ['File']
         #swagger.path = '/file/upload' */
     const storage = s3.storage;
-    const s3Params = s3.params;
+    const s3Params = s3.uploadParams;
 
     const file = req.file;
     
@@ -56,7 +56,7 @@ router.get('/read/:id', (req, res)=>{
     /*  #swagger.tags = ['File']
         #swagger.path = '/file/read/{id}' */
     const storage = s3.storage;
-    const s3Params = s3.params;
+    const s3Params = s3.readParams;
 
     File.findOne({ _id: req.params.id }, (err, file)=>{
         if (err) return res.status(500).json(err);
