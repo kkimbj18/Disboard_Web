@@ -251,7 +251,9 @@ function Index({match}) {
                             sub.push(lec);
                         })
                         allAttend.push(sub);
-                        studentList[subInd] = stdList;
+                        console.log(stdList)
+                        // studentList[subInd] = stdList;
+                        studentList.push(stdList)
                         if(subInd === (result.subjects.length - 1)){
                             resolve();
                         }
@@ -352,6 +354,9 @@ function Index({match}) {
         if(subjectList[change].lectures.length !== 0){ExtractExcel(change)};
         if(!isProfessor){
             setStudentIndex(studentList[change].find(isSubmit).index)
+        }else{
+            setStudentIndex("all");
+            setisAllStudent(true);
         }
     }
 
