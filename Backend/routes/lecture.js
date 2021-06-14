@@ -326,17 +326,15 @@ router.put('/join/:id', auth, (req, res)=>{
             isInProgress: false
         });
 
-        lecture.students.some((student, index, students)=>{
-            if (student.student === req.session._id) {
-                if (student.attendance === 'X')
-                    students[index].attendance = 'O';
-
-                return true;
-            }
+        student = lecture.students.find((student) => {
+            if (student.student === req.session._id) return true;
         });
-        console.log(lecture);
+        if (student.attendance === 'X') student.attendance = 'O';
+
         lecture.save((err, doc)=>{
             if (err) return res.status(500).json(err);
+
+            console.log(doc);
 
             res.status(200).json({
                 success: true,
