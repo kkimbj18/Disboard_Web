@@ -677,6 +677,8 @@ function Index({match}){
          if(isAllStudent){
             setUnderstandingGood(understandingGoodList[dayIndex].length);
             setUnderstandingBad(understandingBadList[dayIndex].length);
+            setScore(scoreList[dayIndex])
+            setAttendance(attendanceList[dayIndex])
             understandingGoodList.map((value, index) => {
                barGood[index] = value.length;
                barAver[index] = value.length - understandingBadList[index].length;
@@ -689,6 +691,8 @@ function Index({match}){
             console.log(studentList[studentIndex]);
             setUnderstandingGood(studentList[studentIndex].good[dayIndex].length);
             setUnderstandingBad(studentList[studentIndex].bad[dayIndex].length);
+            setScore(studentScoreList[studentIndex][dayIndex]);
+            setAttendance(studentAttendList[studentIndex][dayIndex])
             dayList.map((day, index) => {
                barGood[index] = studentList[studentIndex].good[index].length;
                barBad[index] = studentList[studentIndex].bad[index].length;
