@@ -49,14 +49,15 @@ router.post('/start', professorAuth, (req, res)=>{
                 }
             }
         } */
-    Subject.findOne({ _id: req.body.subjectId }, (err, subject)=>{
+    Subject.findOne({ _id: req.body.subjectId }).populate('students').exec((err, subject)=>{
         if (err) return res.status(500).json(err);
 
         const today = moment();
 
-        const studentsForm = subject.students.map((element)=>{
+        const studentsForm = subject.students.map((element) => {
+            console.log(element);
             return {
-                student: element._id,
+                student: Number(element._id),
                 attendance: 'X',
                 activeScore: 0
             }
@@ -327,7 +328,7 @@ router.put('/join/:id', auth, (req, res)=>{
         });
 
         const student = await lecture.students.find((student) => {
-            if (student.student === req.session._id) return true;
+            if (student.student._id === req.session._id) return true;
         });
         if (student.attendance === 'X') student.attendance = 'O';
 
