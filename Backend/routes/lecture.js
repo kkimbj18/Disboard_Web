@@ -334,6 +334,7 @@ router.put('/join/:id', auth, (req, res)=>{
                 return true;
             }
         });
+        console.log(lecture);
         lecture.save((err, doc)=>{
             if (err) return res.status(500).json(err);
 
