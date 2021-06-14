@@ -57,7 +57,8 @@ router.post('/start', professorAuth, (req, res)=>{
         const studentsForm = subject.students.map((element)=>{
             return {
                 student: element,
-                attendance: 'X'
+                attendance: 'X',
+                activeScore = 0
             }
         });
 
@@ -321,7 +322,6 @@ router.put('/join/:id', auth, (req, res)=>{
 
         lecture.students.some((student)=>{
             if (student.student === req.session._id) {
-                student.activeScore = 0;
                 if (student.attendance === 'X')
                     student.attendance = 'O';
 
