@@ -168,7 +168,7 @@ function Index({match}) {
 
     const [isAllStudent, setisAllStudent] = useState(isProfessor);
     const [isLoading, setisLoading] = useState(false);
-    const [isEmpty, setisEmpty] = useState(false);
+    const [isEmpty, setisEmpty] = useState(true);
     
     const [allAttend, setAllAttend] = useState([]);
     const [studentList, setStudentList] = useState([]);
@@ -348,7 +348,8 @@ function Index({match}) {
     const onChangeSubject = (e) => {
         const change = e.target.value;
         setSubjectIndex(change);
-        ExtractExcel(change);
+        setSubjectName(subjectList[change].name);
+        if(subjectList[change].lectures.length !== 0){ExtractExcel(change)};
         if(!isProfessor){
             setStudentIndex(studentList[change].find(isSubmit).index)
         }
