@@ -309,7 +309,13 @@ router.put('/join/:id', auth, (req, res)=>{
             path: 'professor',
             model: 'user'
         }
-    }).populate('students').populate('questions').populate('subtitle').exec((err, lecture)=>{
+    }).populate({
+        path: 'students',
+        populate: {
+            path: 'student',
+            model: 'user'
+        }
+    }).populate('questions').populate('subtitle').exec((err, lecture) => {
         if (err) return res.status(500).json(err);
         if (lecture === null) return res.status(404).json({
             success: false,

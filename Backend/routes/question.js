@@ -53,7 +53,7 @@ router.post('/create', auth, (req, res)=>{
 
             const activeScoreResult = increaseActiveScore(req.body.lectureId, req.session._id);
 
-            if (!activeScoreResult) return res.status(500).json({
+            if (req.session.type === 'student' && !activeScoreResult) return res.status(500).json({
                 success: false,
                 error: 'active score err'
             })
@@ -104,7 +104,7 @@ router.put('/reply', auth, (req, res)=>{
 
         const activeScoreResult = increaseActiveScore(req.body.lectureId, req.session._id);
 
-        if (!activeScoreResult) return res.status(500).json({
+        if (req.session.type === 'student' && !activeScoreResult) return res.status(500).json({
             success: false,
             error: 'active score err'
         })
