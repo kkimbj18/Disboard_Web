@@ -56,7 +56,7 @@ router.post('/start', professorAuth, (req, res)=>{
 
         const studentsForm = subject.students.map((element)=>{
             return {
-                student: element,
+                student: element._id,
                 attendance: 'X',
                 activeScore: 0
             }
