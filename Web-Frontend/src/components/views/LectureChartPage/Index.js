@@ -429,7 +429,6 @@ function Index({match}){
             console.log(result);
             setisEmpty(result.lectures.length === 0);
             if(result.students.length === 0){
-               setisLoading(true);
                resolve();
             }
             else if(result.lectures.length === 0){
@@ -708,7 +707,6 @@ function Index({match}){
    const onChangeDay = (e) => {
       const change = e.target.value;
       setDayIndex(change);
-      // setDay(lectureList[dayIndex].date);
       setDay(dayList[change]);
       onChangeData(change, isAllStudent, studentIndex);
    }
@@ -728,7 +726,6 @@ function Index({match}){
                {isProfessor && studentList.map((value, index) => <option value={index}>{value.name}</option> )}
             </SelectCust>
             <SelectCust style={{border: "1px solid #407AD6", background: "#407AD6", color: "white"}} onChange={onChangeDay}>
-               {/* {lectureList.map((value, index) => <option value={index}>{moment(value.date).format('M월 DD일')}</option>)} */}
                {dayList.map((value, index) => <option value={index}>{value}</option>)}
             </SelectCust>
             <SelectCust style={{border: "1px solid #e0e0e0", background: "#e0e0e0"}} onChange={onChangeMode}>
@@ -763,7 +760,6 @@ function Index({match}){
                <ShowStudentScoreList day={day} scoreList={studentList} isProfessor={isProfessor} userId={user._id} dayIndex={dayIndex} scoreList={scoreList} studentScoreList={studentScoreList}/>
                <Box colSpan="2">
                   <BoxTitle>날짜별 보기</BoxTitle>
-                  {/* <DayBox>{moment(day).format('M월 DD일')}</DayBox> */}
                   <BarChart dayList={dayList} modeIndex={mode} goodList={barGood} badList={barBad} averList={barAver} scoreList={isAllStudent? scoreList : studentScoreList[studentIndex]} attendanceList={barAttend}/>
                </Box>
             </tr>
@@ -775,7 +771,7 @@ function Index({match}){
      useEffect(() => {
       console.log("This is chart page");
       getData().then(()=>{
-         if(studentList.length == 0){
+         if(studentList.length === 0){
             setisEmpty(true);
             setisLoading(true);
          }
