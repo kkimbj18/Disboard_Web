@@ -9,6 +9,8 @@ const moment = require('moment');
 require('moment-timezone');
 moment.tz.setDefault('Asia/Seoul');
 
+const increaseActiveScore = require('../modules/activeScore');
+
 router.post('/create', auth, (req, res)=>{
     /*  #swagger.tags = ['Question']
         #swagger.path = '/question/create' 
@@ -48,6 +50,13 @@ router.post('/create', auth, (req, res)=>{
             $push: { questions: doc._id }
         }, { new: true }, (err)=>{
             if (err) return res.status(500).json(err);
+
+            const activeScoreResult = increaseActiveScore(req.body.lectureId, req.session._id);
+
+            if (req.session.type === 'student' && !activeScoreResult) return res.status(500).json({
+                success: false,
+                error: 'active score err'
+            })
 
             res.status(201).json({
                 success: true,
@@ -92,6 +101,13 @@ router.put('/reply', auth, (req, res)=>{
         $push: { answers: answerForm }, 
     }, { new: true }, (err)=>{
         if (err) return res.status(500).json(err);
+
+        const activeScoreResult = increaseActiveScore(req.body.lectureId, req.session._id);
+
+        if (req.session.type === 'student' && !activeScoreResult) return res.status(500).json({
+            success: false,
+            error: 'active score err'
+        })
 
         res.status(200).json({
             success: true,

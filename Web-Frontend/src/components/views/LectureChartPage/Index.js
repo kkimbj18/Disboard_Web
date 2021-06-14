@@ -429,7 +429,6 @@ function Index({match}){
             console.log(result);
             setisEmpty(result.lectures.length === 0);
             if(result.students.length === 0){
-               setisLoading(true);
                resolve();
             }
             else if(result.lectures.length === 0){
@@ -440,9 +439,7 @@ function Index({match}){
                         id: output.data._id,
                         name: output.data.name,
                         good: [],
-                        bad: [],
-                        activeScore: [],
-                        attendance: []
+                        bad: []
                      }
                      studentList[index] = student;
                      if(index === (result.students.length - 1)){
@@ -465,9 +462,7 @@ function Index({match}){
                         id: output.data._id,
                         name: output.data.name,
                         good: [],
-                        bad: [],
-                        activeScore: [],
-                        attendance: []
+                        bad: []
                      }
                      studentList[stdIndex] = student;
                   })
@@ -542,8 +537,6 @@ function Index({match}){
 
       })
    }
-
-
 
    const setLineData = () => {
       dayList.map((day, dayIndex) => {
@@ -627,12 +620,8 @@ function Index({match}){
                   bad.push(value);
                }               
             })
-            student.good[index] = good;
-            student.bad[index] = bad;
-         })
-      });
-      setisLoading(true);
-      // setLineData();
+         });
+      })
    }
 
    const setRate = (dayIndex, studentIndex, isAllStudent) => {
@@ -715,7 +704,6 @@ function Index({match}){
    const onChangeDay = (e) => {
       const change = e.target.value;
       setDayIndex(change);
-      // setDay(lectureList[dayIndex].date);
       setDay(dayList[change]);
       onChangeData(change, isAllStudent, studentIndex);
    }
@@ -735,7 +723,6 @@ function Index({match}){
                {isProfessor && studentList.map((value, index) => <option value={index}>{value.name}</option> )}
             </SelectCust>
             <SelectCust style={{border: "1px solid #407AD6", background: "#407AD6", color: "white"}} onChange={onChangeDay}>
-               {/* {lectureList.map((value, index) => <option value={index}>{moment(value.date).format('M월 DD일')}</option>)} */}
                {dayList.map((value, index) => <option value={index}>{value}</option>)}
             </SelectCust>
             <SelectCust style={{border: "1px solid #e0e0e0", background: "#e0e0e0"}} onChange={onChangeMode}>

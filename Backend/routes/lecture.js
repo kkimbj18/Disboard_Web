@@ -49,15 +49,17 @@ router.post('/start', professorAuth, (req, res)=>{
                 }
             }
         } */
-    Subject.findOne({ _id: req.body.subjectId }, (err, subject)=>{
+    Subject.findOne({ _id: req.body.subjectId }).populate('students').exec((err, subject)=>{
         if (err) return res.status(500).json(err);
 
         const today = moment();
 
-        const studentsForm = subject.students.map((element)=>{
+        const studentsForm = subject.students.map((element) => {
+            console.log(element);
             return {
-                student: element,
-                attendance: 'X'
+                student: Number(element._id),
+                attendance: 'X',
+                activeScore: 0
             }
         });
 
@@ -274,7 +276,7 @@ router.put('/join/:id', auth, (req, res)=>{
                 success: true,
                 lecture: {
                     $ref: "#/definitions/lecture",
-                    student: [{
+                    students: [{
                         student: 0,
                         attendance: 'O',
                         activeScore: 0
@@ -308,7 +310,13 @@ router.put('/join/:id', auth, (req, res)=>{
             path: 'professor',
             model: 'user'
         }
-    }).populate('students').populate('questions').populate('subtitle').exec((err, lecture)=>{
+    }).populate({
+        path: 'students',
+        populate: {
+            path: 'student',
+            model: 'user'
+        }
+    }).populate('questions').populate('subtitle').exec(async (err, lecture) => {
         if (err) return res.status(500).json(err);
         if (lecture === null) return res.status(404).json({
             success: false,
@@ -319,21 +327,19 @@ router.put('/join/:id', auth, (req, res)=>{
             isInProgress: false
         });
 
-        lecture.students.some((student)=>{
-            if (student.student === req.session._id) {
-                student.activeScore = 0;
-                if (student.attendance === 'X')
-                    student.attendance = 'O';
-
-                return true;
-            }
+        const student = await lecture.students.find((student) => {
+            if (student.student._id === req.session._id) return true;
         });
-        lecture.save((err)=>{
+        if (student.attendance === 'X') student.attendance = 'O';
+
+        lecture.save((err, doc)=>{
             if (err) return res.status(500).json(err);
+
+            console.log(doc);
 
             res.status(200).json({
                 success: true,
-                lecture
+                lecture: doc
             })
         })
     })

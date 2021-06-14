@@ -4,233 +4,236 @@
  * Module dependencies.
  */
 
- var app = require('../app');
- var debug = require('debug')('backend:server');
- var http = require('http');
- 
- const moment = require('moment');
- require('moment-timezone');
- moment.tz.setDefault('Asia/Seoul');
- 
- /**
-  * Get port from environment and store in Express.
-  */
- 
- var port = normalizePort(process.env.PORT || '3000');
- app.set('port', port);
- 
- /**
-  * Create HTTP server.
-  */
- 
- var server = http.createServer(app);
- 
- /**
-  * Create Socket Communication
-  */
- 
- const socketOpt = {
-   cors: {
-     origin: 'http://localhost',
-     credentials: true
-   },
-   path: '/socket'
- }
- 
- const io = require('socket.io')(socketOpt);
- 
- io.attach(server, {
-   pingInterval: 10000,
-   pingTimeout: 5000,
-   cookie: false
- })
- 
- io.on('connection', (socket)=>{
-   // 수업 참가 시, 참가자 갱신
-   socket.on('user', (data)=>{
-     socket.name = data.name;
-     socket.code = data.code;
-     socket.email = data.email;
- 
-     socket.join(socket.code);
- 
-     io.to(socket.code).emit('newUser', {
-       type: 'connect', 
-       name: 'SERVER', 
-       message: data,
-       tmp_data : data
-     });
-   });
- 
-   socket.on('msg', (data)=>{
-     const now = moment();
-     const currHour = now.hours();
-     const currMinute = now.minutes();
- 
-     const startTime = data.time.split(":");
-     const startHour = startTime[0];
-     const startMinute = startTime[1];
- 
-     const needBorrowing = currMinute-startMinute < 0 
- 
-     const time = (needBorrowing) ? ((currHour-startHour-1) + ':' + (currMinute-startMinute+60)) : ((currHour-startHour) + ':' + (currMinute-startMinute));
- 
-     data.time = time;
-     data.name = socket.name;
- 
-     socket.broadcast.to(socket.code).emit('sendMsg', data);
-     // socket.to(socket.code).emit('sendMsg', data);
-   });
- 
-   socket.on('question', (data)=>{
-     data.name = socket.name;
- 
-     socket.broadcast.to(socket.code).emit('sendQ', data);
-   });
- 
-   socket.on('answer', (data)=>{
-     data.name = socket.name;
- 
-     socket.broadcast.to(socket.code).emit('sendA', data);
-   })
- 
-   // 퀴즈 학생들에게 뿌리기
-   socket.on('quiz', (data)=>{
-     if (data.deadLine) {
-       const now = moment();
-       const timeLeft = moment.duration(data.deadLine - now).asMilliseconds;
- 
-       setTimeout(()=>{
-         io.to(socket.code).emit('timeOver');
-       }, timeLeft);
-     }
- 
-     socket.broadcast.to(socket.code).emit('sendQuiz', data); 
-   });
- 
-   socket.on('understandingPro', (data)=>{
-     if (data.deadLine) {
-       const now = moment();
-       const timeLeft = moment.duration(data.deadLine - now).asMilliseconds;
- 
-       setTimeout(()=>{
-         io.to(socket.code).emit('timeOver');
-       }, timeLeft);
-     }
- 
-     socket.broadcast.to(socket.code).emit('sendUnderstandingSheet', data);
-   });
- 
-   socket.on('understandingStu', (data)=>{
-     const now = moment();
-     const currHour = now.hours();
-     const currMinute = now.minutes();
- 
-     const startTime = data.time.split(":");
-     const startHour = startTime[0];
-     const startMinute = startTime[1];
- 
-     const needBorrowing = currMinute-startMinute < 0 
- 
-     const time = (needBorrowing) ? ((currHour-startHour-1) + ':' + (currMinute-startMinute+60)) : ((currHour-startHour) + ':' + (currMinute-startMinute));
- 
-     data.time = time;
-     data.name = socket.name;
- 
-     socket.broadcast.to(socket.code).emit('sendIsUnderstood', data);
-   })
- 
-   socket.on('subtitle', (data)=>{
-     const now = moment();
-     const currHour = now.hours();
-     const currMinute = now.minutes();
- 
-     const startTime = data.time.split(":");
-     const startHour = startTime[0];
-     const startMinute = startTime[1];
- 
-     const needBorrowing = currMinute-startMinute < 0 
- 
-     const time = (needBorrowing) ? ((currHour-startHour-1) + ':' + (currMinute-startMinute+60)) : ((currHour-startHour) + ':' + (currMinute-startMinute));
- 
-     data.time = time;
-     data.name = socket.name;
- 
-     socket.broadcast.to(socket.code).emit('sendSubtitle', data);
-   })
- 
-   // 수업 퇴장 시, 참가자 갱신
-   socket.on('disconnect', (reason)=>{
-     socket.broadcast.to(socket.code).emit('disConnected', socket.email);
- 
-     socket.leave(socket.code);
-   })
- });
- 
- /**
-  * Listen on provided port, on all network interfaces.
-  */
- 
- server.listen(port);
- server.on('error', onError);
- server.on('listening', onListening);
- 
- /**
-  * Normalize a port into a number, string, or false.
-  */
- 
- function normalizePort(val) {
-   var port = parseInt(val, 10);
- 
-   if (isNaN(port)) {
-     // named pipe
-     return val;
-   }
- 
-   if (port >= 0) {
-     // port number
-     return port;
-   }
- 
-   return false;
- }
- 
- /**
-  * Event listener for HTTP server "error" event.
-  */
- 
- function onError(error) {
-   if (error.syscall !== 'listen') {
-     throw error;
-   }
- 
-   var bind = typeof port === 'string'
-     ? 'Pipe ' + port
-     : 'Port ' + port;
- 
-   // handle specific listen errors with friendly messages
-   switch (error.code) {
-     case 'EACCES':
-       console.error(bind + ' requires elevated privileges');
-       process.exit(1);
-       break;
-     case 'EADDRINUSE':
-       console.error(bind + ' is already in use');
-       process.exit(1);
-       break;
-     default:
-       throw error;
-   }
- }
- 
- /**
-  * Event listener for HTTP server "listening" event.
-  */
- 
- function onListening() {
-   var addr = server.address();
-   var bind = typeof addr === 'string'
-     ? 'pipe ' + addr
-     : 'port ' + addr.port;
-   debug('Listening on ' + bind);
- }
+var app = require('../app');
+var debug = require('debug')('backend:server');
+var http = require('http');
+
+const moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault('Asia/Seoul');
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+/**
+ * Create Socket Communication
+ */
+
+const socketOpt = {
+  cors: {
+    origin: 'http://localhost',
+    credentials: true
+  },
+  path: '/socket'
+}
+
+const io = require('socket.io')(socketOpt);
+
+io.attach(server, {
+  pingInterval: 10000,
+  pingTimeout: 5000,
+  cookie: false
+})
+
+io.on('connection', (socket)=>{
+  // 수업 참가 시, 참가자 갱신
+  socket.on('user', (data)=>{
+    socket.name = data.name;
+    socket.code = data.code;
+    socket.email = data.email;
+
+    socket.join(socket.code);
+
+    io.to(socket.code).emit('newUser', {
+      type: 'connect', 
+      name: 'SERVER', 
+      message: data,
+      tmp_data : data
+    });
+  });
+
+  socket.on('msg', (data)=>{
+    const now = moment();
+    const currHour = now.hours();
+    const currMinute = now.minutes();
+
+    const startTime = data.time.split(":");
+    const startHour = startTime[0];
+    const startMinute = startTime[1];
+
+    const needBorrowing = currMinute-startMinute < 0 
+
+    const time = (needBorrowing) ? ((currHour-startHour-1) + ':' + (currMinute-startMinute+60)) : ((currHour-startHour) + ':' + (currMinute-startMinute));
+
+    data.time = time;
+    data.name = socket.name;
+
+    socket.broadcast.to(socket.code).emit('sendMsg', data);
+    // socket.to(socket.code).emit('sendMsg', data);
+  });
+
+  socket.on('question', (data)=>{
+    data.name = socket.name;
+    data.email = socket.email;
+
+    socket.broadcast.to(socket.code).emit('sendQ', data);
+  });
+
+  socket.on('answer', (data)=>{
+    data.name = socket.name;
+    data.email = socket.email;
+
+    socket.broadcast.to(socket.code).emit('sendA', data);
+  })
+
+  // 퀴즈 학생들에게 뿌리기
+  socket.on('quiz', (data)=>{
+    if (data.deadLine) {
+      const now = moment();
+      const timeLeft = moment.duration(data.deadLine - now).asMilliseconds;
+
+      setTimeout(()=>{
+        io.to(socket.code).emit('timeOver');
+      }, timeLeft);
+    }
+
+    socket.broadcast.to(socket.code).emit('sendQuiz', data); 
+  });
+
+  socket.on('understandingPro', (data)=>{
+    if (data.deadLine) {
+      const now = moment();
+      const timeLeft = moment.duration(data.deadLine - now).asMilliseconds;
+
+      setTimeout(()=>{
+        io.to(socket.code).emit('timeOver');
+      }, timeLeft);
+    }
+
+    socket.broadcast.to(socket.code).emit('sendUnderstandingSheet', data);
+  });
+
+  socket.on('understandingStu', (data)=>{
+    const now = moment();
+    const currHour = now.hours();
+    const currMinute = now.minutes();
+
+    const startTime = data.time.split(":");
+    const startHour = startTime[0];
+    const startMinute = startTime[1];
+
+    const needBorrowing = currMinute-startMinute < 0 
+
+    const time = (needBorrowing) ? ((currHour-startHour-1) + ':' + (currMinute-startMinute+60)) : ((currHour-startHour) + ':' + (currMinute-startMinute));
+
+    data.time = time;
+    data.name = socket.name;
+    data.email = socket.email;
+
+    socket.broadcast.to(socket.code).emit('sendIsUnderstood', data);
+  })
+
+  socket.on('subtitle', (data)=>{
+    const now = moment();
+    const currHour = now.hours();
+    const currMinute = now.minutes();
+
+    const startTime = data.time.split(":");
+    const startHour = startTime[0];
+    const startMinute = startTime[1];
+
+    const needBorrowing = currMinute-startMinute < 0 
+
+    const time = (needBorrowing) ? ((currHour-startHour-1) + ':' + (currMinute-startMinute+60)) : ((currHour-startHour) + ':' + (currMinute-startMinute));
+
+    data.time = time;
+    data.name = socket.name;
+
+    socket.broadcast.to(socket.code).emit('sendSubtitle', data);
+  })
+
+  // 수업 퇴장 시, 참가자 갱신
+  socket.on('disconnect', (reason)=>{
+    socket.broadcast.to(socket.code).emit('disConnected', socket.email);
+
+    socket.leave(socket.code);
+  })
+});
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}

@@ -121,17 +121,23 @@ function Index({commentList, emotionList, postId, subjectId, subjectName, userId
 
     const [isShowing, setisShowing] = useState(false);
     const [comment, setComment] = useState('');
-    const [isRed, setisRed] = useState(false);
     const [emotionsLength, setEmotionsLength] = useState(emotionList.length);
-
+    /*
     const checkEmotion = () => {
         if(emotionList.length === 0) {setisRed(false);}
         else{
             emotionList.forEach(element => {
-            if(element.user == userId) {setisRed(true);}});
-        }
-        return setisRed;
+                if(element.user === userId) {setisRed(true);}});
+            }
+            return setisRed;
     }
+    */    
+
+    function isSubmit(element){
+        if(element.user === user._id){return true;}
+    }
+
+    const [isRed, setisRed] = useState(emotionList.find(isSubmit));
 
     const addEmotion = (e) => {
         axios.put('/api/emotion/add',{
@@ -175,7 +181,9 @@ function Index({commentList, emotionList, postId, subjectId, subjectName, userId
     }
 
     const submitComment = (e) => {
-        console.log(comment);
+        console.log(type)
+        console.log(comment)
+        console.log(postId)
         axios.put('/api/comment/add',{
             postType : type,
             postId : postId,
@@ -196,7 +204,8 @@ function Index({commentList, emotionList, postId, subjectId, subjectName, userId
     }
 
     useEffect(() => {
-        checkEmotion();
+        // checkEmotion();
+        console.log(emotionList);
     },[])
 
     return(
