@@ -307,23 +307,23 @@ router.post('/send', auth, (req, res)=>{
                 else return true;
             })
 
-            studentArray.forEach((set, idx)=>{
+            studentArray.forEach((set, idx) => {
                 if (set.size === req.body.limit) {
-                    docs.save((err)=>{
+                    docs.save((err) => {
                         if (err) return res.status(500).json(err);
 
                         alarm = true;
                         alarmType = (idx) ? 'positive' : 'negative';
                     })
                 }
-            })
-        })
+            });
 
-        res.status(201).json({
-            success: true,
-            understanding: understandingForm,
-            alarm: alarm,
-            alarmType: alarmType
+            res.status(201).json({
+                success: true,
+                understanding: understandingForm,
+                alarm: alarm,
+                alarmType: alarmType
+            })
         })
     });
 })

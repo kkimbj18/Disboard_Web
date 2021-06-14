@@ -17,6 +17,8 @@ const increaseActiveScore = (lectureId, studentId) => {
             return true;
         })
     })
+
+    return true;
 }
 
 module.exports = increaseActiveScore;
