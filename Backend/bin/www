@@ -84,12 +84,14 @@ io.on('connection', (socket)=>{
 
   socket.on('question', (data)=>{
     data.name = socket.name;
+    data.email = socket.email;
 
     socket.broadcast.to(socket.code).emit('sendQ', data);
   });
 
   socket.on('answer', (data)=>{
     data.name = socket.name;
+    data.email = socket.email;
 
     socket.broadcast.to(socket.code).emit('sendA', data);
   })
@@ -136,6 +138,7 @@ io.on('connection', (socket)=>{
 
     data.time = time;
     data.name = socket.name;
+    data.email = socket.email;
 
     socket.broadcast.to(socket.code).emit('sendIsUnderstood', data);
   })

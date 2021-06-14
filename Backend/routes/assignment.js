@@ -376,7 +376,7 @@ router.put('/submit', auth, (req, res)=>{
        
    const now = moment();
 
-   assignment.findOne({ _id: req.body.assignmentId }).populate('subject').exec((err, assignment)=>{
+   Assignment.findOne({ _id: req.body.assignmentId }).populate('subject').exec((err, assignment)=>{
        if (err) return res.status(500).json(err);
        if (now > req.body.deadline) {
            return res.status(409).json({

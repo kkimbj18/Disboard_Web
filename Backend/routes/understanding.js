@@ -9,6 +9,8 @@ const moment = require('moment');
 require('moment-timezone');
 moment.tz.setDefault('Asia/Seoul');
 
+const increaseActiveScore = require('../modules/activeScore');
+
 router.post('/create', professorAuth, (req, res)=>{
     /*  #swagger.tags = ['Understanding']
         #swagger.path = '/understanding/create' 
@@ -289,6 +291,12 @@ router.post('/send', auth, (req, res)=>{
         UnderstandingStu.find({ lecture: req.body.lectureId }).sort({ minutes: -1 }).exec((err, docs)=>{
             if (err) return res.status(500).json(err);
 
+            const activeScoreResult = increaseActiveScore(req.body.lectureId, req.session._id);
+
+            if (!activeScoreResult) return res.status(500).json({
+                success: false,
+                error: 'active score err'
+            })
             docs.some((doc)=>{
                 if (now - doc.minutes <= 5) {
                     if (doc.response) studentArray[0].add(doc.student);
