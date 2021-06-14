@@ -160,23 +160,8 @@ io.on('connection', (socket)=>{
   })
 
   // 수업 퇴장 시, 참가자 갱신
-<<<<<<< HEAD
-  socket.on('disconnect', (data)=>{
-    console.log('user disconnected');
-
-    data.name = socket.name;
-    data.email = socket.email;
-
-    socket.broadcast.to(socket.code).emit('disConnected', {
-      type: 'disconnect',
-      name: 'SERVER',
-      message: data,
-      data : socket.email
-    })
-=======
   socket.on('disconnect', (reason)=>{
     socket.broadcast.to(socket.code).emit('disConnected', socket.email);
->>>>>>> 63e617f117dd02ae6db6dfad95fe2bbfeb5e933a
 
     socket.leave(socket.code);
   })
