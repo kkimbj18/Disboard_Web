@@ -58,7 +58,7 @@ router.post('/start', professorAuth, (req, res)=>{
             return {
                 student: element,
                 attendance: 'X',
-                activeScore = 0
+                activeScore: 0
             }
         });
 
