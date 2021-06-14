@@ -315,7 +315,7 @@ router.put('/join/:id', auth, (req, res)=>{
             path: 'student',
             model: 'user'
         }
-    }).populate('questions').populate('subtitle').exec((err, lecture) => {
+    }).populate('questions').populate('subtitle').exec(async (err, lecture) => {
         if (err) return res.status(500).json(err);
         if (lecture === null) return res.status(404).json({
             success: false,
@@ -326,7 +326,7 @@ router.put('/join/:id', auth, (req, res)=>{
             isInProgress: false
         });
 
-        student = lecture.students.find((student) => {
+        const student = await lecture.students.find((student) => {
             if (student.student === req.session._id) return true;
         });
         if (student.attendance === 'X') student.attendance = 'O';
