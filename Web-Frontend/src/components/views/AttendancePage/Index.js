@@ -147,7 +147,7 @@ function ShowAllAttendance ({attendList}){
             {attendList.map((value, index) => 
             <TabletrColor>
                 <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{moment(value.date).format('YYYY.MM.DD')}</td>
-                <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{moment(value.time).format('hh:mm')}</td>
+                <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{value.time}</td>
                 <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>
                 <BoxText>출석 <NumText style={{color: "#0E7ED1"}}> {value.attend}</NumText>회 / 지각 <NumText style={{color: "#61C679"}}> {value.late}</NumText>회 / 결석 <NumText style={{color: "#E24C4B"}}> {value.absence}</NumText>회</BoxText>
                 </td>
@@ -351,6 +351,8 @@ function Index({match}) {
         const change = e.target.value;
         setSubjectIndex(change);
         setSubjectName(subjectList[change].name);
+        console.log(studentList);
+        console.log(subjectList)
         if(subjectList[change].lectures.length !== 0){ExtractExcel(change)};
         if(!isProfessor){
             setStudentIndex(studentList[change].find(isSubmit).index)
@@ -412,8 +414,9 @@ function Index({match}) {
     const [data, setData] = useState([]);
 
     const ExtractExcel = (subjectIndex) => {
-        setHeaders([{label: "학생이름 / 날짜", key: "studentName"}]);
-        setData([]);
+        // setHeaders([{label: "학생이름 / 날짜", key: "studentName"}]);
+        // setData([]);
+
         allAttend[subjectIndex].map((lec, lecIndex) => {
             let label = {label: moment(lec.date).format("YYYY-MM-DD") , key: `${lecIndex}`}
             headers.push(label);
