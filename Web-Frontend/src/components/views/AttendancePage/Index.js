@@ -124,7 +124,7 @@ function ShowAttendance ({attendanceList}){
                 <TabletrColor>
                     <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{moment(value.date).format('YYYY.MM.DD')}</td>
                     <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{attendanceList.name}</td>
-                    <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{moment(value.time).format('hh:mm')}</td>
+                    <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{value.time}</td>
                     <td style={{padding: "10px 0", borderBottom: "1px solid #D5D5D5"}}>{showState(value.state)}</td>
                 </TabletrColor>
                 )}
@@ -204,64 +204,68 @@ function Index({match}) {
                     allWeek.push(all);
                     currentWeek.push(curr)
                     let stdList = [];
+                    var setStd = new Promise((resolve, reject) => {
+                        subject.students.map((stdId, index)=>{
+                            if(subInd === 0 && stdId === user._id){setStudentIndex(index)}
+                            axios.get('/api/user/get/' + String(stdId))
+                            .then((stdRes) => {
+                                let student = {
+                                    index: index,
+                                    id: stdRes.data._id,
+                                    name: stdRes.data.name,
+                                    state: []
+                                }
+                                stdList.push(student);
+                            })
+                            .catch((error)=>{
+                                console.log(error);
+                                reject(error);
+                            })
+                        })
+                    })
 
-                    subject.students.map((stdId, index)=>{
-                        if(subInd === 0 && stdId === user._id){setStudentIndex(index)}
-                        axios.get('/api/user/get/' + String(stdId))
-                        .then((stdRes) => {
-                            let student = {
-                                index: index,
-                                id: stdRes.data._id,
-                                name: stdRes.data.name,
-                                state: []
+                    setStd.then(
+                        axios.get('/api/lecture/get/subject/'+ String(subject._id))
+                        .then((responseLec)=>{
+                            let sub = []; 
+                            const lectureRes = responseLec.data;
+                            console.log(lectureRes);
+                            lectureRes.lectures.map((lecture)=>{
+                                let lec = {
+                                    date: lecture.date,
+                                    time: lecture.start_time,
+                                    attend: 0,
+                                    late: 0,
+                                    absence: 0
+                                }
+    
+                                lecture.students.map((student, stdInd)=>{
+                                    if(student.attendance === 'O'){lec.attend = lec.attend + 1}
+                                    else if(student.attendance === 'X'){lec.late = lec.late + 1}
+                                    else{lec.absence = lec.absence + 1}
+                                    let std = {
+                                        date: lecture.date,
+                                        time: lecture.start_time,
+                                        state: student.attendance
+                                    }
+                                    stdList[stdInd].state.push(std);
+                                })
+                                sub.push(lec);
+                            })
+                            allAttend.push(sub);
+                            console.log(stdList)
+                            // studentList[subInd] = stdList;
+                            studentList.push(stdList)
+                            if(subInd === (result.subjects.length - 1)){
+                                resolve();
                             }
-                            stdList.push(student);
                         })
                         .catch((error)=>{
                             console.log(error);
                             reject(error);
                         })
-                    })
 
-                    axios.get('/api/lecture/get/subject/'+ String(subject._id))
-                    .then((responseLec)=>{
-                        let sub = []; 
-                        const lectureRes = responseLec.data;
-                        console.log(lectureRes);
-                        lectureRes.lectures.map((lecture)=>{
-                            let lec = {
-                                date: lecture.date,
-                                time: lecture.start_time,
-                                attend: 0,
-                                late: 0,
-                                absence: 0
-                            }
-
-                            lecture.students.map((student, stdInd)=>{
-                                if(student.attendance === 'O'){lec.attend = lec.attend + 1}
-                                else if(student.attendance === 'x'){lec.late = lec.late + 1}
-                                else{lec.absence = lec.absence + 1}
-                                let std = {
-                                    date: lecture.date,
-                                    time: lecture.start_time,
-                                    state: student.attendance
-                                }
-                                stdList[stdInd].state.push(std);
-                            })
-                            sub.push(lec);
-                        })
-                        allAttend.push(sub);
-                        console.log(stdList)
-                        // studentList[subInd] = stdList;
-                        studentList.push(stdList)
-                        if(subInd === (result.subjects.length - 1)){
-                            resolve();
-                        }
-                    })
-                    .catch((error)=>{
-                        console.log(error);
-                        reject(error);
-                    })
+                    )
                 })
 
             })
@@ -279,25 +283,27 @@ function Index({match}) {
                 allWeek.push(all);
                 currentWeek.push(curr)
                 let stdList = [];
-                subRes.data.subject.students.map((stdId, index)=>{
-                    if(!isProfessor && stdId === user._id){setStudentIndex(index)}
-                    axios.get('/api/user/get/' + String(stdId))
-                    .then((stdRes) => {
-                        let student = {
-                            index: index,
-                            id: stdRes.data._id,
-                            name: stdRes.data.name,
-                            state: []
-                        }
-                        stdList.push(student);
+                var setStd = new Promise((resolve, reject) => {
+                    subRes.data.subject.students.map((stdId, index)=>{
+                        if(!isProfessor && stdId === user._id){setStudentIndex(index)}
+                        axios.get('/api/user/get/' + String(stdId))
+                        .then((stdRes) => {
+                            let student = {
+                                index: index,
+                                id: stdRes.data._id,
+                                name: stdRes.data.name,
+                                state: []
+                            }
+                            stdList.push(student);
+                            if((subRes.data.subject.students.length - 1) === index){resolve();}
+                        })
+                        .catch((error)=>{
+                            console.log(error);
+                            reject(error);
+                        })
                     })
-                    .catch((error)=>{
-                        console.log(error);
-                        reject(error);
-                    })
-                })
-
-                axios.get('/api/lecture/get/subject/'+ String(subjectId))
+                });
+                setStd.then(axios.get('/api/lecture/get/subject/'+ String(subjectId))
                 .then((response)=>{
                     const result = response.data;
                     console.log(result);
@@ -313,13 +319,14 @@ function Index({match}) {
 
                         lecture.students.map((student, stdInd)=>{
                             if(student.attendance === 'O'){lec.attend = lec.attend + 1}
-                            else if(student.attendance === 'x'){lec.late = lec.late + 1}
+                            else if(student.attendance === 'X'){lec.late = lec.late + 1}
                             else{lec.absence = lec.absence + 1}
                             let std = {
                                 date: lecture.date,
                                 time: lecture.start_time,
                                 state: student.attendance
                             }
+                            console.log(stdList[stdInd])
                             stdList[stdInd].state.push(std);
                         })
 
@@ -332,7 +339,7 @@ function Index({match}) {
                 .catch((error)=>{
                     console.log(error);
                     reject(error);
-                })
+                }))
 
 
             })
@@ -343,6 +350,7 @@ function Index({match}) {
         }      
     })}
  
+
     function isSubmit(element){
         if(element.id === user._id){return true;}
     }
@@ -536,7 +544,7 @@ function Index({match}) {
 
     useEffect(() => {
         getData().then(()=>{
-            if(!isEmpty){ExtractExcel(0);}
+            if(studentList[0].length !== 0){ExtractExcel(0);}
             if(!isProfessor){
                 studentList[subjectIndex].map((student, index)=>{if(student.id === user._id){onChangeCount(0, index)}})
             }
