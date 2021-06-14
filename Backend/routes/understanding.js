@@ -329,8 +329,13 @@ router.post('/send', auth, (req, res)=>{
 })
 
 function count(docs) {
-    return docs.reduce((acc, doc)=>{
-        acc[doc.response] = (acc[doc.response]) ? acc[doc.response].push(doc) : [doc];
+    return docs.reduce((acc, doc) => { 
+        if (doc.response) {
+            acc.O = (acc.O) ? [...acc.O, doc] : [doc];
+        }
+        else {
+            acc.X = (acc.X) ? [...acc.X, doc] : [doc];
+        }
 
         return acc;
     }, {});
@@ -351,9 +356,9 @@ router.get('/get/lecture/:id', auth, (req, res)=>{
                             name: '김민건'
                         },
                         lecture: 0,
-                        response: 'O',
+                        response: true,
                         minutes: '10:03',
-                        isCounted: false
+                        isCounted: 0
                     }],
                     X: [{
                         student: {
@@ -361,9 +366,9 @@ router.get('/get/lecture/:id', auth, (req, res)=>{
                             name: '윤다연'
                         },
                         lecture: 0,
-                        response: 'X',
+                        response: true,
                         minutes: '10:05',
-                        isCounted: false
+                        isCounted: 0
                     }]
                 }
             }
@@ -374,6 +379,8 @@ router.get('/get/lecture/:id', auth, (req, res)=>{
         } */
     UnderstandingStu.find({ lecture: req.params.id }).populate('student', { _id: 1, name: 1 }).exec((err, docs)=>{
         if (err) return res.status(500).json(err);
+
+        console.log(docs);
         
         const countObj = count(docs);
 

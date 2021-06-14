@@ -1,19 +1,25 @@
-const subjects = {
-    students: [{
-        id: 0,
-        attendance: 'X'
-    }, {
-        id: 1,
-        attendance: 'X'
-    }]
+function count(docs) {
+    return docs.reduce((acc, doc) => {
+        if (doc.response) {
+            acc.O = (acc.O) ? [...acc.O, doc] : [doc];
+        }
+        else {
+            acc.X = (acc.X) ? [...acc.X, doc] : [doc];
+        }
+
+        return acc;
+    }, {});
 }
 
-subjects.students.some((student) => {
-    if (student.id === 0) {
-        student.attendance = 'O';
+const docs = [{
+    response: true,
+    id: 0
+}, {
+    response: false,
+    id: 1
+    }, {
+    response: false,
+        id: 2
+}]
 
-        return true;
-    }
-})
-
-console.log(subjects);
+console.log(count(docs));
