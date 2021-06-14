@@ -439,9 +439,7 @@ function Index({match}){
                         id: output.data._id,
                         name: output.data.name,
                         good: [],
-                        bad: [],
-                        activeScore: [],
-                        attendance: []
+                        bad: []
                      }
                      studentList[index] = student;
                      if(index === (result.students.length - 1)){
@@ -464,9 +462,7 @@ function Index({match}){
                         id: output.data._id,
                         name: output.data.name,
                         good: [],
-                        bad: [],
-                        activeScore: [],
-                        attendance: []
+                        bad: []
                      }
                      studentList[stdIndex] = student;
                   })
@@ -493,8 +489,8 @@ function Index({match}){
                            else if(student.attendance === 'x'){late = late + 1}
                            else{absence = absence + 1}
 
-                           studentAttendList[stdInd].push(student.attendance);
-                           studentScoreList[stdInd].push(student.activeScore);
+                           studentAttendList[stdInd] = student.attendance;
+                           studentScoreList[stdInd] = student.activeScore;
                         })
 
                         attendanceList.push({attend: attend, late: late, absence: absence});
@@ -537,19 +533,15 @@ function Index({match}){
       })
    }
 
-
-
    const setLineData = () => {
       dayList.map((day, dayIndex) => {
          let TimeList = [];
          let AverList = [];
          understandingGoodList[dayIndex].map((response, index) => {
-            // TimeList.push(moment(response.minutes)._i)
             TimeList.push(response.minutes)
          })
 
          understandingBadList[dayIndex].map((response, index) => {
-            // TimeList.push(moment(response.minutes)._i);
             TimeList.push(response.minutes)
          })
          TimeList = TimeList.sort(function(a, b){
@@ -604,27 +596,26 @@ function Index({match}){
    }
 
    const setDefaultStudentData = (dayList, studentList) => {
-      // studentList.push(student);
-      studentList.map((student) => {
-         dayList.map((day, index) => {
-            let good = [];
-            understandingGoodList[index].map((value) => {
-               if(value.student._id === student.id){
-                  good.push(value);
-               }
+      if(dayList !== 0){
+         studentList.map((student) => {
+            dayList.map((day, index) => {
+               let good = [];
+               understandingGoodList[index].map((value) => {
+                  if(value.student._id === student.id){
+                     good.push(value);
+                  }
+               })
+               let bad = [];
+               understandingBadList[index].map((value) => {
+                  if(value.student._id === student.id){
+                     bad.push(value);
+                  }               
+               })
+               student.good[index] = good;
+               student.bad[index] = bad;
             })
-            let bad = [];
-            understandingBadList[index].map((value) => {
-               if(value.student._id === student.id){
-                  bad.push(value);
-               }               
-            })
-            student.good[index] = good;
-            student.bad[index] = bad;
-         })
-      });
-      setisLoading(true);
-      // setLineData();
+         });
+      }
    }
 
    const setRate = (dayIndex, studentIndex, isAllStudent) => {
@@ -761,7 +752,7 @@ function Index({match}){
                <Info title={"출석 비율"} day={day} data={attendance} rate={attendanceRate} rateInfo={rateInfo} isAllStudent={isAllStudent} isStudentAttend={isAllStudent}/>
             </tr>
             <tr>
-               <ShowStudentScoreList day={day} scoreList={studentList} isProfessor={isProfessor} userId={user._id} dayIndex={dayIndex} scoreList={scoreList} studentScoreList={studentScoreList}/>
+               <ShowStudentScoreList day={day} studentList={studentList} isProfessor={isProfessor} userId={user._id} dayIndex={dayIndex} scoreList={scoreList} studentScoreList={studentScoreList}/>
                <Box colSpan="2">
                   <BoxTitle>날짜별 보기</BoxTitle>
                   <BarChart dayList={dayList} modeIndex={mode} goodList={barGood} badList={barBad} averList={barAver} scoreList={isAllStudent? scoreList : studentScoreList[studentIndex]} attendanceList={barAttend}/>
