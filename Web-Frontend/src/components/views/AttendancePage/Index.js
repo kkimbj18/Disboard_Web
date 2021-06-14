@@ -216,6 +216,7 @@ function Index({match}) {
                                     state: []
                                 }
                                 stdList.push(student);
+                                if((subject.students.length - 1) === index){resolve();}
                             })
                             .catch((error)=>{
                                 console.log(error);
