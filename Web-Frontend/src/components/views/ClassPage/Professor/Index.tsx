@@ -8,7 +8,7 @@ import Loading from '../utils/Loading/Index'
 import { generateInstantToken } from '../utils/Auth/Index'
 import ZoomInstant from "@zoomus/instantsdk"
 import Chat from '../utils/Contents/Chat/Index';
-import Participant from '../utils/Contents/Participant/Index';
+import Participant from '../utils/Contents/Participant/Index1';
 import Question from '../utils/Contents/Question/Index'
 import Etc from './util/Etc/Index'
 import Comp from './util/Comp/Index.js'

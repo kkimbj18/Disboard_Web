@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components';
+import axios from 'axios'
 
 interface QuestionProps {
     msg: string
     socket: any
     qNum: number
+    lecture_id: number
 }
 
 const BoxContainer = styled.button`
@@ -69,6 +71,7 @@ color : #00000050;
 function showAnswers() {
 
 }
+const user = sessionStorage && sessionStorage.userInfo && JSON.parse(window.sessionStorage.userInfo);
 
 function Box(props: QuestionProps) {
 
@@ -100,13 +103,24 @@ function Box(props: QuestionProps) {
     }
 
     function mySubmit() {
-        socket.emit('answer', {
-            qNum: props.qNum,
-            content: inputRef.current.value
-        })
-        setanswers(answers.concat([<Answer>{inputRef.current.value}</Answer>]));
-        inputRef.current.value = '';
-        console.log(inputRef.current);
+        if (inputRef.current.value) {
+            axios.post('/api/question/create', {
+                lectureId: props.lecture_id,
+                name: user ? user.name : "",
+                questionContent: props.msg
+            }).then((res) => {
+                console.log(res);
+                socket.emit('answer', {
+                    qNum: props.qNum,
+                    content: inputRef.current.value
+                })
+            })
+            setanswers(answers.concat([<Answer>{inputRef.current.value}</Answer>]));
+            inputRef.current.value = '';
+            console.log(inputRef.current);
+            const elm = document.querySelector(`.participantsclass#${user.email.split("@")[0]}`) as any;
+            console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML) + 1).toString());
+        }
     }
 
     function keyDown(e: any) {
@@ -115,9 +129,12 @@ function Box(props: QuestionProps) {
 
     useEffect(() => {
         socket.on('sendA', (data: any) => {
+            console.log(data, '질문 답변 받음');
             if (props.qNum == data.qNum) {
                 setanswers(answers.concat([<Answer>{data.content}</Answer>]));
             }
+            const elm = document.querySelector(`.participantsclass#${data.email.split("@")[0]}`) as any;
+            console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML)+1).toString());
         })
     }, [answers])
 

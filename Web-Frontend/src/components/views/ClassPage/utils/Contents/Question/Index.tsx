@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Box from './utils/Box'
 import styled from 'styled-components'
 import socketio from 'socket.io-client'
+import axios from 'axios'
 
 const QuestionContainer = styled.div`
 width : 100%;
@@ -39,8 +40,8 @@ text-align : center;
 font-weight : bold;
 color : #A6C5F3;
 `
-
-function Index(props:any) {
+const user = sessionStorage && sessionStorage.userInfo && JSON.parse(window.sessionStorage.userInfo);
+function Index(props: any) {
     const socket = props.socket;
 
     const [qNum, setqNum] = useState<number>(0);
@@ -52,29 +53,45 @@ function Index(props:any) {
         console.log('button');
         const qInput = document.querySelector('#qInput') as HTMLInputElement;
         if (qInput.value) {
+            const payload = {
+                lectureId: props.lecture_id,
+                name: user && user.name,
+                questionContent: qInput.value
+            }
+            console.log(payload);
+            axios.post('/api/question/create', {
+                lectureId: props.lecture_id,
+                name: user ? user.name : "",
+                questionContent: qInput.value
+            }).then((res)=>console.log(res));
+            console.log(qInput.value);
             socket.emit('question', {
-                content : qInput.value,
-                qNum : qNum
+                content: qInput.value,
+                qNum: qNum
             })
-            console.log(questions);
-            setquestions(questions.concat([<Box qNum = {qNum}socket = {socket} msg={qInput.value}></Box>]));
+            setquestions(questions.concat([<Box lecture_id={props.lecture_id} qNum={qNum} socket={socket} msg={qInput.value}></Box>]));
+            const elm = document.querySelector(`.participantsclass#${user.email.split("@")[0]}`) as any;
+            console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML) + 1).toString());
         }
-        setqNum(qNum+1);
+        setqNum(qNum + 1);
         inputRef.current.value = '';
     }
 
     useEffect(() => {
-        socket.on('sendQ', (data:any)=>{
-            setquestions(questions.concat([<Box qNum = {data.qNum} socket = {socket} msg={data.content}></Box>]));
-            setqNum(qNum+1);
+        socket.on('sendQ', (data: any) => {
+            console.log(data, "질문 받음");
+            setquestions(questions.concat([<Box lecture_id={props.lecture_id} qNum={data.qNum} socket={socket} msg={data.content}></Box>]));
+            setqNum(qNum + 1);
+            const elm = document.querySelector(`.participantsclass#${data.email.split("@")[0]}`) as any;
+            console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML)+1).toString());
         })
     }, [questions])
 
-    const onKeyPress=(e: React.KeyboardEvent<HTMLInputElement>)=>{
-        if(e.key === "Enter"){
+    const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
             mySubmit();
-      }
-}
+        }
+    }
 
     return (
         <QuestionContainer>
@@ -82,7 +99,7 @@ function Index(props:any) {
                 {questions}
             </ChatContentCnt>
             <ChatInputCnt>
-                <ChatInput ref = {inputRef} onKeyPress={onKeyPress} id="qInput" type="TextArea" placeholder="질문을 입력해주세요" />
+                <ChatInput ref={inputRef} onKeyPress={onKeyPress} id="qInput" type="TextArea" placeholder="질문을 입력해주세요" />
                 <ChatSubmitBtn onClick={mySubmit}>내전송</ChatSubmitBtn>
             </ChatInputCnt>
         </QuestionContainer>

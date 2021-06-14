@@ -233,6 +233,8 @@ const socket = socketio('https://disboard13.kro.kr', {
   withCredentials: true,
   path: '/socket'
 });
+console.log(socket);
+
 const user = sessionStorage && sessionStorage.userInfo && JSON.parse(window.sessionStorage.userInfo);
 function Index(props: TestProps) {
   //------states------
@@ -244,6 +246,8 @@ function Index(props: TestProps) {
   const [ref, setref] = useState<any>(React.createRef());
   const [subject_id, setsubject_id] = useState(props.match.params.subject_id);
   const [lecture_id, setlecture_id] = useState<number>(1);
+  const [lecture_info, setlecture_info] = useState(null);
+  const [students, setstudents] = useState(null);
 
   //------useeffect------
 
@@ -336,7 +340,13 @@ function Index(props: TestProps) {
     console.log('joinlecture');
     axios.get(`/api/lecture/get/inProgress/subject/${subject_id}`)
       .then(res => {
+        console.log(res);
         setlecture_id(res.data.lecture._id);
+        axios.put(`/api/lecture/join/${res.data.lecture._id}`).then((res)=>{
+          console.log(res.data);
+          setstudents(res.data.lecture.students);
+          setlecture_info(res.data.lecture);
+        })
       }).catch(err => console.log(err));
   }
 
@@ -466,7 +476,7 @@ function Index(props: TestProps) {
       <RightCnt>
         <Active1Cnt>
           <Active1ContentCnt>
-            <ContentWrapper className="content1 active" id="content1"><Participant socket={socket} /></ContentWrapper>
+            <ContentWrapper className="content1 active" id="content1"><Participant students = {students} socket={socket} /></ContentWrapper>
             <ContentWrapper className="content1" id="content2"><Chat socket={socket} user={user.name} /></ContentWrapper>
             <ContentWrapper className="content1" id="content3"><Question lecture_id={lecture_id} socket={socket} /></ContentWrapper>
           </Active1ContentCnt>
@@ -478,7 +488,7 @@ function Index(props: TestProps) {
         </Active1Cnt>
         <Active2Cnt>
           <Active2ContentCnt>
-            <ContentWrapper className="content2 active" id="content1"><Comp socket={socket} /></ContentWrapper>
+            <ContentWrapper className="content2 active" id="content1"><Comp lecture_info = {lecture_info} lecture_id = {lecture_id} socket={socket} /></ContentWrapper>
             <ContentWrapper className="content2" id="content2"><Sub lecture_id={lecture_id} socket={socket} /></ContentWrapper>
             <ContentWrapper className="content2" id="content3"><Etc socket={socket} /></ContentWrapper>
           </Active2ContentCnt>
