@@ -374,7 +374,7 @@ function Index({match}){
    const subjectName = match.params.name;
     
    const isProfessor = user.type === "professor" ? true : false;
-   const [isLoading, setisLoading] = useState(false);
+   const [isLoading, setisLoading] = useState();
    const [isLoadingLine, setisLoadingLine] = useState(false);
    const [isAllStudent, setisAllStudent] = useState(isProfessor);
    const [isEmpty, setisEmpty] = useState(false);
@@ -454,7 +454,7 @@ function Index({match}){
                })
             }
             else{
-               result.students.map((value, index) => {
+                  result.students.map((value, index) => {
                   if(!isProfessor && value===user._id ){setStudentIndex(index)}
                   axios.get('/api/user/get/'+ String(value))
                   .then((output) => {
@@ -467,6 +467,55 @@ function Index({match}){
                         attendance: []
                      }
                      studentList[index] = student;
+                     if((result.students.length - 1) === index){
+                        axios.get('/api/lecture/get/subject/'+ String(subjectId))
+                        .then((response) => {
+                           const result = response.data;
+                           console.log(result);
+                           setLectureList(result.lecture);
+                           setDay(moment(result.lectures[0].date).format('M월 D일'));
+                           result.lectures.map((value, index) => {
+                              dayList[index] = moment(value.date).format('M월 D일');
+                              let totalScore = 0;
+                              let attend = 0;
+                              let late = 0;
+                              let absence = 0;
+                              value.students.map((student, stdInd)=>{
+                                 totalScore = student.activeScore + totalScore;
+                                 if(student.attendance === 'O'){attend = attend + 1;}
+                                 else if(student.attendance === 'x'){late = late + 1}
+                                 else{absence = absence + 1}
+
+                                 studentList[stdInd].attendance.push(student.attendance);
+                                 studentList[stdInd].activeScore.push(student.activeScore);
+                           })
+
+                           attendanceList.push({attend: attend, late: late, absence: absence});
+                           scoreList.push(totalScore);
+
+                              axios.get('/api/understanding/get/lecture/' + String(value._id))
+                              .then((understand)=>{
+                                 if(Object.keys(understand.data.countResponse).length === 0){
+                                    understandingGoodList[index] = [];
+                                    understandingBadList[index] = [];
+                                 }
+                                 else{
+                                    let responseGood = understand.data.countResponse.O;
+                                    understandingGoodList[index] = responseGood;
+                  
+                                    let responseBad = understand.data.countResponse.X;
+                                    understandingBadList[index] = responseBad;
+                                 }
+                                 if(index === (result.lectures.length - 1)) {resolve();}
+                              })
+                              .catch((error)=>{
+                                 console.log(error);
+                                 reject(error);
+                              });
+                           })
+                        })
+                        
+                     }
                   })
                   .catch((error) => {
                      console.log(error);
@@ -474,52 +523,8 @@ function Index({match}){
                   })
                })
 
-               axios.get('/api/lecture/get/subject/'+ String(subjectId))
-               .then((response) => {
-                  const result = response.data;
-                  console.log(result);
-                  setLectureList(result.lecture);
-                  setDay(moment(result.lectures[0].date).format('M월 D일'));
-                  result.lectures.map((value, index) => {
-                     dayList[index] = moment(value.date).format('M월 D일');
-                     let totalScore = 0;
-                     let attend = 0;
-                     let late = 0;
-                     let absence = 0;
-                     value.students.map((student, stdInd)=>{
-                        totalScore = student.activeScore + totalScore;
-                        if(student.attendance === 'O'){attend = attend + 1;}
-                        else if(student.attendance === 'x'){late = late + 1}
-                        else{absence = absence + 1}
+               
 
-                        studentIndex[stdInd].attendance.push(student.attendance);
-                        studentList[stdInd].activeScore.push(student.activeScore);
-                    })
-
-                    attendanceList.push({attend: attend, late: late, absence: absence});
-                    scoreList.push(totalScore);
-
-                     axios.get('/api/understanding/get/lecture/' + String(value._id))
-                     .then((understand)=>{
-                        if(Object.keys(understand.data.countResponse).length === 0){
-                           understandingGoodList[index] = [];
-                           understandingBadList[index] = [];
-                        }
-                        else{
-                           let responseGood = understand.data.countResponse.O;
-                           understandingGoodList[index] = responseGood;
-         
-                           let responseBad = understand.data.countResponse.X;
-                           understandingBadList[index] = responseBad;
-                        }
-                        if(index === (result.lectures.length - 1)) {resolve();}
-                     })
-                     .catch((error)=>{
-                        console.log(error);
-                        reject(error);
-                     });
-                  })
-               })
                .catch((error) => {
                   console.log(error);
                   reject(error);
@@ -770,7 +775,11 @@ function Index({match}){
      useEffect(() => {
       console.log("This is chart page");
       getData().then(()=>{
-         if(dayList.length != 0){
+         if(studentList.length == 0){
+            setisEmpty(true);
+            setisLoading(true);
+         }
+         else if(dayList.length !== 0){
             setRate(0);
             setDefaultStudentData(dayList, studentList);
             setLineData();

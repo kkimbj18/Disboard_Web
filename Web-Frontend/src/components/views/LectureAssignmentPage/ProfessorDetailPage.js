@@ -287,7 +287,7 @@ function Index({match}) {
                         {ReactHtmlParser(problem.content)}
                     </ProblemContent>
                     <hr style={{width: "100%", margin: "10px 0px", display:"block", borderColor: '#ffffff'}}/>
-                    <ShowResponse commentList={problem.comments} emotionList={problem.emotions} postId={problem.id} subjectId={subjectId} subjectName={subjectName} userId={user._id} type={"assignment"}/>
+                    <ShowResponse commentList={problem.comments} emotionList={problem.emotions} postId={problemId} subjectId={subjectId} subjectName={subjectName} userId={user._id} type={"assignment"}/>
                     <StudentSubmit studentList={studentList} changeScore={onChangeScore} score={problem.score} fileList={studentFile}/>
                     <CheckBtn onClick={updateScore}>채점 완료</CheckBtn>
                 </ProblemContainer>
