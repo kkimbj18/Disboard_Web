@@ -322,15 +322,15 @@ function Info ({title, day, data, rate, rateInfo, isStudentAttend}){
    )
 }
 
-function ShowStudentScoreList({day, studentList, isProfessor, userId, dayIndex, scoreList}){
+function ShowStudentScoreList({day, studentList, isProfessor, userId, dayIndex, scoreList, studentScoreList}){
 
    function calcRate(dayIndex, studentIndex){
       let lastIndex = dayIndex - 1;
       let result = 0
 
       if(lastIndex >= 0){
-         let change = studentList[studentIndex].activeScore[dayIndex] - studentList[studentIndex].activeScore[lastIndex];
-         let lastLecture = studentList[studentIndex].good[lastIndex] === 0 ? 1 : studentList[studentIndex].activeScore[lastIndex];
+         let change = studentScoreList[studentIndex][dayIndex] - studentScoreList[studentIndex][lastIndex];
+         let lastLecture = studentScoreList[studentIndex][lastIndex] === 0 ? 1 : studentScoreList[studentIndex][lastIndex];
          result = (change / lastLecture) * 100;
       }
 
@@ -355,9 +355,9 @@ function ShowStudentScoreList({day, studentList, isProfessor, userId, dayIndex, 
                {studentList.map((value, stdInd) => 
                   <tr>
                      <td style={{padding: "5px 0", borderBottom: "1px solid #D5D5D5"}}>{isProfessor ? value.name : <>{value.id === userId ? value.name : "anonymous"}</>}</td>
-                     <td style={{padding: "5px 0", borderBottom: "1px solid #D5D5D5"}}>{value.activeScore[dayIndex]}</td>
+                     <td style={{padding: "5px 0", borderBottom: "1px solid #D5D5D5"}}>{studentScoreList[stdInd][dayIndex]}</td>
                      <td style={{padding: "5px 0", borderBottom: "1px solid #D5D5D5"}}>{calcRate(dayIndex, stdInd)}</td>
-                     <td style={{padding: "5px 0", borderBottom: "1px solid #D5D5D5"}}><Progress percent={(value.activeScore[dayIndex] / scoreList[dayIndex])*100} status="active"/></td>
+                     <td style={{padding: "5px 0", borderBottom: "1px solid #D5D5D5"}}><Progress percent={(studentScoreList[stdInd][dayIndex] / scoreList[dayIndex])*100} status="active"/></td>
                   </tr>
                )}
             </tbody>
@@ -407,10 +407,13 @@ function Index({match}){
    const [scoreList, setScoreList] = useState([]);
    const [scoreRate, setScoreRate] = useState(0);
    const [score, setScore] = useState(0);
+   const [studentScoreList, setStudentScoreList] = useState([]);
 
    const [attendanceList, setAttendanceList] = useState([]);
    const [attendanceRate, setAttendanceRate] = useState(0);
    const [attendance, setAttendance] = useState(0);
+   const [studentAttendList, setStudentAttendList] = useState([]);
+
    
    const [day, setDay] = useState();
    const [dayIndex, setDayIndex] = useState(0);
@@ -454,9 +457,9 @@ function Index({match}){
                })
             }
             else{
-                  result.students.map((value, index) => {
-                  if(!isProfessor && value===user._id ){setStudentIndex(index)}
-                  axios.get('/api/user/get/'+ String(value))
+                  result.students.map((std, stdIndex) => {
+                  if(!isProfessor && std===user._id ){setStudentIndex(stdIndex)}
+                  axios.get('/api/user/get/'+ String(std))
                   .then((output) => {
                      const student = {
                         id: output.data._id,
@@ -466,71 +469,66 @@ function Index({match}){
                         activeScore: [],
                         attendance: []
                      }
-                     studentList[index] = student;
-                     if((result.students.length - 1) === index){
-                        axios.get('/api/lecture/get/subject/'+ String(subjectId))
-                        .then((response) => {
-                           const result = response.data;
-                           console.log(result);
-                           setLectureList(result.lecture);
-                           setDay(moment(result.lectures[0].date).format('M월 D일'));
-                           result.lectures.map((value, index) => {
-                              dayList[index] = moment(value.date).format('M월 D일');
-                              let totalScore = 0;
-                              let attend = 0;
-                              let late = 0;
-                              let absence = 0;
-                              value.students.map((student, stdInd)=>{
-                                 totalScore = student.activeScore + totalScore;
-                                 if(student.attendance === 'O'){attend = attend + 1;}
-                                 else if(student.attendance === 'x'){late = late + 1}
-                                 else{absence = absence + 1}
-
-                                 studentList[stdInd].attendance.push(student.attendance);
-                                 studentList[stdInd].activeScore.push(student.activeScore);
-                           })
-
-                           attendanceList.push({attend: attend, late: late, absence: absence});
-                           scoreList.push(totalScore);
-
-                              axios.get('/api/understanding/get/lecture/' + String(value._id))
-                              .then((understand)=>{
-                                 if(Object.keys(understand.data.countResponse).length === 0){
-                                    understandingGoodList[index] = [];
-                                    understandingBadList[index] = [];
-                                 }
-                                 else{
-                                    let responseGood = understand.data.countResponse.O;
-                                    understandingGoodList[index] = responseGood;
-                  
-                                    let responseBad = understand.data.countResponse.X;
-                                    understandingBadList[index] = responseBad;
-                                 }
-                                 if(index === (result.lectures.length - 1)) {resolve();}
-                              })
-                              .catch((error)=>{
-                                 console.log(error);
-                                 reject(error);
-                              });
-                           })
-                        })
-                        
-                     }
+                     studentList[stdIndex] = student;
                   })
                   .catch((error) => {
                      console.log(error);
                      reject(error);
                   })
-               })
 
-               
+                  axios.get('/api/lecture/get/subject/'+ String(subjectId))
+                  .then((response) => {
+                     const lecResult = response.data;
+                     console.log(lecResult);
+                     setLectureList(lecResult.lecture);
+                     setDay(moment(lecResult.lectures[0].date).format('M월 D일'));
+                     lecResult.lectures.map((value, index) => {
+                        dayList[index] = moment(value.date).format('M월 D일');
+                        let totalScore = 0;
+                        let attend = 0;
+                        let late = 0;
+                        let absence = 0;
+                        value.students.map((student, stdInd)=>{
+                           totalScore = student.activeScore + totalScore;
+                           if(student.attendance === 'O'){attend = attend + 1;}
+                           else if(student.attendance === 'x'){late = late + 1}
+                           else{absence = absence + 1}
 
-               .catch((error) => {
-                  console.log(error);
-                  reject(error);
+                           studentAttendList[stdInd].push(student.attendance);
+                           studentScoreList[stdInd].push(student.activeScore);
+                        })
+
+                        attendanceList.push({attend: attend, late: late, absence: absence});
+                        scoreList.push(totalScore);
+
+                        axios.get('/api/understanding/get/lecture/' + String(value._id))
+                        .then((understand)=>{
+                           if(Object.keys(understand.data.countResponse).length === 0){
+                              understandingGoodList[index] = [];
+                              understandingBadList[index] = [];
+                           }
+                           else{
+                              let responseGood = understand.data.countResponse.O;
+                              understandingGoodList[index] = responseGood;
+            
+                              let responseBad = understand.data.countResponse.X;
+                              understandingBadList[index] = responseBad;
+                           }
+                           if(index === (lecResult.lectures.length - 1)) {resolve();}
+                        })
+                        .catch((error)=>{
+                           console.log(error);
+                           reject(error);
+                        });
+                     })
+                  })
+                  .catch((error) => {
+                     console.log(error);
+                     reject(error);
+                  })
+
                })
             }
-
          })
          .catch((error) => {
             console.log(error);
@@ -667,8 +665,8 @@ function Index({match}){
             lastLecture = studentList[studentIndex].bad[lastIndex].length === 0 ? 1 : studentList[studentIndex].bad[lastIndex].length;
             setUnderstandingBadRate((change / lastLecture) * 100)
 
-            change = studentList[studentIndex].activeScore[dayIndex] - studentList[studentIndex].activeScore[lastIndex];
-            lastLecture = studentList[studentIndex].activeScore[lastIndex] === 0 ? 1 : studentList[studentIndex].activeScore[lastIndex];
+            change = studentScoreList[studentIndex][dayIndex] - studentScoreList[studentIndex][lastIndex];
+            lastLecture = studentScoreList[studentIndex][dayIndex] === 0 ? 1 : studentScoreList[studentIndex][lastIndex];
             setScoreRate((change / lastLecture) * 100)
          }
          
@@ -676,28 +674,30 @@ function Index({match}){
    }
 
    const onChangeData = (dayIndex, isAllStudent, studentIndex) => {
-      if(isAllStudent){
-         setUnderstandingGood(understandingGoodList[dayIndex].length);
-         setUnderstandingBad(understandingBadList[dayIndex].length);
-         understandingGoodList.map((value, index) => {
-            barGood[index] = value.length;
-            barAver[index] = value.length - understandingBadList[index].length;
-         })
-         understandingBadList.map((value, index) => {
-            barBad[index] = value.length;
-         })
-
-      }else{
-         console.log(studentList[studentIndex]);
-         setUnderstandingGood(studentList[studentIndex].good[dayIndex].length);
-         setUnderstandingBad(studentList[studentIndex].bad[dayIndex].length);
-         dayList.map((day, index) => {
-            barGood[index] = studentList[studentIndex].good[index].length;
-            barBad[index] = studentList[studentIndex].bad[index].length;
-            barAver[index] = studentList[studentIndex].good[index].length - studentList[studentIndex].bad[index].length
-         })
+      if(dayList.length !== 0){
+         if(isAllStudent){
+            setUnderstandingGood(understandingGoodList[dayIndex].length);
+            setUnderstandingBad(understandingBadList[dayIndex].length);
+            understandingGoodList.map((value, index) => {
+               barGood[index] = value.length;
+               barAver[index] = value.length - understandingBadList[index].length;
+            })
+            understandingBadList.map((value, index) => {
+               barBad[index] = value.length;
+            })
+   
+         }else{
+            console.log(studentList[studentIndex]);
+            setUnderstandingGood(studentList[studentIndex].good[dayIndex].length);
+            setUnderstandingBad(studentList[studentIndex].bad[dayIndex].length);
+            dayList.map((day, index) => {
+               barGood[index] = studentList[studentIndex].good[index].length;
+               barBad[index] = studentList[studentIndex].bad[index].length;
+               barAver[index] = studentList[studentIndex].good[index].length - studentList[studentIndex].bad[index].length
+            })
+         }
+         setRate(dayIndex, studentIndex, isAllStudent);
       }
-      setRate(dayIndex, studentIndex, isAllStudent);
    }
 
    const onChangeMode = (e) => {
@@ -734,7 +734,7 @@ function Index({match}){
             <SelectCust style={{border: "1px solid #e0e0e0", background: "#e0e0e0"}} onChange={onChangeMode}>
                <option value={0}>{modeList[0]}</option>
                <option value={1}>{modeList[1]}</option>
-               {isProfessor && <option value={2}>{modeList[2]}</option>}
+               {isProfessor && isAllStudent && <option value={2}>{modeList[2]}</option>}
             </SelectCust>
          </div>
       )
@@ -760,11 +760,11 @@ function Index({match}){
                <Info title={"출석 비율"} day={day} data={attendance} rate={attendanceRate} rateInfo={rateInfo} isAllStudent={isAllStudent} isStudentAttend={isAllStudent}/>
             </tr>
             <tr>
-               <ShowStudentScoreList day={day} scoreList={studentList} isProfessor={isProfessor} userId={user._id} dayIndex={dayIndex} scoreList={scoreList}/>
+               <ShowStudentScoreList day={day} scoreList={studentList} isProfessor={isProfessor} userId={user._id} dayIndex={dayIndex} scoreList={scoreList} studentScoreList={studentScoreList}/>
                <Box colSpan="2">
                   <BoxTitle>날짜별 보기</BoxTitle>
                   {/* <DayBox>{moment(day).format('M월 DD일')}</DayBox> */}
-                  <BarChart dayList={dayList} modeIndex={mode} goodList={barGood} badList={barBad} averList={barAver} scoreList={isAllStudent? scoreList : studentList[studentIndex].activeScore} attendanceList={barAttend}/>
+                  <BarChart dayList={dayList} modeIndex={mode} goodList={barGood} badList={barBad} averList={barAver} scoreList={isAllStudent? scoreList : studentScoreList[studentIndex]} attendanceList={barAttend}/>
                </Box>
             </tr>
          </tbody>
@@ -805,7 +805,7 @@ function Index({match}){
             }else{
                setUnderstandingGood(studentList[studentIndex].good[dayIndex].length);
                setUnderstandingBad(studentList[studentIndex].bad[dayIndex].length);
-               switch (studentList[studentIndex].attendance[dayIndex]) {
+               switch (studentAttendList[studentIndex][dayIndex]) {
                   case "O":
                      setAttendance("출석");
                      break;
@@ -816,7 +816,7 @@ function Index({match}){
                      setAttendance("결석");
                      break;
                }
-               setScore(studentList[studentIndex].activeScore[dayIndex]);
+               setScore(studentScoreList[studentIndex][dayIndex]);
                dayList.map((day, index) => {
                   barGood[index] = studentList[studentIndex].good[index].length;
                   barBad[index] = studentList[studentIndex].bad[index].length;
