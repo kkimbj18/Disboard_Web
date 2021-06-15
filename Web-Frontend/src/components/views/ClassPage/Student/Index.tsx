@@ -344,7 +344,7 @@ function Index(props: TestProps) {
         console.log(res);
         setlecture_id(res.data.lecture._id);
         axios.put(`/api/lecture/join/${res.data.lecture._id}`).then((res) => {
-          console.log(res.data);
+          console.log(res);
           setstudents(res.data.lecture.students);
           setlecture_info(res.data.lecture);
         })

@@ -64,11 +64,11 @@ function Index(props: parProps) {
 
     useEffect(() => {
         console.log(props.students);
-        let students = props.students.filter((student: any) => {
+        let students = props.students && props.students.filter((student: any) => {
             if (student.attendance === 'O') return true;
         });
         console.log(students);
-        tempArr = students.map((student: any) => {
+        tempArr = students && students.map((student: any) => {
             return (
                 <Row className="participantsclass" id={student.student.email.split("@")[0]} style={{ color: 'black' }}>
                     <div>{student.student.name}</div>
@@ -143,7 +143,7 @@ function Index(props: parProps) {
             <Row style={{ color: 'black' }}>
                 <div>name</div>
                 <div>score</div>
-                <div>{pars.length}</div>
+                <div>attendance</div>
             </Row>
             <ListBox id="part_listbox">
                 {pars}
