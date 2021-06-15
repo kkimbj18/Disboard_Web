@@ -523,15 +523,8 @@ function Index({match}){
                               understandingGoodList[index] = responseGood;
             
                               let responseBad = understand.data.countResponse.X;
-<<<<<<< HEAD
                               understandingBadList[index] = responseBad;
                               if(index === (lecResult.lectures.length - 1)) {resolve();}
-=======
-                              understandingBadList.push(responseBad);
-                              console.log(understandingBadList);
-
-                              setFinalStudentData(dayList, studentList);
->>>>>>> 6f088426a4141318c4d0cb72db9f295ff64f7340
                            }
                         })
                         .catch((error)=>{
@@ -572,7 +565,7 @@ function Index({match}){
             return a - b;
          });
          TimeList = new Set(TimeList);
-         lineLable[dayIndex] = [...TimeList];
+         lineLable[dayIndex] = Array.from(TimeList);
          lineLable[dayIndex].map((value, index) => {
             let cnt = 0;
             understandingGoodList[dayIndex] && understandingGoodList[dayIndex].map((response) => {
@@ -589,16 +582,14 @@ function Index({match}){
          })
          lineAver[dayIndex] = AverList;
       })
-      console.log(studentList);
+
       studentList && studentList.map((student, studentIndex) => {
          let temp = [];
          dayList.map((day, dayIndex) => {
             let StudList = [];
             const label = lineLable[dayIndex];
-            console.log(lineLable, dayIndex);
             lineLable[dayIndex].map((value, index) => {
                let cnt = 0;
-<<<<<<< HEAD
                student.good.map((response) => {
                   if(response.minutes === value){
                      cnt = cnt + 1;
@@ -606,16 +597,6 @@ function Index({match}){
                })
                student.bad.map((response) => {
                   if(response.minutes === value){
-=======
-               console.log(student);
-               student.good[dayIndex] && student.good[dayIndex].map((response) => {
-                  if (response.minutes === value) {
-                     cnt = cnt + 1;
-                  }
-               })
-               student.bad[dayIndex] &&student.bad[dayIndex].map((response) => {
-                  if (response.minutes === value) {
->>>>>>> 6f088426a4141318c4d0cb72db9f295ff64f7340
                      cnt = cnt - 1;
                   }
                })
@@ -624,11 +605,10 @@ function Index({match}){
             temp.push(StudList);
          })
          lineStudent[studentIndex] = temp;
-      });
+      })
       setisLoadingLine(true);
    }
 
-<<<<<<< HEAD
    const setDefaultStudentData = (studentList, dayList) => {
       return new Promise((resolve, reject) => {
          let cnt = 0;
@@ -658,68 +638,6 @@ function Index({match}){
          })
          // if((cnt + 1) === studentList.length){resolve()}
       })
-=======
-   const setDefaultStudentData = (dayList, studentList) => {
-      // studentList.push(student);
-      console.log(studentList);
-      setStudentList(studentList.map((student) => {
-         let good = [];
-         let bad = [];
-         dayList.map((day, index) => {
-            
-            console.log(understandingGoodList[index]);
-            understandingGoodList[index] && understandingGoodList[index].map((value) => {
-               console.log(value);
-               if (value.student._id === student.id) {
-                  good.push(value);
-               }
-            })
-            
-            console.log(understandingBadList);
-            understandingBadList[index] && understandingBadList[index].map((value) => {
-               console.log(value);
-               if (value.student._id === student.id) {
-                  bad.push(value);
-               }
-            })
-         });
-         console.log(good, bad);
-         student.good = good;
-         student.bad = bad;
-         return student;
-      }));
-   }
-
-   const setFinalStudentData = (dayList, studentList) => {
-      // studentList.push(student);
-      console.log(studentList);
-      setStudentList(studentList.map((student) => {
-         let good = [];
-         let bad = [];
-         dayList.map((day, index) => {
-
-            console.log(understandingGoodList[index]);
-            understandingGoodList[index] && understandingGoodList[index].map((value) => {
-               console.log(value);
-               if (value.student._id === student.id) {
-                  good.push(value);
-               }
-            })
-
-            console.log(understandingBadList);
-            understandingBadList[index] && understandingBadList[index].map((value) => {
-               console.log(value);
-               if (value.student._id === student.id) {
-                  bad.push(value);
-               }
-            })
-         });
-         console.log(good, bad);
-         student.good = good;
-         student.bad = bad;
-         return student;
-      }));
->>>>>>> 6f088426a4141318c4d0cb72db9f295ff64f7340
    }
 
    const setRate = (dayIndex, studentIndex, isAllStudent) => {
@@ -895,7 +813,6 @@ function Index({match}){
          }
          else{
             setRate(0);
-<<<<<<< HEAD
             setDefaultStudentData(studentList, dayList).then(()=>{
                setLineData()
                if(isProfessor && understandingGoodList[dayIndex] && understandingBadList[dayIndex]){
@@ -961,54 +878,6 @@ function Index({match}){
                      }
                      }
             })
-=======
-            setDefaultStudentData(dayList, studentList);
-            setLineData();
-            if(isProfessor && understandingGoodList[dayIndex] && understandingBadList[dayIndex]){
-               setUnderstandingGood(understandingGoodList[dayIndex].length);
-               setUnderstandingBad(understandingBadList[dayIndex].length);
-               let attend = ((attendanceList[dayIndex].attend / studentList.length) * 100).toFixed(0);
-               setAttendance(`${attend}% (${attendanceList[dayIndex].attend}/${studentList.length})`);
-               setScore(scoreList[dayIndex])
-               console.log(understandingGoodList);
-               console.log(understandingBadList);
-               understandingGoodList.map((value, index) => {
-                  barGood[index] = value && value.length;
-                  barAver[index] = value && value.length - understandingBadList[index].length;
-               })
-               understandingBadList.map((value, index) => {
-                  barBad[index] = value.length;
-               })
-               attendanceList.map((value, index)=>{
-                  barAttend.attend.push(value.attend);
-                  barAttend.late.push(value.late);
-                  barAttend.absence.push(value.absence);
-               })
-               setisLoading(true);
-            } else {
-               console.log(studentList);
-               setUnderstandingGood(studentList[studentIndex].good[dayIndex].length);
-               setUnderstandingBad(studentList[studentIndex].bad[dayIndex].length);
-               switch (studentAttendList[studentIndex][dayIndex]) {
-                  case "O":
-                     setAttendance("출석");
-                     break;
-                  case "X":
-                     setAttendance("지각");
-                     break;
-                  default:
-                     setAttendance("결석");
-                     break;
-               }
-               setScore(studentScoreList[studentIndex][dayIndex]);
-               dayList.map((day, index) => {
-                  barGood[index] = studentList[studentIndex].good[index].length;
-                  barBad[index] = studentList[studentIndex].bad[index].length;
-                  barAver[index] = studentList[studentIndex].good[index].length - studentList[studentIndex].bad[index].length
-               })
-               setisLoading(true);
-            }
->>>>>>> 6f088426a4141318c4d0cb72db9f295ff64f7340
          }
       })
       
