@@ -547,7 +547,7 @@ function Index({match}){
       })
    }
 
-   const setLineData = () => {
+   const setLineData = (studentList) => {
       console.log(understandingGoodList)
       dayList.map((day, dayIndex) => {
          let TimeList = [];
@@ -814,7 +814,7 @@ function Index({match}){
          else{
             setRate(0);
             setDefaultStudentData(studentList, dayList).then(()=>{
-               setLineData()
+               setLineData(studentList)
                if(isProfessor && understandingGoodList[dayIndex] && understandingBadList[dayIndex]){
                   setUnderstandingGood(understandingGoodList[0].length);
                   setUnderstandingBad(understandingBadList[0].length);
