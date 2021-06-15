@@ -67,18 +67,26 @@ function Index1(props: parProps) {
             console.log('newUser', data);
             let email = data.message.email;
             console.log(data.message.email.split("@")[0]);
-            if (!document.querySelector(`.participantsclass#${data.message.email.split("@")[0]}`)) {
-                addPar(data.message.name, "0", data.message.email.split("@")[0]);
+            try {
+                if (!document.querySelector(`.participantsclass#${data.message.email.split("@")[0]}`)) {
+                    addPar(data.message.name, "0", data.message.email.split("@")[0]);
+                }
+            } catch (err) {
+                console.log(err);
             }
         })
         props.socket.on('disConnected', (data: any) => {
             console.log("disconneected", data);
-            const toRemove = document.querySelectorAll(`.participantsclass#${data.split("@")[0]}`) as NodeListOf<HTMLElement>;
-            console.log(toRemove);
-            toRemove.forEach((elm: HTMLElement) => {
-                console.log(elm);
-                elm.remove();
-            })
+            try {
+                const toRemove = document.querySelectorAll(`.participantsclass#${data.split("@")[0]}`) as NodeListOf<HTMLElement>;
+                console.log(toRemove);
+                toRemove.forEach((elm: HTMLElement) => {
+                    console.log(elm);
+                    elm.remove();
+                })
+            }catch(err){
+                console.log(err);
+            }
         })
     }, [pars])
 

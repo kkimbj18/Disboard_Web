@@ -279,17 +279,17 @@ function Index(props: TestProps) {
   //------useeffect------
 
 
-  function zoomInit() {
+  async function zoomInit() {
     setisLoading(true);
     const client = ZoomInstant.createClient();
-    client.init("en-US", `${window.location.origin}/lib`);
+    await client.init("en-US", `${window.location.origin}/lib`);
     const token = generateInstantToken(
       "BkxDIpVzJ3wIa0Wwt7HIGg9hdMeit8qtg5BL",
       "RgEUnU0BDoSEozxsw8ySNWs8C0WvTfpDsUxA",
       "harry"
     );
     console.log('joining...');
-    client.join("harry", token, user.email)
+    await client.join("harry", token, user.email)
       .then(() => {
         console.log("Successfully joined a session.");
         setclient(client);
@@ -299,7 +299,7 @@ function Index(props: TestProps) {
       .catch((error) => {
         console.error(error);
       });
-
+    await client.getMediaStream().startAudio();
     client.on("connection-change", (payload) => {
       if (payload.state === "Connected") {
         console.log("connected!");
@@ -410,8 +410,8 @@ function Index(props: TestProps) {
   //------rendering------
   //render screen button handler
   const RenderMenuBtns = () => {
-    const screens = ['내화면', '공유화면', '참가자들'];
-    const links = [My, Share, Part]
+    const screens = ['내화면', '공유화면'];
+    const links = [My, Share]
     const result = screens.map((value, index) => {
       return (
         <Fuck>
@@ -509,7 +509,7 @@ function Index(props: TestProps) {
             {RenderMenuBtns()}
           </ScreenMenuCnt>
           {RenderCanvas()}
-          <MediaController socket = {socket} client={client} />
+          <MediaController socket={socket} client={client} />
         </ZoomScreen>
       </LeftCnt>
       <RightCnt>
@@ -520,7 +520,7 @@ function Index(props: TestProps) {
             <ContentWrapper className="content1" id="content3"><Question lecture_id={lecture_id} socket={socket} /></ContentWrapper>
           </Active1ContentCnt>
           <Active1Menu>
-            <ParticipantsBtn className="Active1Btn active" id="1" onClick={Active1BtnHandler}>{lecture_id}</ParticipantsBtn>
+            <ParticipantsBtn className="Active1Btn active" id="1" onClick={Active1BtnHandler}>참가자</ParticipantsBtn>
             <ChatBtn className="Active1Btn" id="2" onClick={Active1BtnHandler}>채팅</ChatBtn>
             <QuestionBtn className="Active1Btn" id="3" onClick={Active1BtnHandler}>질문</QuestionBtn>
           </Active1Menu>
