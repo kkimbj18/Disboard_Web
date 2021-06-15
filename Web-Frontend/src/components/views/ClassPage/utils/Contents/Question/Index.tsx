@@ -63,15 +63,19 @@ function Index(props: any) {
                 lectureId: props.lecture_id,
                 name: user ? user.name : "",
                 questionContent: qInput.value
-            }).then((res)=>console.log(res));
+            }).then((res) => console.log(res));
             console.log(qInput.value);
             socket.emit('question', {
                 content: qInput.value,
                 qNum: qNum
             })
             setquestions(questions.concat([<Box lecture_id={props.lecture_id} qNum={qNum} socket={socket} msg={qInput.value}></Box>]));
-            const elm = document.querySelector(`.participantsclass#${user.email.split("@")[0]}`) as any;
-            console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML) + 1).toString());
+            try {
+                const elm = document.querySelector(`.participantsclass#${user.email.split("@")[0]}`) as any;
+                console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML) + 1).toString());
+            }catch(err){
+                console.log(err);
+            }
         }
         setqNum(qNum + 1);
         inputRef.current.value = '';
@@ -82,8 +86,12 @@ function Index(props: any) {
             console.log(data, "질문 받음");
             setquestions(questions.concat([<Box lecture_id={props.lecture_id} qNum={data.qNum} socket={socket} msg={data.content}></Box>]));
             setqNum(qNum + 1);
-            const elm = document.querySelector(`.participantsclass#${data.email.split("@")[0]}`) as any;
-            console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML)+1).toString());
+            try{
+                const elm = document.querySelector(`.participantsclass#${data.email.split("@")[0]}`) as any;
+                console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML) + 1).toString());
+            }catch(err){
+                console.log(err);
+            }
         })
     }, [questions])
 

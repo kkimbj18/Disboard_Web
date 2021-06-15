@@ -90,6 +90,32 @@ function Index(props) {
     const [cnt, setcnt] = useState(0);
 
     useEffect(() => {
+        if (isAudioOn) {
+            startAudio();
+        } else muteAudio();
+    }, [isAudioOn])
+
+    const startAudio = async () => {
+        try {
+            await props.client.getMediaStream().unmuteAudio().then(res => {
+                console.log(res);
+            })
+        }catch(err){
+            console.log(err);
+        }
+    }
+
+    const muteAudio = async () => {
+        try {
+            await props.client.getMediaStream().muteAudio().then(res => {
+                console.log(res);
+            });
+        }catch(err){
+            console.log(err);
+        }
+    }
+
+    useEffect(() => {
         setTimeout(() => {
             try {
                 const client1 = props.client;
@@ -227,7 +253,7 @@ function Index(props) {
 
     const getOut = () => {
         socket.disconnect({
-            test : 'test'
+            test: 'test'
         });
         window.location.href = '/main';
     }
