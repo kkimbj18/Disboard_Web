@@ -222,7 +222,7 @@ interface TestProps {
   match: {
     params: {
       subject_id: string,
-      subject_code : string
+      subject_code: string
     }
   }
 }
@@ -251,17 +251,17 @@ function Index(props: TestProps) {
 
   //------useeffect------
 
-  function zoomInit() {
+  async function zoomInit() {
     try {
       setisLoading(true);
       const client = ZoomInstant.createClient();
-      client.init("en-US", `${window.location.origin}/lib`);
+      await client.init("en-US", `${window.location.origin}/lib`);
       const token = generateInstantToken(
         "BkxDIpVzJ3wIa0Wwt7HIGg9hdMeit8qtg5BL",
         "RgEUnU0BDoSEozxsw8ySNWs8C0WvTfpDsUxA",
         "harry"
       );
-      client.join("harry", token, user.email)
+      await client.join("harry", token, user.email)
         .then(() => {
           console.log("Successfully joined a session.");
           setclient(client);
@@ -270,6 +270,7 @@ function Index(props: TestProps) {
         .catch((error) => {
           console.error(error);
         });
+      await client.getMediaStream().startAudio();
       client.on("connection-change", (payload) => {
         if (payload.state === "Connected") {
           console.log("connected!");
@@ -342,7 +343,7 @@ function Index(props: TestProps) {
       .then(res => {
         console.log(res);
         setlecture_id(res.data.lecture._id);
-        axios.put(`/api/lecture/join/${res.data.lecture._id}`).then((res)=>{
+        axios.put(`/api/lecture/join/${res.data.lecture._id}`).then((res) => {
           console.log(res.data);
           setstudents(res.data.lecture.students);
           setlecture_info(res.data.lecture);
@@ -403,8 +404,8 @@ function Index(props: TestProps) {
   //------rendering------
   //render screen button handler
   const RenderMenuBtns = () => {
-    const screens = ['내화면', '공유화면', '참가자들'];
-    const links = [My, Share, Part]
+    const screens = ['내화면', '공유화면'];
+    const links = [My, Share]
     const result = screens.map((value, index) => {
       return (
         <Fuck>
@@ -456,9 +457,9 @@ function Index(props: TestProps) {
       code: props.match.params.subject_code,
       email: user ? user.email : "default"
     });
-        socket.on('newUser', (data: any) => {
-          console.log(data);
-        });
+    socket.on('newUser', (data: any) => {
+      console.log(data);
+    });
   }, [])
   if (isLoading) return <Loading type="spin" color='orange'></Loading>
 
@@ -470,25 +471,25 @@ function Index(props: TestProps) {
             {RenderMenuBtns()}
           </ScreenMenuCnt>
           {RenderCanvas()}
-          <MediaController socket = {socket} client={client} />
+          <MediaController socket={socket} client={client} />
         </ZoomScreen>
       </LeftCnt>
       <RightCnt>
         <Active1Cnt>
           <Active1ContentCnt>
-            <ContentWrapper className="content1 active" id="content1"><Participant students = {students} socket={socket} /></ContentWrapper>
+            <ContentWrapper className="content1 active" id="content1"><Participant students={students} socket={socket} /></ContentWrapper>
             <ContentWrapper className="content1" id="content2"><Chat socket={socket} user={user.name} /></ContentWrapper>
             <ContentWrapper className="content1" id="content3"><Question lecture_id={lecture_id} socket={socket} /></ContentWrapper>
           </Active1ContentCnt>
           <Active1Menu>
-            <ParticipantsBtn className="Active1Btn active" id="1" onClick={Active1BtnHandler}>{lecture_id}</ParticipantsBtn>
+            <ParticipantsBtn className="Active1Btn active" id="1" onClick={Active1BtnHandler}>참가자</ParticipantsBtn>
             <ChatBtn className="Active1Btn" id="2" onClick={Active1BtnHandler}>채팅</ChatBtn>
             <QuestionBtn className="Active1Btn" id="3" onClick={Active1BtnHandler}>질문</QuestionBtn>
           </Active1Menu>
         </Active1Cnt>
         <Active2Cnt>
           <Active2ContentCnt>
-            <ContentWrapper className="content2 active" id="content1"><Comp lecture_info = {lecture_info} lecture_id = {lecture_id} socket={socket} /></ContentWrapper>
+            <ContentWrapper className="content2 active" id="content1"><Comp lecture_info={lecture_info} lecture_id={lecture_id} socket={socket} /></ContentWrapper>
             <ContentWrapper className="content2" id="content2"><Sub lecture_id={lecture_id} socket={socket} /></ContentWrapper>
             <ContentWrapper className="content2" id="content3"><Etc socket={socket} /></ContentWrapper>
           </Active2ContentCnt>

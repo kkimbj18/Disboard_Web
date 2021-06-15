@@ -75,16 +75,9 @@ function Index(props: PopProps) {
         } else if (props.data.type == 2) {
             data = multipleVal;
             sendAnswer(data);
-            sendAnswer(1);
-            sendAnswer(2);
-            sendAnswer(3);
-            sendAnswer(4);
-            sendAnswer(5);
         } else {
             data = tfVal;
             sendAnswer(tfVal);
-            sendAnswer(1);
-            sendAnswer(2);
         }
         props.setOptions();
     };

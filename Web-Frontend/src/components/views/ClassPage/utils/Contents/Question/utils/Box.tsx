@@ -118,8 +118,12 @@ function Box(props: QuestionProps) {
             setanswers(answers.concat([<Answer>{inputRef.current.value}</Answer>]));
             inputRef.current.value = '';
             console.log(inputRef.current);
-            const elm = document.querySelector(`.participantsclass#${user.email.split("@")[0]}`) as any;
-            console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML) + 1).toString());
+            try {
+                const elm = document.querySelector(`.participantsclass#${user.email.split("@")[0]}`) as any;
+                console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML) + 1).toString());
+            }catch(err){
+                console.log(err);
+            }
         }
     }
 
@@ -133,8 +137,12 @@ function Box(props: QuestionProps) {
             if (props.qNum == data.qNum) {
                 setanswers(answers.concat([<Answer>{data.content}</Answer>]));
             }
-            const elm = document.querySelector(`.participantsclass#${data.email.split("@")[0]}`) as any;
-            console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML)+1).toString());
+            try {
+                const elm = document.querySelector(`.participantsclass#${data.email.split("@")[0]}`) as any;
+                console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML) + 1).toString());
+            } catch (err) {
+                console.log(err);
+            }
         })
     }, [answers])
 

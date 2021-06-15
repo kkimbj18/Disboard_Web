@@ -131,8 +131,10 @@ function Index(props) {
 
     useEffect(() => {
         socket.on("sendIsUnderstood", function (data) {
-            const elm = document.querySelector(`.participantsclass#${data.email.split("@")[0]}`);
-            console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML)+1).toString());
+            try{
+                const elm = document.querySelector(`.participantsclass#${data.email.split("@")[0]}`);
+                console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML)+1).toString());
+            }catch(err){ console.log(err) }
             if (data.type == 'up') {
                 chartRef.current.data.ups = chartRef.current.data.ups+1;
             } else {

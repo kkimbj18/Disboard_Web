@@ -57,8 +57,12 @@ function Index(props: CompProps) {
                 time: res.data.understanding.time
             })
         })
-        const elm = document.querySelector(`.participantsclass#${user.email.split("@")[0]}`) as any;
-        console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML) + 1).toString());
+        try{
+            const elm = document.querySelector(`.participantsclass#${user.email.split("@")[0]}`) as any;
+            console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML) + 1).toString());
+        }catch(err){
+            console.log(err);
+        }
     }
 
     function downBtnHandler() {
@@ -74,8 +78,12 @@ function Index(props: CompProps) {
                 time: res.data.understanding.time
             })
         })
-        const elm = document.querySelector(`.participantsclass#${user.email.split("@")[0]}`) as any;
-        console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML) + 1).toString());
+        try{
+            const elm = document.querySelector(`.participantsclass#${user.email.split("@")[0]}`) as any;
+            console.log(elm.childNodes[1].innerHTML = (parseInt(elm.childNodes[1].innerHTML) + 1).toString());
+        }catch(err){
+            console.log(err);
+        }
     }
 
     return (
