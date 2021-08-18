@@ -8,12 +8,7 @@ RUN npm install
 RUN npm install -g pm2
 
 ENV NODE_ENV production
-ENV SESSION_SECRET capstone_project_t13
 ENV DB mongo
-ENV IP 3.36.52.136
-ENV ACCESSKEY AKIAQZXIFS4YVOJJPZOT
-ENV SECRETKEY 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
-ENV BUCKET_NAME disboard-capstone
 
 COPY . .
 
